@@ -1,8 +1,6 @@
-import java.util.Scanner;
 /**
- * Uses files to mimic a sql database, even though SQLite 
- * already exists.
- * Directory==database, files==tables;
+ * Uses arrays to hold inventory.
+ * Transition to SQL imenent.
  * @author jib5153
  *
  */
@@ -47,9 +45,9 @@ public class DBIO {
 	 * @return
 	 */
 	public static Media[] query(String type){
-		if(type == "album"){
+		if(type.equals("album")){
 			return albumInventory;
-		}else if(type=="movie"){
+		}else if(type.equals("movie")){
 			return movieInventory;
 		}
 		else{
@@ -69,7 +67,7 @@ public class DBIO {
 		boolean found=false;
 		//Delete by moving to end of Array and copying a copy of length-1 into source
 		for(int i=0; i<inv.length; i++){
-			if(inv[i]==mObj){
+			if(inv[i].equals(mObj)){
 				inv[i]=inv[inv.length-1];
 				
 				newInv = new Media[inv.length-1];
