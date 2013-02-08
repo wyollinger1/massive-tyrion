@@ -76,7 +76,20 @@ public class Media {
 	public void setAvgRating(double avgRating) {
 		this.avgRating = avgRating;
 	}
-
+	
+	/**
+	 * Tests equality of media items based on their identifying information 
+	 * of the item. Specifically on the media items creator, name, duration,
+	 * and genre.
+	 * @param mObj Media object to test equality against 
+	 * @return true if objects are equal false otherwise
+	 */
+	public boolean equals(Media mObj){
+		return this.creator.equals(mObj.getCreator()) && 
+				this.name.equals(mObj.getName()) && 
+				this.duration==mObj.getDuration() && 
+				this.genre.equals(mObj.getGenre());
+	}
 	
 	@Override
 	public String toString() {
