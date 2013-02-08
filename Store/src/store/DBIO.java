@@ -67,7 +67,7 @@ public class DBIO {
 		boolean found=false;
 		//Delete by moving to end of Array and copying a copy of length-1 into source
 		for(int i=0; i<inv.length; i++){
-			if(inv[i].equals(mObj)){
+			if(inv[1]!=null && inv[i].equals(mObj)){
 				inv[i]=inv[inv.length-1];
 				
 				newInv = new Media[inv.length-1];
