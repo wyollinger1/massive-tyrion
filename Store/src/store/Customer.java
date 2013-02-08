@@ -7,6 +7,7 @@ public class Customer {
 	protected String shoppingCart;
     protected double balance;
     protected String history;
+    protected boolean purchased = false;
 
     // default constructor
     public Customer()
@@ -83,22 +84,32 @@ public class Customer {
 		this.history = history;
 	}
     
-	public void Search(String mediaObj)
+	//Allows the user to search for a media object
+	public void Search(Media mediaObj)
 	{
 		
 	}
 	
-	public String displayItem(String mediaObj)
-	{
-		return mediaObj;
-	}
-	
-	public void purchase(String mediaObj)
+	//Displays the attributes of the current media object on screen
+	public String displayItem(Media mediaObj)
 	{
 		
+		return Media.toString();
 	}
 	
-	public void rate(String mediaObj)
+	//Allows the customer to make a purchase of a media object
+	public void purchase(Media mediaObj)
+	{
+		if(balance > price)
+		{
+			
+		}
+		DBIO.remove(mediaObj);
+		purchased = true;
+	}
+	
+	//Allows the user to rate a purchased media object
+	public void rate(Media mediaObj)
 	{
 		
 	}
