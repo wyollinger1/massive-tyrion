@@ -25,7 +25,7 @@ public class Media {
 	}
 	
 	/*
-	 * Start autogen getters/setters
+	 * Auto-generated getters/setters
 	 */
 	
 	public String getCreator() {
@@ -89,6 +89,17 @@ public class Media {
 				this.name.equals(mObj.getName()) && 
 				this.duration==mObj.getDuration() && 
 				this.genre.equals(mObj.getGenre());
+	}
+	
+	/**
+	 * Returns a hash such that equal media items return equal hashes.
+	 * @return integer hash code
+	 */
+	@Override
+	public int hashCode(){
+		return this.creator.hashCode()+this.genre.hashCode()+this.duration;
+		
+		
 	}
 	
 	@Override
