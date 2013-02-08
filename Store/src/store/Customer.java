@@ -1,3 +1,4 @@
+//import java.util.Scanner;
 
 public class Customer {
 
@@ -7,7 +8,7 @@ public class Customer {
 	protected String shoppingCart;
     protected double balance;
     protected String history;
-    protected boolean purchased = false;
+    
 
     // default constructor
     public Customer()
@@ -94,24 +95,35 @@ public class Customer {
 	public String displayItem(Media mediaObj)
 	{
 		
-		return Media.toString();
+		return mediaObj.toString();
 	}
 	
 	//Allows the customer to make a purchase of a media object
-	public void purchase(Media mediaObj)
+	public boolean purchase(Media mediaObj, String type)
 	{
-		if(balance > price)
+		boolean purchased = false;
+		
+		if(balance > mediaObj.getPrice())
 		{
-			
+			if(DBIO.remove(mediaObj,type))
+			{
+				balance = balance - mediaObj.getPrice();
+				purchased = true;
+			}
 		}
-		DBIO.remove(mediaObj);
-		purchased = true;
+		else
+		{
+			System.out.println("Not enough money");
+		}
+		return purchased;
 	}
 	
 	//Allows the user to rate a purchased media object
 	public void rate(Media mediaObj)
 	{
+		double rating = 0;
 		
+		mediaObj.addRating(rating);
 	}
 	
 	
