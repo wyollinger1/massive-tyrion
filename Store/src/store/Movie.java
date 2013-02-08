@@ -1,4 +1,4 @@
-package store;
+
 
 public class Movie extends Media {
 	Movie(String creator, String name, int duration, 

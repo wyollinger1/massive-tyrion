@@ -1,4 +1,3 @@
-package Store;
 
 public class Customer {
 

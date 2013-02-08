@@ -1,5 +1,5 @@
-package store;
-import Scanner;
+
+import java.util.Scanner;
 /**
  * Uses files to mimic a sql database, even though SQLite 
  * already exists.

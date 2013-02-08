@@ -1,4 +1,4 @@
-package Store;
+
 
 public class Manager extends Customer{
 	

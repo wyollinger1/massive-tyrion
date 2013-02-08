@@ -1,4 +1,4 @@
-package store;
+
 
 public class Album extends Media {
 
