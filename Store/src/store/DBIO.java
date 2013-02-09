@@ -1,6 +1,6 @@
 /**
  * Uses arrays to hold inventory.
- * Transition to SQL imenent.
+ * Transition to SQL imminent.
  * @author jib5153
  *
  */
