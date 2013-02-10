@@ -1,3 +1,10 @@
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.DatabaseMetaData;
 /**
  * Uses arrays to hold inventory.
  * Transition to SQL imminent.
@@ -5,15 +12,38 @@
  *
  */
 public class DBIO {
-	
+	private static final String driverName = "org.sqlite.JDBC"; //May let driver be changed in future
+	private static final String jdbcUrlPre = "jdbc:sqlite:"; //Prefix for all SQLite JDBC url's
+	private static Connection con;
 	private static Album [] albumInventory;
 	private static Audiobook [] bookInventory;
 	private static Movie [] movieInventory;
 	
-	DBIO(String dirName){
-		
+	/**
+	 * Initializes static class with the SQLite JDBC driver.
+	 * TODO Docs claim Class.forName() is no longer necessary ... 
+	 * 		which is all this init does
+	 * @throws ClassNotFoundException
+	 */
+	public static void init() throws ClassNotFoundException{
+		Class.forName(driverName);
 	}
 	
+	/**
+	 * Set the current working database.
+	 * 
+	 * @param dbUrl String url of database.
+	 * @return true on successful connection false otherwise
+	 */
+	public static boolean setDb(String dbUrl){
+		try{
+			con = DriverManager.getConnection(jdbcUrlPre+dbUrl);
+			return true;
+		}catch(SQLException sqlE){
+			con = null; //Probably not necessary
+			return false;
+		}
+	}
 	/**
 	 * Set album inventory
 	 * @param inv Album [] to set movie inventory to
