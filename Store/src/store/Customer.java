@@ -121,6 +121,7 @@ public class Customer {
 			{
 				balance = balance - mediaObj.getPrice();
 				purchased = true;
+				DBIO.updateNumSold(mediaObj,1);
 			}
 		}
 		else
@@ -131,13 +132,18 @@ public class Customer {
 	}
 	
 	//Allows the user to rate a purchased media object
-	public void rate(Media mediaObj)
-	{
-		double rating = 0;
-		
-		mediaObj.addRating(rating);
+	public void rateMovie(Media movieObj, double rating)
+	{	
+		movieObj.addRating(rating);
 	}
-	
+	public void rateBook(Media bookObj, double rating)
+	{	
+		bookObj.addRating(rating);
+	}
+	public void rateAlbum(Media albumObj, double rating)
+	{	
+		albumObj.addRating(rating);
+	}
 	
     @Override
     public String toString()
