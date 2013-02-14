@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 /**
  * Uses arrays to hold inventory.
  * Transition to SQL imenent.
@@ -9,6 +11,8 @@ public class DBIO {
 	private static Album [] albumInventory;
 	private static Audiobook [] bookInventory;
 	private static Movie [] movieInventory;
+	private static ArrayList<Media> sold;
+	private static ArrayList<Integer> numSold;
 	
 	DBIO(String dirName){
 		
@@ -119,5 +123,22 @@ public class DBIO {
 		}
 		return true;
 	}
-	
+	public static boolean updateNumSold(Media mObj, int num){
+		Integer index=null;
+		if(sold.contains(mObj)){
+			index=sold.indexOf(mObj);
+			numSold.set(index, num);
+		}else{
+			sold.add(mObj);
+			numSold.add(num);
+		}
+		return true;
+	}
+	public static int getNumSold(Media mObj){
+		if(sold.contains(mObj)){
+			return numSold.get(sold.indexOf(mObj));
+		}else{
+			return 0;
+		}
+	}
 }

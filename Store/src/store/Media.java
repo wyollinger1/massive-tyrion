@@ -6,7 +6,6 @@ public class Media {
 	protected String name;
 	protected int duration;
 	protected String genre;
-	protected int numSold;
 	protected double price;
 	protected int numRating;
 	protected double avgRating;
@@ -18,7 +17,7 @@ public class Media {
 		this.name=name;
 		this.duration=duration;
 		this.genre=genre;
-		this.numSold=numSold;
+		this.setNumSold(numSold);
 		this.price=price;
 		this.numRating=numRating;
 		this.avgRating=avgRating;
@@ -53,10 +52,10 @@ public class Media {
 		this.genre = genre;
 	}
 	public int getNumSold() {
-		return numSold;
+		return DBIO.getNumSold(this);
 	}
 	public void setNumSold(int numSold) {
-		this.numSold = numSold;
+		DBIO.updateNumSold(this, numSold);
 	}
 	public double getPrice() {
 		return price;
@@ -105,7 +104,7 @@ public class Media {
 	@Override
 	public String toString() {
 		return "Media [creator=" + creator + ", name=" + name + ", duration="
-				+ duration + ", genre=" + genre + ", numSold=" + numSold
+				+ duration + ", genre=" + genre + ", numSold=" + this.getNumSold()
 				+ ", price=" + price + ", numRating=" + numRating
 				+ ", avgRating=" + avgRating + "]";
 	}

@@ -43,7 +43,7 @@ public class Manager extends Customer
     //will return the number sold
     public static int getnumSold(Media mediaObj) 
     {
-        return mediaObj.numSold;
+        return mediaObj.getNumSold();
     }
 
     @Override
