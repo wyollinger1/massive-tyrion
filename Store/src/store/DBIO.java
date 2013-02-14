@@ -69,11 +69,19 @@ public class DBIO {
 		for(int i=0; i<inv.length; i++){
 			if(inv[i]!=null && inv[i].equals(mObj)){
 				inv[i]=inv[inv.length-1];
-				
-				newInv = new Media[inv.length-1];
-				System.arraycopy(inv,0, newInv, 0, inv.length-1);
-				
-				inv=newInv;
+				if(type.equals("album")){
+					newInv = new Album[inv.length-1];
+					System.arraycopy(inv,0, newInv, 0, inv.length-1);
+					albumInventory=(Album[])newInv;
+				}else if(type.equals("movie")){
+					newInv = new Movie[inv.length-1];
+					System.arraycopy(inv,0, newInv, 0, inv.length-1);
+					movieInventory=(Movie[])newInv;
+				}else if(type.equals("book")){
+					newInv = new Audiobook[inv.length-1];
+					System.arraycopy(inv,0, newInv, 0, inv.length-1);
+					bookInventory=(Audiobook[])newInv;
+				}
 				found=true;
 				break;
 			}
@@ -87,10 +95,28 @@ public class DBIO {
 	 * @return
 	 */
 	public static boolean add(Media mObj, String type){
-		Media [] inv = query(type);
-		Media [] newInv = new Media[inv.length+1];
-		System.arraycopy(inv, 0, newInv, 0, inv.length);
-		newInv[inv.length]= mObj;
+		Media [] inv;
+		Media [] newInv;
+		if(type.equals("album")){
+			inv=albumInventory;
+			newInv = new Album[inv.length+1];
+			System.arraycopy(inv, 0, newInv, 0, inv.length);
+			newInv[inv.length]= mObj;
+			albumInventory=(Album[])newInv;
+		}else if(type.equals("movie")){
+			inv=movieInventory;
+			newInv = new Movie[inv.length+1];
+			System.arraycopy(inv, 0, newInv, 0, inv.length);
+			newInv[inv.length]= mObj;
+			movieInventory=(Movie[])newInv;
+		}
+		else{
+			inv=bookInventory;
+			newInv = new Audiobook[inv.length+1];
+			System.arraycopy(inv, 0, newInv, 0, inv.length);
+			newInv[inv.length]= mObj;
+			bookInventory=(Audiobook[])newInv;
+		}
 		return true;
 	}
 	

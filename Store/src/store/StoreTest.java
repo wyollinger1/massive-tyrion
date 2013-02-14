@@ -5,6 +5,7 @@ public class StoreTest
 
         Audiobook aud1 = new Audiobook("Josh", "2013", 120, "horror", 0, 30, 0,0);
         Movie mov1 = new Movie("Josh", "2013", 120, "horror", 0, 30, 0,0);
+        Movie[] tempArr;
         
         
         Audiobook [] aInv = new Audiobook[1];
@@ -29,7 +30,12 @@ public class StoreTest
         
         mng1.addMedia(mov3, "movie");
         
-        System.out.println(DBIO.query("\nmovie"));
+        tempArr = (Movie[])DBIO.query("movie");
+        System.out.println(tempArr.length);
+        for(int i=0; i<tempArr.length; i++){
+        	System.out.println(tempArr[i]);
+        }
+        
         
         System.out.println("\nThe movie " + mov3.name + " was sold " + Manager.getnumSold(mov3) + " times.");
         
