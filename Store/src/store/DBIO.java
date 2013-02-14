@@ -6,15 +6,12 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.DatabaseMetaData;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Map;
 import java.util.Set;
 
 /**
- * Uses arrays to hold inventory. Transition to SQL imminent.
+ * SQL implementation.  Abstracts queries away so all database calls are made through this API.
  * 
  * @author jib5153
  * 
@@ -29,10 +26,6 @@ public class DBIO {
 																// url's
 	private static Connection con;
 	private static Statement stmnt;
-	private static final String[] SET_VALUES = new String[] { "=", "<>", ">",
-			"<", ">=", "<=", "BETWEEN", "LIKE", "IN" };
-	private static Set<String> Q_OPERATORS = new HashSet<String>(
-			Arrays.asList(SET_VALUES));
 
 	/**
 	 * Initializes static class with the SQLite JDBC driver. TODO Docs claim
@@ -149,14 +142,77 @@ public class DBIO {
 					+ "avgRating=(avgRating*numRating +" + rating
 					+ ")/(numRating+1), " + "numRating=numRating+1"
 					+ "WHERE mId=" + mId);
-			refreshMedia(mObj); // TODO make a refreshMedia, probably based on
-								// query
+			refreshMedia(mObj); 
 		} catch (SQLException sqlE) {
 			return -1;
 		}
 		return isSuccess;
 	}
+	/**
+	 * Refreshes/resets media object with data in database
+	 * @param mObj Media object to refresh
+	 * @return the refreshed media object
+	 */
+	private static Media refreshMedia(Media mObj){
+		String [] cols = {"*"};
+		Integer [] condArr = {mObj.getId()};//TODO: Media needs and id field
+		ResultSet results;
+		Media [] mediaArr;
+		SelectBuilder sb = getSelectBuilder(cols, "Inventory");
+		sb.addIntCondition("mId", "=", condArr, true);
+		results=executeQuery(sb);
+		mObj = result2Media(results)[0]; //Counting on finding exactly one row, probably should add some checks or something.
+		return mObj; 
+		
+	}
 
-	public static PreparedStatement getPrepared(String[] colNames)
+	/**
+	 * Turns a ResultSet from the Inventory Table into a Media array, which is what
+	 * all Media results should be returned as.
+	 * @param results ResultSet to process for Media objects
+	 * @return Array of media objects extracted from the ResultSet
+	 * @throws SQLException if error reading from the ResultSet
+	 */
+	private static Media[] result2Media(ResultSet results) throws SQLException{
+		int mId, duration, numSold, numRating; //TODO: Media class needs an id data member
+		double price, avgRating;
+		String creator, name, genre;
+		ArrayList<Media> mediaObjs = new ArrayList<Media>();		
+		do{
+			mId=results.getInt("mId");
+			creator=results.getString("creator");
+			name=results.getString("name");
+			duration=results.getInt("duration");
+			genre=results.getString("genre");
+			numSold=results.getInt("numInStock"); //TODO: This is just plain wrong
+			price=results.getDouble("price");
+			numRating=results.getInt("numRating");
+			avgRating=results.getDouble("avgRating");
+			mediaObjs.add(new Media(creator, name, duration, genre, numSold, price, numRating, avgRating)); //TODO Inventory should have type column to switch on so can create specific media not generic
+		}
+		while(results.next());
+		return (Media[])mediaObjs.toArray();
+	}
 	
+	/**
+	 * Gets a SelectBuilder object to build a Select query to execute on the database.
+	 * 
+	 * @param columnArr String array of columns to select, must be non-null, can contain solitary item, i.e. ["*"]
+	 * @param tableName String name of table to select columns from
+	 * @return SelectBuilder initialized with the columns and table, allowing to build a Where clause
+	 */
+	public static SelectBuilder getSelectBuilder(String[] columnArr, String tableName){
+		return new SelectBuilder(columnArr, tableName);
+	}
+	
+	/**
+	 * Executes the built Select statement on the database and returns the ResultSet.
+	 * 
+	 * @param sb SelectBuilder containing the completed Select statement
+	 * @return ResultSet containing the results returned by the database
+	 * @throws SQLException on database access error
+	 */
+	public static ResultSet executeQuery(SelectBuilder sb) throws SQLException{ //TODO Take care of this exception either here or in the QueryBuilder class
+		return sb.executeSelect(con);
+	}
 }
