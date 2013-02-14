@@ -5,6 +5,7 @@ public class Customer {
     protected int ID;
 	protected String name;
     protected String password;
+	protected String city;
 	protected String shoppingCart;
     protected double balance;
     protected String history;
@@ -16,6 +17,7 @@ public class Customer {
         ID = 0;
         name = "";
         password = "";
+		city = "";
 		shoppingCart = "";
         balance = 0.0;
 		history = "";
@@ -25,6 +27,7 @@ public class Customer {
     public Customer(int ID,
              String name,
              String password,
+			 String city,
              double balance,
              String shoppingCart,
              String customerHistory)
@@ -32,6 +35,7 @@ public class Customer {
         this.ID = ID;
         this.name = name;
         this.password = password;
+		this.city = city;
         this.balance = balance;
         this.shoppingCart = shoppingCart;
         this.history = customerHistory;
@@ -60,7 +64,15 @@ public class Customer {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
+	
+	public String getcity() {
+		return city;
+	}
+	
+	public void setcity(String city) {
+		this.city = city;
+	}
+	
 	public String getShoppingCart() {
 		return shoppingCart;
 	}
@@ -131,13 +143,14 @@ public class Customer {
     public String toString()
     {
         return String.format("::CUSTOMER INFORMATION::\n"
-                    + "    Identification #: %20s \n"
-                    + "    The Customer:   	%20s \n"
-                    + "    Password:   		%20s \n"
-                    + "    Balance:        %20f \n"
-                    + "	   Shopping Cart:	%20s \n"
-                    + "    History:           %20s \n",
-                    this.ID, this.name, this.password,
+                    + "Identification #:%20s \n"
+                    + "The Customer:%20s \n"
+                    + "Password:%20s \n"
+					+ "City:%20s \n"
+                    + "Balance:%20f \n"
+                    + "Shopping Cart:%20s \n"
+                    + "History:%20s \n",
+                    this.ID, this.name, this.password, this.city,
                     this.balance, this.shoppingCart, this.history);
         
     }
