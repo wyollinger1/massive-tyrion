@@ -11,8 +11,8 @@ public class DBIO {
 	private static Album [] albumInventory;
 	private static Audiobook [] bookInventory;
 	private static Movie [] movieInventory;
-	private static ArrayList<Media> sold;
-	private static ArrayList<Integer> numSold;
+	private static ArrayList<Media> sold = new ArrayList<Media>();
+	private static ArrayList<Integer> numSold = new ArrayList<Integer>();
 	
 	DBIO(String dirName){
 		
