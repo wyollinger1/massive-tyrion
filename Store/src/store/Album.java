@@ -5,7 +5,12 @@
  * Date: 2/15/2013
  * Description: Album subclass of Media
  */
-
+/**
+ * Album subclass of Media
+ * @author Jared Bean
+ * @author Josh Thrush
+ *
+ */
 public class Album extends Media {
 
 	//Initializer for an album object, sets all data members with the Media superclass

@@ -5,7 +5,12 @@
  * Date: 2/15/2013
  * Description: Audiobook subclass of Media
  */
-
+/**
+ * Audiobook subclass of Media
+ * @author Jared Bean
+ * @author Josh Thrush
+ *
+ */
 public class Audiobook extends Media {
 
 	//Initializer for an album object, sets all data members with the Media superclass

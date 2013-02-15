@@ -5,6 +5,12 @@
  * Date: 2/15/2013
  * Description: Movie subclass of Media
  */
+/**
+ * Movie subclass of Media
+ * @author Jared Bean
+ * @author Josh Thrush
+ *
+ */
 public class Movie extends Media {
 	
 	//Initializer for an album object, sets all data members with the Media superclass
