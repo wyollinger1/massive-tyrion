@@ -83,7 +83,15 @@ public class Media {
 	 * @param mObj Media object to test equality against 
 	 * @return true if objects are equal false otherwise
 	 */
-	public boolean equals(Media mObj){
+	@Override 
+	public boolean equals(Object obj){
+		if (obj == null)
+            return false;
+        if (obj == this)
+            return true;
+        if (obj.getClass() != getClass())
+            return false;
+        Media mObj = (Media)obj;
 		return this.creator.equals(mObj.getCreator()) && 
 				this.name.equals(mObj.getName()) && 
 				this.duration==mObj.getDuration() && 

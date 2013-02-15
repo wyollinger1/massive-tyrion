@@ -135,8 +135,12 @@ public class DBIO {
 		return true;
 	}
 	public static int getNumSold(Media mObj){
+		int x=0;
+		int index=0;
 		if(sold.contains(mObj)){
-			return numSold.get(sold.indexOf(mObj));
+			index=sold.indexOf(mObj);
+			x=numSold.get(index);
+			return x;
 		}else{
 			return 0;
 		}

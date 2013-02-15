@@ -1,6 +1,6 @@
 
 
-public class Manager extends Customer
+public class Manager extends User
 {
     //Constructor calls super class to default construct manager
     public Manager()

@@ -56,20 +56,22 @@ public class StoreTest
         System.out.println(mng1.toString());
 		
 		//Customer purchases
-        cust1.purchase(mov1, "movie"); //Buys
-		cust1.rateMovie(mov1,5.0); //Rates
-        cust2.purchase(aud1,"book"); //Not enough Credit!!
+        cust2.purchase(mov1, "movie"); //Buys
+		cust2.rateMovie(mov1,5.0); //Rates
+        cust1.purchase(aud1,"book"); //Not enough Credit!!
        
        //Get and print movie inventory after purchase and rating
         tempArr = (Movie[])DBIO.query("movie");
         System.out.println(tempArr.length);
         for(int i=0; i<tempArr.length; i++){
-        	System.out.println(tempArr[i]);
+        	System.out.println(tempArr[i].toString());
         }
         
         
         //Manager number of sales test
-        System.out.println("\nThe movie " + mov2.name + " was sold " + Manager.getnumSold(mov2) + " times.");
+        System.out.println("\nThe movie " + mov3.getName() + " was sold " + Manager.getnumSold(mov3) + " time(s).");
+        System.out.println("\nThe movie " + mov2.getName() + " was sold " + Manager.getnumSold(mov2) + " time(s).");
+        System.out.println("\nThe movie " + mov1.getName() + " was sold " + Manager.getnumSold(mov1) + " time(s).");
         
 		//Manager gets customer info test
         System.out.println("\n Retreive Customer information: \n" + Manager.getcustInfo(cust1));
