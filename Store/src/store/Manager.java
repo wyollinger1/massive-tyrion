@@ -34,18 +34,21 @@ public class Manager extends User
     }
     
     // Retrieve all information of any customer
-    public static String getcustInfo(Customer cust)
+    public String getcustInfo(Customer cust)
     {
         
         return cust.toString();         
     }
     //Takes in media object
     //will return the number sold
-    public static int getnumSold(Media mediaObj) 
+    public int getnumSold(Media mediaObj) 
     {
         return mediaObj.getNumSold();
     }
-
+     
+    public double getTotalSales(){
+    	return DBIO.getTotalSales();    	
+    }
     @Override
     public String toString()
     {

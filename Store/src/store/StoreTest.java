@@ -32,7 +32,7 @@ public class StoreTest
 		DBIO.setAlbumInventory(alInv);
         
 		//Get and print movie inventory
-        tempArr = (Movie[])DBIO.query("movie");
+        tempArr = (Movie[])cust1.list("movie");
         System.out.println(tempArr.length);
         for(int i=0; i<tempArr.length; i++){
         	System.out.println(tempArr[i]);
@@ -43,7 +43,7 @@ public class StoreTest
         mng1.deleteMedia(mov2,"movie");
 		
 		//Get and print new movie inventory
-        tempArr = (Movie[])DBIO.query("movie");
+        tempArr = (Movie[])cust2.list("movie");
         System.out.println(tempArr.length);
         for(int i=0; i<tempArr.length; i++){
         	System.out.println(tempArr[i]);
@@ -61,7 +61,7 @@ public class StoreTest
         cust1.purchase(aud1,"book"); //Not enough Credit!!
        
        //Get and print movie inventory after purchase and rating
-        tempArr = (Movie[])DBIO.query("movie");
+        tempArr = (Movie[])cust1.list("movie");
         System.out.println(tempArr.length);
         for(int i=0; i<tempArr.length; i++){
         	System.out.println(tempArr[i].toString());
@@ -69,12 +69,16 @@ public class StoreTest
         
         
         //Manager number of sales test
-        System.out.println("\nThe movie " + mov3.getName() + " was sold " + Manager.getnumSold(mov3) + " time(s).");
-        System.out.println("\nThe movie " + mov2.getName() + " was sold " + Manager.getnumSold(mov2) + " time(s).");
-        System.out.println("\nThe movie " + mov1.getName() + " was sold " + Manager.getnumSold(mov1) + " time(s).");
+        System.out.println("\nThe movie " + mov3.getName() + " was sold " + mng1.getnumSold(mov3) + " time(s).");
+        System.out.println("\nThe movie " + mov2.getName() + " was sold " + mng1.getnumSold(mov2) + " time(s).");
+        System.out.println("\nThe movie " + mov1.getName() + " was sold " + mng1.getnumSold(mov1) + " time(s).");
+        
+        //Manager total sales
+        System.out.printf("\nTotal Sales: %.2f", mng1.getTotalSales());
+        assert mng1.getTotalSales()==75.0 : "That's not right!";
         
 		//Manager gets customer info test
-        System.out.println("\n Retreive Customer information: \n" + Manager.getcustInfo(cust1));
+        System.out.println("\n Retreive Customer information: \n" + mng1.getcustInfo(cust1));
 		
 		
     }

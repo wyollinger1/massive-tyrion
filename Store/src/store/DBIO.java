@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Uses arrays to hold inventory.
@@ -13,11 +14,14 @@ public class DBIO {
 	private static Movie [] movieInventory;
 	private static ArrayList<Media> sold = new ArrayList<Media>();
 	private static ArrayList<Integer> numSold = new ArrayList<Integer>();
+	private final static String [] types = {"movie", "book", "album"};
 	
 	DBIO(String dirName){
 		
 	}
-	
+	public static String [] getTypes(){
+		return types;
+	}
 	/**
 	 * Set album inventory
 	 * @param inv Album [] to set movie inventory to
@@ -144,5 +148,18 @@ public class DBIO {
 		}else{
 			return 0;
 		}
+	}
+	public static double getTotalSales(){
+		Iterator<Media> mIter = sold.iterator();
+		Iterator<Integer> numSoldIter = numSold.iterator();
+		Media objSold;
+		Integer numberSold;
+		double totalSales=0;
+		while(mIter.hasNext()){
+			objSold=mIter.next();
+			numberSold=numSoldIter.next();
+			totalSales+= objSold.price*numberSold;
+		}
+		return totalSales;
 	}
 }
