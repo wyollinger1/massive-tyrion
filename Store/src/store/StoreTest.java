@@ -1,3 +1,5 @@
+
+
 public class StoreTest
 {
     public static void main(String[] args)
@@ -11,9 +13,9 @@ public class StoreTest
         Movie[] tempArr; //temporary movie inventory array
         
 		//Creating User objects
-		Customer cust1 = new Customer(1,"Josh","pw", "Street", 25.00,"Transformers","Spider Man 3");
-        Customer cust2 = new Customer(2,"Jared","pw1", "Street", 35.00,"Batman Begins","Spider Man 2");
-        Manager mng1 = new Manager(1,"Tyler","pw2", "Street",55.00,"Jurassic Park","The Dark Knight");
+		Customer cust1 = new Customer(1,"Josh","pw", "City", 25.00,"Transformers","Spider Man 3");
+        Customer cust2 = new Customer(2,"Jared","pw1", "City", 35.00,"Batman Begins","Spider Man 2");
+        Manager mng1 = new Manager(1,"Tyler","pw2", "City",55.00,"Jurassic Park","The Dark Knight");
 		
 		//Creating arrays for the different media types
         Album [] alInv = new Album[1];

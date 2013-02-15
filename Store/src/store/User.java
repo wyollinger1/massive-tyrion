@@ -1,17 +1,33 @@
-//import java.util.Scanner;
+/**
+ * Name: Joshua Thrush, Jared Bean
+ * Section: 1
+ * Program: Java Store Project
+ * Date: 2/15/2013
+ * Description: This file holds the user class which is the base class of customer and manager. It contains methods which give
+ * customer and manager the abitity to purchase, rate, and list all media items.
+ * 
+ */
 
+/**
+ * The user class has a default constructor which sets all data members to either 0 or blank space
+ * It also has a intitializer constructor which gets the data member values from the test driver
+ * Other methods included in this class are the getters and setters, and methods allowing the users to purchase, rate, and list media.
+ * 
+ * @author Joshua Thrush
+ * @author Jared Bean
+ */
 public class User {
 
-    protected int ID;
-	protected String name;
-    protected String password;
-	protected String city;
-	protected String shoppingCart;
-    protected double balance;
-    protected String history;
+    protected int ID; //user's ID number
+	protected String name; //name of the user
+    protected String password; //user password
+	protected String city; //city where user lives
+	protected String shoppingCart; //user's current items up for purchase
+    protected double balance; //user credit
+    protected String history; //user purchase history
     
 
-    // default constructor
+    // default constructor - sets all data members to blank or 0
     public User()
     {
         ID = 0;
@@ -23,14 +39,14 @@ public class User {
 		history = "";
     }
     
-    // Initializer constructor
+    // Initializer constructor - gets data members from the test driver
     public User(int ID,
              String name,
              String password,
 			 String city,
              double balance,
              String shoppingCart,
-             String customerHistory)
+             String userHistory)
     {
         this.ID = ID;
         this.name = name;
@@ -38,9 +54,10 @@ public class User {
 		this.city = city;
         this.balance = balance;
         this.shoppingCart = shoppingCart;
-        this.history = customerHistory;
+        this.history = userHistory;
     }
     
+    //Auto-generated setters and getters
 	public int getID() {
 		return ID;
 	}
@@ -110,24 +127,23 @@ public class User {
 		return mediaObj.toString();
 	}
 	
-	//Allows the customer to make a purchase of a media object
+	//Allows the user to make a purchase of a media object, if the user doesn't have enough credit the item is not sold and a message is printed on screen.
 	public boolean purchase(Media mediaObj, String type)
 	{
 		boolean purchased = false;
 		
-		if(balance > mediaObj.getPrice())
+		if(balance > mediaObj.getPrice()) //checks user credit
 		{
-			if(DBIO.remove(mediaObj,type))
+			if(DBIO.remove(mediaObj,type)) //checks that item is in stock
 			{
-				balance = balance - mediaObj.getPrice();
-				purchased = true;
-				
-				mediaObj.setNumSold(mediaObj.getNumSold()+1);
+				balance = balance - mediaObj.getPrice(); //subtracts amount from user balance
+				purchased = true; //purchase is completed
+				mediaObj.setNumSold(mediaObj.getNumSold()+1); //number sold is incremented
 			}
 		}
 		else
 		{
-			System.out.println("Not enough money");
+			System.out.println("Not enough money"); //item is not sold
 		}
 		return purchased;
 	}
@@ -145,15 +161,19 @@ public class User {
 	{	
 		albumObj.addRating(rating);
 	}
+	
+	//Allows the user to get a list of all available media
 	public Media [] list(String type){
 		return DBIO.query(type);
 	}
+	
     @Override
+    // toString holding the user information
     public String toString()
     {
-        return String.format("::CUSTOMER INFORMATION::\n"
+        return String.format("::USER INFORMATION::\n"
                     + "Identification #:%20s \n"
-                    + "The Customer:%20s \n"
+                    + "The User:%20s \n"
                     + "Password:%20s \n"
 					+ "City:%20s \n"
                     + "Balance:%20f \n"
