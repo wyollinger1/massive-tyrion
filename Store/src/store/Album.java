@@ -1,4 +1,10 @@
-
+/**
+ * Name: Jared Bean, Josh Thrush
+ * Section: 1
+ * Program: Project Phase 1
+ * Date: 2/15/2013
+ * Description: Album subclass of Media
+ */
 
 public class Album extends Media {
 
