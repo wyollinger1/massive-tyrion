@@ -1,29 +1,39 @@
+/**
+ * Name: Jared Bean, Josh Thrush
+ * Section: 1
+ * Program: Project Phase 1
+ * Date: 2/15/2013
+ * Description: Interface to database for program
+ */
 import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * Uses arrays to hold inventory.
- * Transition to SQL imenent.
+ * Class contains methods to interface with store database backend.
+ * Interfaces with the inventory and sales databases, allowing simple
+ * queries (getTotalSales) and adding and removing items.
  * @author jib5153
  *
  */
 public class DBIO {
 	
-	private static Album [] albumInventory;
-	private static Audiobook [] bookInventory;
-	private static Movie [] movieInventory;
-	private static ArrayList<Media> sold = new ArrayList<Media>();
-	private static ArrayList<Integer> numSold = new ArrayList<Integer>();
-	private final static String [] types = {"movie", "book", "album"};
+	private static Album [] albumInventory; //Album part of the inventory database
+	private static Audiobook [] bookInventory; //Audiobook part of inventory database
+	private static Movie [] movieInventory; //Movie part of the inventory database
+	private static ArrayList<Media> sold = new ArrayList<Media>(); //Media objects reference part of the Sales database, parallel to numSold
+	private static ArrayList<Integer> numSold = new ArrayList<Integer>(); //Integer part of the Sales database, parallel to sold
+	private final static String [] types = {"movie", "book", "album"}; //Lists the available types for this database, for ease-of-use
 	
-	DBIO(String dirName){
-		
-	}
+	/**
+	 * Get's the different inventory types.
+	 * The types are used as parameters in many of this class's methods.
+	 * @return Array of the type names.
+	 */
 	public static String [] getTypes(){
 		return types;
 	}
 	/**
-	 * Set album inventory
+	 * Sets the database's album inventory
 	 * @param inv Album [] to set movie inventory to
 	 */
 	
@@ -31,7 +41,7 @@ public class DBIO {
 		albumInventory = inv;
 	}
 	/**
-	 * Set book inventory
+	 * Sets the database's book inventory
 	 * @param inv AudioBook [] to set movie inventory to
 	 */
 	
@@ -39,7 +49,7 @@ public class DBIO {
 		bookInventory = inv;
 	}
 	/**
-	 * Set movie inventory
+	 * Sets the database's movie inventory
 	 * @param inv Movie [] to set movie inventory to
 	 */
 	public static void setMovieInventory(Movie [] inv){
@@ -50,7 +60,7 @@ public class DBIO {
 	 * Queries database.
 	 * Currently just returns a list of media objects of the passed type
 	 * @param type String denoting the type of media wanted
-	 * @return
+	 * @return Array of media objects in the inventory
 	 */
 	public static Media[] query(String type){
 		if(type.equals("album")){
@@ -67,11 +77,11 @@ public class DBIO {
 	 * Removes the media object from the inventory.
 	 * @param mObj Media object to remove.
 	 * @param type	String type of the mObj
-	 * @return
+	 * @return boolean - true object was successfully removed false otherwise
 	 */
 	public static boolean remove(Media mObj, String type){
-		Media [] inv = query(type);
-		Media [] newInv;
+		Media [] inv = query(type);//reference holder for the current inventory
+		Media [] newInv;//reference holder for the new inventory
 		boolean found=false;
 		//Delete by moving to end of Array and copying a copy of length-1 into source
 		for(int i=0; i<inv.length; i++){
@@ -97,14 +107,17 @@ public class DBIO {
 		return found;
 	}
 	/**
-	 * Adds mObj to the inventory.
+	 * Adds mObj to the inventory database.
 	 * @param mObj Media object to add to the inventory.
 	 * @param type	String type of mObj.
-	 * @return
+	 * @return boolean - true if the object was successfully added, false otherwise
 	 */
 	public static boolean add(Media mObj, String type){
-		Media [] inv;
-		Media [] newInv;
+		Media [] inv;//reference holder for the current inventory
+		Media [] newInv;//reference holder for the new inventory
+		//Based on the type make a new array with one more slot 
+		//copy the old one into it and add the new mObj at the end
+		//type is needed to get the data member reference we want to change 
 		if(type.equals("album")){
 			inv=albumInventory;
 			newInv = new Album[inv.length+1];
@@ -127,6 +140,12 @@ public class DBIO {
 		}
 		return true;
 	}
+	/**
+	 * Updates the sales database with number of a specific media object sold.
+	 * @param mObj Media object being updated
+	 * @param num Integer number of media objects sold
+	 * @return boolean - true if update was successful false otherwise
+	 */
 	public static boolean updateNumSold(Media mObj, int num){
 		Integer index=null;
 		if(sold.contains(mObj)){
@@ -138,27 +157,28 @@ public class DBIO {
 		}
 		return true;
 	}
+	/**
+	 * Gets the number sold for a specific media object
+	 * @param mObj Media object to look up
+	 * @return Integer number of media objects sold
+	 */
 	public static int getNumSold(Media mObj){
-		int x=0;
-		int index=0;
 		if(sold.contains(mObj)){
-			index=sold.indexOf(mObj);
-			x=numSold.get(index);
-			return x;
+			return numSold.get(sold.indexOf(mObj));
 		}else{
 			return 0;
 		}
 	}
+	/**
+	 * Gets the total dollar amount of sales so far for the store.
+	 * @return A double representing the dollar amount sold.
+	 */
 	public static double getTotalSales(){
-		Iterator<Media> mIter = sold.iterator();
-		Iterator<Integer> numSoldIter = numSold.iterator();
-		Media objSold;
-		Integer numberSold;
-		double totalSales=0;
+		Iterator<Media> mIter = sold.iterator(); //for the media obj. bit of the Sales database
+		Iterator<Integer> numSoldIter = numSold.iterator();//for the integer number sold for each media obj.
+		double totalSales=0;//total dollar amount of sales to return
 		while(mIter.hasNext()){
-			objSold=mIter.next();
-			numberSold=numSoldIter.next();
-			totalSales+= objSold.price*numberSold;
+			totalSales+= mIter.next().price*numSoldIter.next();
 		}
 		return totalSales;
 	}

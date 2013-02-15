@@ -7,6 +7,7 @@ public class Manager extends User
     {
         super();
     }
+
     public Manager(int ID,
              String name,
              String password,
@@ -45,7 +46,6 @@ public class Manager extends User
     {
         return mediaObj.getNumSold();
     }
-     
     public double getTotalSales(){
     	return DBIO.getTotalSales();    	
     }
