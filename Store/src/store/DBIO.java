@@ -19,11 +19,10 @@ import java.util.Set;
 import java.util.Iterator;
 
 /**
- * Class contains methods to interface with store database backend.
- * Interfaces with the inventory and sales databases, allowing simple
- * queries (getTotalSales) and adding and removing items.
- * SQL implementation. Abstracts queries away so all database calls are made
- * through this API.
+ * Class contains methods to interface with store database backend. Interfaces
+ * with the inventory and sales databases, allowing simple queries
+ * (getTotalSales) and adding and removing items. SQL implementation. Abstracts
+ * queries away so all database calls are made through this API.
  * 
  * @author jib5153
  * 
@@ -143,21 +142,44 @@ public class DBIO {
 	 *            Media object being rated
 	 * @param rating
 	 *            rating being added of type double
-	 * @return integer number of rows manipulated, -1 on error
+	 * @return Refreshed Media object with updated data members, including new
+	 *         rating. If the update failed due to an SQLException, or changes
+	 *         no data returns the same media object passed in. If the refresh
+	 *         query failed then it returns null.
 	 */
-	public static int updateRating(Media mObj, double rating) {
-		int mId = mObj.getId(); 
-		int isSuccess = 0;
+	public static Media updateRating(Media mObj, double rating) {
+		int mId = mObj.getId();
+		int isUpdated = 0;
 		try {
-			isSuccess = stmnt.executeUpdate("UPDATE Inventory SET"
+			isUpdated = stmnt.executeUpdate("UPDATE Inventory SET"
 					+ "avgRating=(avgRating*numRating +" + rating
 					+ ")/(numRating+1), " + "numRating=numRating+1"
 					+ "WHERE mId=" + mId);
-			mObj = getMedia(mObj.getId());
+			if (isUpdated != 0) { //Don't make an unnecessary SQL query
+				mObj = getMedia(mObj.getId());
+			}
 		} catch (SQLException sqlE) {
-			return -1;
+			mObj = mObj;
 		}
-		return isSuccess;
+		return mObj; // TODO: Should this go in a finally? what's the diff?
+	}
+
+	/**
+	 * 
+	 * @param mObj
+	 * @param cust
+	 *            and this is why I said a manager is-a customer, cause which
+	 *            subclass should add buy functionality Customer, not User!
+	 * @return
+	 */
+	public static boolean addSale(Media mObj, User cust, int num){
+		int mId = mObj.getId(); 
+		int isSuccess = 0;
+		try{
+			isSuccess = stmnt.executeUpdate();
+		}catch(SQLException sqlE){
+			
+		}
 	}
 
 	/**
@@ -167,25 +189,27 @@ public class DBIO {
 	 *            Media object to refresh
 	 * @return the refreshed media object or null on error
 	 */
-	public static Media getMedia(int mId){
+	public static Media getMedia(int mId) {
 		String[] cols = { "*" };
 		Integer[] condArr = { mId };
 		ResultSet results;
 		Media mObj;
 		SelectBuilder sb = getSelectBuilder(cols, "Inventory");
-		try{
+		try {
 			sb.addIntCondition("mId", "=", condArr, true);
-		
+
 			results = executeQuery(sb);
-			mObj = result2Media(results)[0]; // Counting on finding exactly one row,
-											// probably should add some checks
-											// or something.
-		}catch(SQLException sqlE){
-			mObj=null;
-		}catch(ArrayIndexOutOfBoundsException indexE){
-			mObj=null;
-		}catch(Exception e){
-			mObj=null;
+			mObj = result2Media(results)[0]; // Counting on finding exactly one
+												// row,
+												// probably should add some
+												// checks
+												// or something.
+		} catch (SQLException sqlE) {
+			mObj = null;
+		} catch (ArrayIndexOutOfBoundsException indexE) {
+			mObj = null;
+		} catch (Exception e) {
+			mObj = null;
 		}
 		return mObj;
 
@@ -202,7 +226,7 @@ public class DBIO {
 	 *             if error reading from the ResultSet
 	 */
 	private static Media[] result2Media(ResultSet results) throws SQLException {
-		int mId, duration, numSold, numRating; 
+		int mId, duration, numSold, numRating;
 		double price, avgRating;
 		String creator, name, genre;
 		ArrayList<Media> mediaObjs = new ArrayList<Media>();
@@ -219,10 +243,10 @@ public class DBIO {
 			avgRating = results.getDouble("avgRating");
 			mediaObjs.add(new Media(creator, name, duration, genre, numSold,
 					price, numRating, avgRating, mId)); // TODO Inventory table
-													// should have
-													// type column to switch on
-													// so can create specific
-													// media not generic
+			// should have
+			// type column to switch on
+			// so can create specific
+			// media not generic
 		} while (results.next());
 		return (Media[]) mediaObjs.toArray();
 	}
