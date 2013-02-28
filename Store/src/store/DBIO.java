@@ -146,15 +146,14 @@ public class DBIO {
 	 * @return integer number of rows manipulated, -1 on error
 	 */
 	public static int updateRating(Media mObj, double rating) {
-		int mId = mObj.getId(); // TODO Media object needs an id field and a
-								// getter for that field
+		int mId = mObj.getId(); 
 		int isSuccess = 0;
 		try {
 			isSuccess = stmnt.executeUpdate("UPDATE Inventory SET"
 					+ "avgRating=(avgRating*numRating +" + rating
 					+ ")/(numRating+1), " + "numRating=numRating+1"
 					+ "WHERE mId=" + mId);
-			refreshMedia(mObj);
+			mObj = getMedia(mObj.getId());
 		} catch (SQLException sqlE) {
 			return -1;
 		}
@@ -166,19 +165,28 @@ public class DBIO {
 	 * 
 	 * @param mObj
 	 *            Media object to refresh
-	 * @return the refreshed media object
+	 * @return the refreshed media object or null on error
 	 */
-	private static Media refreshMedia(Media mObj) {
+	public static Media getMedia(int mId){
 		String[] cols = { "*" };
-		Integer[] condArr = { mObj.getId() };// TODO: Media needs and id field
+		Integer[] condArr = { mId };
 		ResultSet results;
-		Media[] mediaArr;
+		Media mObj;
 		SelectBuilder sb = getSelectBuilder(cols, "Inventory");
-		sb.addIntCondition("mId", "=", condArr, true);
-		results = executeQuery(sb);
-		mObj = result2Media(results)[0]; // Counting on finding exactly one row,
+		try{
+			sb.addIntCondition("mId", "=", condArr, true);
+		
+			results = executeQuery(sb);
+			mObj = result2Media(results)[0]; // Counting on finding exactly one row,
 											// probably should add some checks
 											// or something.
+		}catch(SQLException sqlE){
+			mObj=null;
+		}catch(ArrayIndexOutOfBoundsException indexE){
+			mObj=null;
+		}catch(Exception e){
+			mObj=null;
+		}
 		return mObj;
 
 	}
@@ -194,8 +202,7 @@ public class DBIO {
 	 *             if error reading from the ResultSet
 	 */
 	private static Media[] result2Media(ResultSet results) throws SQLException {
-		int mId, duration, numSold, numRating; // TODO: Media class needs an id
-												// data member
+		int mId, duration, numSold, numRating; 
 		double price, avgRating;
 		String creator, name, genre;
 		ArrayList<Media> mediaObjs = new ArrayList<Media>();
@@ -211,7 +218,7 @@ public class DBIO {
 			numRating = results.getInt("numRating");
 			avgRating = results.getDouble("avgRating");
 			mediaObjs.add(new Media(creator, name, duration, genre, numSold,
-					price, numRating, avgRating)); // TODO Inventory table
+					price, numRating, avgRating, mId)); // TODO Inventory table
 													// should have
 													// type column to switch on
 													// so can create specific
@@ -249,7 +256,7 @@ public class DBIO {
 	 */
 	public static ResultSet executeQuery(SelectBuilder sb) throws SQLException {
 		// TODO Take care of this thrown exception either here or in the
-		// QueryBuilder class
+		// SelectBuilder class
 		return sb.executeSelect(con);
 	}
 }
