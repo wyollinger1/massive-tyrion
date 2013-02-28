@@ -1,3 +1,5 @@
+import java.sql.SQLException;
+
 /**
  * Name: Jared Bean, Josh Thrush
  * Section: 1
@@ -40,13 +42,18 @@ public class Media {
 		this.name=name;
 		this.duration=duration;
 		this.genre=genre;
-		this.setNumSold(numSold);
 		this.price=price;
 		this.numRating=numRating;
 		this.avgRating=avgRating;
 		this.id =id;
 	}
-	
+	/**
+	 * Gets the id
+	 * @return Integer id of media object
+	 */
+	public int getId(){
+		return this.id;
+	}
 	/**
 	 * Gets the creator	
 	 * @return String name of creator
@@ -105,17 +112,26 @@ public class Media {
 	}
 	/**
 	 * Gets the number sold of this media object
-	 * @return Integer number sold
+	 * @return Integer number sold, -1 on error
 	 */
 	public int getNumSold() {
-		return DBIO.getNumSold(this);
-	}
-	/**
-	 * Sets the number sold 
-	 * @param numSold Integer number sold
-	 */
-	public void setNumSold(int numSold) {
-		DBIO.updateNumSold(this, numSold);
+		String [] colNames = {"SUM(numSold)"};
+		Integer [] conArr = {(Integer)this.id}; // Selecting number of sold of this media item, by id
+		int numSold;
+		SelectBuilder selectNumSold = DBIO.getSelectBuilder(colNames, "SALES");
+		
+		try{
+			selectNumSold.addIntCondition("mId", "=", conArr, true);
+			numSold=DBIO.executeQuery(selectNumSold).getInt(0);
+		}catch(SQLException sqlE){
+			//TODO: Alert user somehow that there's a 'temporary' error with the db
+			numSold=-1;
+		}catch(Exception e){
+			//TODO: Alert user somehow that there's a bug in code
+			numSold =-1;
+		}
+		
+		return numSold;
 	}
 	/**
 	 * Gets the price in dollars 
