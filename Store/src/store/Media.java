@@ -20,6 +20,7 @@ public class Media {
 	protected double price;
 	protected int numRating;
 	protected double avgRating;
+	protected int id;
 	/**
 	 * Constructor for a Media object, initialized with all the data defining a media object.
 	 * @param creator String name of the creator of this media object
@@ -30,10 +31,11 @@ public class Media {
 	 * @param price Price in dollars 
 	 * @param numRating Integer number of ratings given to the media object
 	 * @param avgRating Average rating of the media object, represented as a double
+	 * @param id Integer unique id number
 	 */
 	Media(String creator, String name, int duration, 
 			String genre, int numSold, double price,
-			int numRating, double avgRating){
+			int numRating, double avgRating, int id){
 		this.creator=creator;
 		this.name=name;
 		this.duration=duration;
@@ -42,6 +44,7 @@ public class Media {
 		this.price=price;
 		this.numRating=numRating;
 		this.avgRating=avgRating;
+		this.id =id;
 	}
 	
 	/**

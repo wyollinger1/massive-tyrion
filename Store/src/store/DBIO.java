@@ -5,181 +5,251 @@
  * Date: 2/15/2013
  * Description: Interface to database for program
  */
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.DatabaseMetaData;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Set;
 import java.util.Iterator;
 
 /**
  * Class contains methods to interface with store database backend.
  * Interfaces with the inventory and sales databases, allowing simple
  * queries (getTotalSales) and adding and removing items.
+ * SQL implementation. Abstracts queries away so all database calls are made
+ * through this API.
+ * 
  * @author jib5153
- *
+ * 
  */
 public class DBIO {
-  
-  private static Album [] albumInventory; //Album part of the inventory database
-  private static Audiobook [] bookInventory; //Audiobook part of inventory database
-  private static Movie [] movieInventory; //Movie part of the inventory database
-  private static ArrayList<Media> sold = new ArrayList<Media>(); //Media objects reference part of the Sales database, parallel to numSold
-  private static ArrayList<Integer> numSold = new ArrayList<Integer>(); //Integer part of the Sales database, parallel to sold
-  private final static String [] types = {"movie", "book", "album"}; //Lists the available types for this database, for ease-of-use
-  
-  /**
-   * Get's the different inventory types.
-   * The types are used as parameters in many of this class's methods.
-   * @return Array of the type names.
-   */
-  public static String [] getTypes(){
-    return types;
-  }
-  /**
-   * Sets the database's album inventory
-   * @param inv Album [] to set movie inventory to
-   */
-  
-  public static void setAlbumInventory(Album [] inv){
-    albumInventory = inv;
-  }
-  /**
-   * Sets the database's book inventory
-   * @param inv AudioBook [] to set movie inventory to
-   */
-  
-  public static void setBookInventory(Audiobook [] inv){
-    bookInventory = inv;
-  }
-  /**
-   * Sets the database's movie inventory
-   * @param inv Movie [] to set movie inventory to
-   */
-  public static void setMovieInventory(Movie [] inv){
-    movieInventory = inv;
-  }
-  
-  /**
-   * Queries database.
-   * Currently just returns a list of media objects of the passed type
-   * @param type String denoting the type of media wanted
-   * @return Array of media objects in the inventory
-   */
-  public static Media[] query(String type){
-    if(type.equals("album")){
-      return albumInventory;
-    }else if(type.equals("movie")){
-      return movieInventory;
-    }
-    else{
-      return bookInventory;
-    }
-    
-  }
-  /**
-   * Removes the media object from the inventory.
-   * @param mObj Media object to remove.
-   * @param type  String type of the mObj
-   * @return boolean - true object was successfully removed false otherwise
-   */
-  public static boolean remove(Media mObj, String type){
-    Media [] inv = query(type);//reference holder for the current inventory
-    Media [] newInv;//reference holder for the new inventory
-    boolean found=false;
-    //Delete by moving to end of Array and copying a copy of length-1 into source
-    for(int i=0; i<inv.length; i++){
-      if(inv[i]!=null && inv[i].equals(mObj)){
-        inv[i]=inv[inv.length-1];
-        if(type.equals("album")){
-          newInv = new Album[inv.length-1];
-          System.arraycopy(inv,0, newInv, 0, inv.length-1);
-          albumInventory=(Album[])newInv;
-        }else if(type.equals("movie")){
-          newInv = new Movie[inv.length-1];
-          System.arraycopy(inv,0, newInv, 0, inv.length-1);
-          movieInventory=(Movie[])newInv;
-        }else if(type.equals("book")){
-          newInv = new Audiobook[inv.length-1];
-          System.arraycopy(inv,0, newInv, 0, inv.length-1);
-          bookInventory=(Audiobook[])newInv;
-        }
-        found=true;
-        break;
-      }
-    }
-    return found;
-  }
-  /**
-   * Adds mObj to the inventory database.
-   * @param mObj Media object to add to the inventory.
-   * @param type  String type of mObj.
-   * @return boolean - true if the object was successfully added, false otherwise
-   */
-  public static boolean add(Media mObj, String type){
-    Media [] inv;//reference holder for the current inventory
-    Media [] newInv;//reference holder for the new inventory
-    //Based on the type make a new array with one more slot 
-    //copy the old one into it and add the new mObj at the end
-    //type is needed to get the data member reference we want to change 
-    if(type.equals("album")){
-      inv=albumInventory;
-      newInv = new Album[inv.length+1];
-      System.arraycopy(inv, 0, newInv, 0, inv.length);
-      newInv[inv.length]= mObj;
-      albumInventory=(Album[])newInv;
-    }else if(type.equals("movie")){
-      inv=movieInventory;
-      newInv = new Movie[inv.length+1];
-      System.arraycopy(inv, 0, newInv, 0, inv.length);
-      newInv[inv.length]= mObj;
-      movieInventory=(Movie[])newInv;
-    }
-    else{
-      inv=bookInventory;
-      newInv = new Audiobook[inv.length+1];
-      System.arraycopy(inv, 0, newInv, 0, inv.length);
-      newInv[inv.length]= mObj;
-      bookInventory=(Audiobook[])newInv;
-    }
-    return true;
-  }
-  /**
-   * Updates the sales database with number of a specific media object sold.
-   * @param mObj Media object being updated
-   * @param num Integer number of media objects sold
-   * @return boolean - true if update was successful false otherwise
-   */
-  public static boolean updateNumSold(Media mObj, int num){
-    Integer index=null;
-    if(sold.contains(mObj)){
-      index=sold.indexOf(mObj);
-      numSold.set(index, num);
-    }else{
-      sold.add(mObj);
-      numSold.add(num);
-    }
-    return true;
-  }
-  /**
-   * Gets the number sold for a specific media object
-   * @param mObj Media object to look up
-   * @return Integer number of media objects sold
-   */
-  public static int getNumSold(Media mObj){
-    if(sold.contains(mObj)){
-      return numSold.get(sold.indexOf(mObj));
-    }else{
-      return 0;
-    }
-  }
-  /**
-   * Gets the total dollar amount of sales so far for the store.
-   * @return A double representing the dollar amount sold.
-   */
-  public static double getTotalSales(){
-    Iterator<Media> mIter = sold.iterator(); //for the media obj. bit of the Sales database
-    Iterator<Integer> numSoldIter = numSold.iterator();//for the integer number sold for each media obj.
-    double totalSales=0;//total dollar amount of sales to return
-    while(mIter.hasNext()){
-      totalSales+= mIter.next().price*numSoldIter.next();
-    }
-    return totalSales;
-  }
+	private static final String driverName = "org.sqlite.JDBC"; // May let
+																// driver be
+																// changed in
+																// future
+	private static final String jdbcUrlPre = "jdbc:sqlite:"; // Prefix for all
+																// SQLite JDBC
+																// url's
+	private static Connection con;
+	private static Statement stmnt;
+
+	/**
+	 * Initializes static class with the SQLite JDBC driver. TODO Docs claim
+	 * Class.forName() is no longer necessary ... which is all this init does
+	 * 
+	 * @throws ClassNotFoundException
+	 */
+	public static void init() throws ClassNotFoundException {
+		Class.forName(driverName);
+	}
+
+	/**
+	 * Set the current working database.
+	 * 
+	 * @param dbUrl
+	 *            String url of database.
+	 * @return true on successful connection false otherwise
+	 */
+	public static boolean setDb(String dbUrl) {
+		try {
+			con = DriverManager.getConnection(jdbcUrlPre + dbUrl);
+			try {
+				stmnt = con.createStatement();
+			} catch (SQLException sqlE) {
+				stmnt = null;
+				con.close();
+				throw sqlE;
+			}
+			return true;
+		} catch (SQLException sqlE) {
+			con = null; // Probably not necessary
+			return false;
+		}
+	}
+
+	/**
+	 * Removes the num number of media object from the inventory.
+	 * 
+	 * @param mObj
+	 *            Media object to remove.
+	 * @param num
+	 *            integer number of media objects to remove
+	 * @return integer number of rows updated, -1 on error
+	 */
+	public static int remove(int mId, int num) {
+		int isSuccess = 0;
+		try {
+			isSuccess = stmnt
+					.executeUpdate("UPDATE Inventory SET numInStock = numInStock-"
+							+ num + " WHERE mId=" + mId + " AND numInStock>0");
+		} catch (SQLException sqlE) {
+			return -1;
+		}
+		return isSuccess;
+	}
+
+	/**
+	 * Adds num number of media objects with id mId to the inventory.
+	 * 
+	 * @param mId
+	 *            integer id of the media object
+	 * @param num
+	 *            integer number of media objects to add
+	 * @return integer number of rows updated, -1 on error
+	 */
+	public static int add(int mId, int num) {
+		int isSuccess = 0;
+		try {
+			isSuccess = stmnt
+					.executeUpdate("UPDATE Inventory SET numInStock = numInStock"
+							+ num + " WHERE mId=" + mId);
+		} catch (SQLException sqlE) {
+			return -1;
+		}
+		return isSuccess;
+	}
+
+	/**
+	 * Manager method to update/manipulate item's descriptive data. Note:
+	 * ratings data and number in stock have separate manipulation functions.
+	 * 
+	 * @param mObj
+	 *            Media object containing new data to set for it's mId
+	 * @return integer number of rows manipulated, -1 on error
+	 */
+	public static int update(int mId, Media mObj) {
+		int isSuccess = 0;
+		try {
+			isSuccess = stmnt.executeUpdate("UPDATE Inventory SET creator="
+					+ mObj.getCreator() + ", " + "name=" + mObj.getName()
+					+ ", duration=" + mObj.getDuration() + ", genre="
+					+ mObj.getGenre() + " " + "WHERE mId=" + mId);
+		} catch (SQLException sqlE) {
+			return -1;
+		}
+		return isSuccess;
+	}
+
+	/**
+	 * Updates rating average with new rating
+	 * 
+	 * @param mObj
+	 *            Media object being rated
+	 * @param rating
+	 *            rating being added of type double
+	 * @return integer number of rows manipulated, -1 on error
+	 */
+	public static int updateRating(Media mObj, double rating) {
+		int mId = mObj.getId(); // TODO Media object needs an id field and a
+								// getter for that field
+		int isSuccess = 0;
+		try {
+			isSuccess = stmnt.executeUpdate("UPDATE Inventory SET"
+					+ "avgRating=(avgRating*numRating +" + rating
+					+ ")/(numRating+1), " + "numRating=numRating+1"
+					+ "WHERE mId=" + mId);
+			refreshMedia(mObj);
+		} catch (SQLException sqlE) {
+			return -1;
+		}
+		return isSuccess;
+	}
+
+	/**
+	 * Refreshes/resets media object with data in database
+	 * 
+	 * @param mObj
+	 *            Media object to refresh
+	 * @return the refreshed media object
+	 */
+	private static Media refreshMedia(Media mObj) {
+		String[] cols = { "*" };
+		Integer[] condArr = { mObj.getId() };// TODO: Media needs and id field
+		ResultSet results;
+		Media[] mediaArr;
+		SelectBuilder sb = getSelectBuilder(cols, "Inventory");
+		sb.addIntCondition("mId", "=", condArr, true);
+		results = executeQuery(sb);
+		mObj = result2Media(results)[0]; // Counting on finding exactly one row,
+											// probably should add some checks
+											// or something.
+		return mObj;
+
+	}
+
+	/**
+	 * Turns a ResultSet from the Inventory Table into a Media array, which is
+	 * what all Media results should be returned as.
+	 * 
+	 * @param results
+	 *            ResultSet to process for Media objects
+	 * @return Array of media objects extracted from the ResultSet
+	 * @throws SQLException
+	 *             if error reading from the ResultSet
+	 */
+	private static Media[] result2Media(ResultSet results) throws SQLException {
+		int mId, duration, numSold, numRating; // TODO: Media class needs an id
+												// data member
+		double price, avgRating;
+		String creator, name, genre;
+		ArrayList<Media> mediaObjs = new ArrayList<Media>();
+		do {
+			mId = results.getInt("mId");
+			creator = results.getString("creator");
+			name = results.getString("name");
+			duration = results.getInt("duration");
+			genre = results.getString("genre");
+			numSold = results.getInt("numInStock"); // TODO: This is just plain
+													// wrong
+			price = results.getDouble("price");
+			numRating = results.getInt("numRating");
+			avgRating = results.getDouble("avgRating");
+			mediaObjs.add(new Media(creator, name, duration, genre, numSold,
+					price, numRating, avgRating)); // TODO Inventory table
+													// should have
+													// type column to switch on
+													// so can create specific
+													// media not generic
+		} while (results.next());
+		return (Media[]) mediaObjs.toArray();
+	}
+
+	/**
+	 * Gets a SelectBuilder object to build a Select query to execute on the
+	 * database.
+	 * 
+	 * @param columnArr
+	 *            String array of columns to select, must be non-null, can
+	 *            contain solitary item, i.e. ["*"]
+	 * @param tableName
+	 *            String name of table to select columns from
+	 * @return SelectBuilder initialized with the columns and table, allowing to
+	 *         build a Where clause
+	 */
+	public static SelectBuilder getSelectBuilder(String[] columnArr,
+			String tableName) {
+		return new SelectBuilder(columnArr, tableName);
+	}
+
+	/**
+	 * Executes the built Select statement on the database and returns the
+	 * ResultSet.
+	 * 
+	 * @param sb
+	 *            SelectBuilder containing the completed Select statement
+	 * @return ResultSet containing the results returned by the database
+	 * @throws SQLException
+	 *             on database access error
+	 */
+	public static ResultSet executeQuery(SelectBuilder sb) throws SQLException {
+		// TODO Take care of this thrown exception either here or in the
+		// QueryBuilder class
+		return sb.executeSelect(con);
+	}
 }

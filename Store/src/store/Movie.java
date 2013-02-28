@@ -16,9 +16,9 @@ public class Movie extends Media {
 	//Initializer for an album object, sets all data members with the Media superclass
 	public Movie(String creator, String name, int duration, 
 			String genre, int numSold, double price,
-			int numRating, double avgRating){
+			int numRating, double avgRating, int id){
 		super( creator,  name,  duration, 
 				 genre,  numSold,  price,
-				 numRating,  avgRating);
+				 numRating,  avgRating, id);
 	}
 }
