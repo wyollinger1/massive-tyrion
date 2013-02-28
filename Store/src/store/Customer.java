@@ -1,143 +1,53 @@
-//import java.util.Scanner;
+/**
+ * Name: Tyler Madouse, Joshua Thrush, Jared Bean
+ * Section: 1
+ * Program: Java Store Project
+ * Date: 2/15/2013
+ * Description: This file holds the customer class which inherits its methods from the user superclass.
+ * 
+ */
 
-public class Customer {
+/**
+ * The customer class has default and initializer constructors which inherit from the user superclass.
+ * Also a toString is provided which returns all customer information.
+ * The rest of the methods are inherited from the User superclass
+ * 
+ * @author Tyler Madouse
+ * @author Joshua Thrush
+ * @author Jared Bean
+ */
+public class Customer extends User {
 
-    protected int ID;
-	protected String name;
-    protected String password;
-	protected String shoppingCart;
-    protected double balance;
-    protected String history;
-    
-
-    // default constructor
-    public Customer()
-    {
-        ID = 0;
-        name = "";
-        password = "";
-		shoppingCart = "";
-        balance = 0.0;
-		history = "";
+	//Default constructor - gets data from user class
+    public Customer(){
+    	super();
     }
     
-    // Initializer constructor
+    //Initializer constructor- sets data members through user class
     public Customer(int ID,
-             String name,
-             String password,
-             double balance,
-             String shoppingCart,
-             String customerHistory)
-    {
-        this.ID = ID;
-        this.name = name;
-        this.password = password;
-        this.balance = balance;
-        this.shoppingCart = shoppingCart;
-        this.history = customerHistory;
+            String name,
+            String password,
+			 String city,
+            double balance,
+            String shoppingCart,
+            String customerHistory){
+    	super(ID, name, password, city, balance, shoppingCart, customerHistory);
+    	
     }
     
-	public int getID() {
-		return ID;
-	}
-
-	public void setID(int iD) {
-		ID = iD;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getShoppingCart() {
-		return shoppingCart;
-	}
-
-	public void setShoppingCart(String shoppingCart) {
-		this.shoppingCart = shoppingCart;
-	}
-
-	public double getBalance() {
-		return balance;
-	}
-
-	public void setBalance(double balance) {
-		this.balance = balance;
-	}
-
-	public String getHistory() {
-		return history;
-	}
-
-	public void setHistory(String history) {
-		this.history = history;
-	}
-    
-	//Allows the user to search for a media object
-	public void Search(Media mediaObj)
-	{
-		
-	}
-	
-	//Displays the attributes of the current media object on screen
-	public String displayItem(Media mediaObj)
-	{
-		
-		return mediaObj.toString();
-	}
-	
-	//Allows the customer to make a purchase of a media object
-	public boolean purchase(Media mediaObj, String type)
-	{
-		boolean purchased = false;
-		
-		if(balance > mediaObj.getPrice())
-		{
-			if(DBIO.remove(mediaObj,type))
-			{
-				balance = balance - mediaObj.getPrice();
-				purchased = true;
-			}
-		}
-		else
-		{
-			System.out.println("Not enough money");
-		}
-		return purchased;
-	}
-	
-	//Allows the user to rate a purchased media object
-	public void rate(Media mediaObj)
-	{
-		double rating = 0;
-		
-		mediaObj.addRating(rating);
-	}
-	
-	
     @Override
+    //toString holding all customer information
     public String toString()
     {
         return String.format("::CUSTOMER INFORMATION::\n"
-                    + "    Identification #: %20s \n"
-                    + "    The Customer:   	%20s \n"
-                    + "    Password:   		%20s \n"
-                    + "    Balance:        %20f \n"
-                    + "	   Shopping Cart:	%20s \n"
-                    + "    History:           %20s \n",
-                    this.ID, this.name, this.password,
+                    + "Identification #:%20s \n"
+                    + "The Customer:%20s \n"
+                    + "Password:%20s \n"
+					+ "City:%20s \n"
+                    + "Balance:%20f \n"
+                    + "Shopping Cart:%20s \n"
+                    + "History:%20s \n",
+                    this.ID, this.name, this.password, this.city,
                     this.balance, this.shoppingCart, this.history);
         
     }

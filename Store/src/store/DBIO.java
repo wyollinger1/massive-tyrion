@@ -1,3 +1,10 @@
+/**
+ * Name: Jared Bean, Josh Thrush
+ * Section: 1
+ * Program: Project Phase 1
+ * Date: 2/15/2013
+ * Description: Interface to database for program
+ */
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -9,8 +16,12 @@ import java.sql.DatabaseMetaData;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Set;
+import java.util.Iterator;
 
 /**
+ * Class contains methods to interface with store database backend.
+ * Interfaces with the inventory and sales databases, allowing simple
+ * queries (getTotalSales) and adding and removing items.
  * SQL implementation. Abstracts queries away so all database calls are made
  * through this API.
  * 

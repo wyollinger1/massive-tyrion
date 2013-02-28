@@ -1,7 +1,20 @@
-
-
+/**
+ * Name: Jared Bean, Josh Thrush
+ * Section: 1
+ * Program: Project Phase 1
+ * Date: 2/15/2013
+ * Description: Movie subclass of Media
+ */
+/**
+ * Movie subclass of Media
+ * @author Jared Bean
+ * @author Josh Thrush
+ *
+ */
 public class Movie extends Media {
-	Movie(String creator, String name, int duration, 
+	
+	//Initializer for an album object, sets all data members with the Media superclass
+	public Movie(String creator, String name, int duration, 
 			String genre, int numSold, double price,
 			int numRating, double avgRating){
 		super( creator,  name,  duration, 
