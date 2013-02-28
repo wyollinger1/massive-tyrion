@@ -54,12 +54,13 @@ public class SelectBuilder {
 	 * Helper function to make the format string
 	 * @param colName String name of the column to apply the condition
 	 * @param operator String name of the operator, not IN or BETWEEN which are special
-	 * @param condition String array condition applied, NOT NULL
+	 * @param conditionArr String array condition applied, NOT NULL
 	 * @param isAnd true if AND'ing in the condition otherwise false - meaningless for the first condition
 	 * @return Format string for a PreparedStatement
-	 * @throws Exception if size of conditionArr does not match what is expected by the operator, or if the parameter, operator, is not a recognized operator
+	 * @throws SQLException if size of conditionArr does not match what is expected by the operator.
+	 * @throws Exception if the parameter, operator, is not a recognized operator
 	 */
-	private String makeFormatString(String colName, String operator, Object[] conditionArr, boolean isAnd) throws Exception{
+	private String makeFormatString(String colName, String operator, Object[] conditionArr, boolean isAnd) throws SQLException, Exception{
 		String condFormatStr=""; //Holds the format string for this condition
 		if(conditionArr.length==0){
 			throw new SQLException("conditionArr cannot have length 0");
@@ -116,9 +117,10 @@ public class SelectBuilder {
 	 * @param colName String name of the column to apply the condition
 	 * @param operator String name of the operator, not IN or BETWEEN which are special
 	 * @param condition Integer condition applied
-	 * @throws Exception if size of conditionArr does not match what is expected by the operator, or if the parameter, operator, is not a recognized operator
+	 * @throws SQLException if size of conditionArr does not match what is expected by the operator.
+	 * @throws Exception if the parameter, operator, is not a recognized operator
 	 */
-	public void addIntCondition(String colName, String operator, Integer[] conditionArr, boolean isAnd) throws Exception{
+	public void addIntCondition(String colName, String operator, Integer[] conditionArr, boolean isAnd) throws SQLException, Exception{
 		String condFormatStr=makeFormatString(colName, operator, conditionArr, isAnd);
 		
 		//Add to where-format-strings and string-parameters ArrayLists
@@ -131,9 +133,10 @@ public class SelectBuilder {
 	 * @param colName String name of the column to apply the condition
 	 * @param operator String name of the operator, not IN or BETWEEN which are special
 	 * @param condition Double condition applied
-	 * @throws Exception if size of conditionArr does not match what is expected by the operator, or if the parameter, operator, is not a recognized operator
+	 * @throws SQLException if size of conditionArr does not match what is expected by the operator.
+	 * @throws Exception if the parameter, operator, is not a recognized operator
 	 */
-	public void addDoubleCondition(String colName, String operator, Double[] conditionArr, boolean isAnd) throws Exception{
+	public void addDoubleCondition(String colName, String operator, Double[] conditionArr, boolean isAnd) throws SQLException, Exception{
 		String condFormatStr=makeFormatString(colName, operator, conditionArr, isAnd);
 		
 		//Add to where-format-strings and string-parameters ArrayLists
