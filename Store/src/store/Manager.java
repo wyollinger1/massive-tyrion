@@ -31,16 +31,17 @@ public class Manager extends User {
 
 	// Adds media to store
 	// Takes in a Media object: mediaObj
-	// and the type of media as a String
-	public void addMedia(Media mediaObj, String type) {
-		DBIO.add(mediaObj, type);
+	// the type of media as a String
+	// and the number to add
+	public void addMedia(Media mediaObj, String type, int num) {
+		DBIO.add(mediaObj, type, num);
 	}
 
 	// Removes media from store
 	// Takes in Media object: mediaObj
-	// and type of media as a String
-	public void deleteMedia(Media mediaObj, String type) {
-		DBIO.remove(mediaObj, type);
+	// and number of media objects to remove
+	public void deleteMedia(Media mediaObj, int num) {
+		DBIO.remove(mediaObj.getId(), num);
 	}
 
 	// Retrieve all information of any customer

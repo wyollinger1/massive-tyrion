@@ -6,17 +6,14 @@
  * Description: Interface to database for program
  */
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.Date;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
+import java.sql.Savepoint;
+import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Set;
-import java.util.Iterator;
 
 /**
  * Class contains methods to interface with store database backend. Interfaces
@@ -104,16 +101,92 @@ public class DBIO {
 	 */
 	public static int add(int mId, int num) {
 		int isSuccess = 0;
+		String upExist="UPDATE Inventory SET numInStock =(SELECT numInStock FROM Inventory WHERE mId=?)+? WHERE mId=?";
+		PreparedStatement upInv = null;
 		try {
-			isSuccess = stmnt
-					.executeUpdate("UPDATE Inventory SET numInStock = numInStock"
-							+ num + " WHERE mId=" + mId);
+			upInv=con.prepareStatement(upExist);
+			upInv.setInt(0, mId);
+			upInv.setInt(1, num);
+			upInv.setInt(2, mId);
+			upInv.executeUpdate();
 		} catch (SQLException sqlE) {
-			return -1;
+			isSuccess=-1;
+		}finally{
+			//Try to close the statement but ignore any exceptions
+			if(upInv!=null)try{upInv.close();}catch(SQLException ignore){} 
 		}
 		return isSuccess;
 	}
-
+	/**
+	 * Either adds a number of existing media objects to the number in stock or
+	 * inserts a new media object into the inventory and refreshes the media object 
+	 * with its new id number.
+	 * @param mObj Media object to add, id of zero if new
+	 * @param type Type of object to add 
+	 * @param num Number to add to inventory
+	 * @return refreshed media object or null on error
+	 */
+	public static Media add(Media mObj, String type, int num){
+		String insMedia = "INSERT INTO Inventory (creator, name, duration, genre, numInStock, price, type)"
+				+ "VALUES(?, ?, ?, ?, ?, ?, ?)";
+		String selMid = "SELECT mId FROM Inventory WHERE creator=? AND name=? AND duration=? AND price=? AND type=? ORDER BY mId DESC";
+		PreparedStatement insStmnt=null;
+		PreparedStatement selId = null;
+		ResultSet rs;
+		Media retVal=null;
+		try{
+			if(mObj.getId()==0){
+				con.setAutoCommit(false);
+				//Prepare the Insert statement
+				insStmnt=con.prepareStatement(insMedia);
+				insStmnt.setString(0, mObj.getCreator());
+				insStmnt.setString(1, mObj.getName());
+				insStmnt.setInt(2, mObj.getDuration());
+				insStmnt.setString(3, mObj.getGenre());
+				insStmnt.setInt(4, num);
+				insStmnt.setDouble(5, mObj.getPrice());
+				insStmnt.setString(6, type);
+				
+				insStmnt.executeUpdate();
+				
+				//Prepare the select statement with same vals
+				selId=con.prepareStatement(selMid);
+				selId.setString(0, mObj.getCreator());
+				selId.setString(1, mObj.getName());
+				selId.setInt(2, mObj.getDuration());
+				selId.setString(3, mObj.getGenre());
+				selId.setInt(4, num);
+				selId.setDouble(5, mObj.getPrice());
+				selId.setString(6, type);
+				
+				//Get the newly inserted media object
+				rs = selId.executeQuery();
+				if(rs.first()){
+					retVal=	DBIO.getMedia(rs.getInt("mId"));
+				}else{
+					throw new SQLException("Couldn't get inserted media");
+				}
+				con.commit();
+			}else{
+				//If it already has a non-zero mId we can use the simpler add
+				DBIO.add(mObj.getId(), num);
+			}
+		}catch(SQLException sqlE){
+			//Rollback query if we have any problems
+			if(con!=null){
+				try {
+					con.rollback();
+				} catch (SQLException ignore) {}
+			}
+			retVal=null;
+		}finally{
+			//Try to close things and put things back as we found them
+			if (insStmnt!=null){try{insStmnt.close();} catch(SQLException ignore){}}
+			if (selId!=null){try{selId.close();} catch(SQLException ignore){}}
+			try{con.setAutoCommit(true);}catch(SQLException ignore){}
+		}
+		return retVal;
+	}
 	/**
 	 * Manager method to update/manipulate item's descriptive data. Note:
 	 * ratings data and number in stock have separate manipulation functions.
@@ -155,7 +228,7 @@ public class DBIO {
 					+ "avgRating=(avgRating*numRating +" + rating
 					+ ")/(numRating+1), " + "numRating=numRating+1"
 					+ "WHERE mId=" + mId);
-			if (isUpdated != 0) { //Don't make an unnecessary SQL query
+			if (isUpdated != 0) { // Don't make an unnecessary SQL query
 				mObj = getMedia(mObj.getId());
 			}
 		} catch (SQLException sqlE) {
@@ -165,22 +238,128 @@ public class DBIO {
 	}
 
 	/**
+	 * Adds the sale of the num number of media objects to the specified
+	 * customer. Fails if the customer doesn't have enough money or the store
+	 * doesn't have enough inventory.
 	 * 
 	 * @param mObj
+	 *            Media object being sold
 	 * @param cust
-	 *            and this is why I said a manager is-a customer, cause which
-	 *            subclass should add buy functionality Customer, not User!
-	 * @return
+	 *            customer buying item
+	 * @param num
+	 *            Integer number of media objects being sold.
+	 * @return number of rows updated or -1 on failure
 	 */
-	public static boolean addSale(Media mObj, User cust, int num){
-		int mId = mObj.getId(); 
-		int isSuccess = 0;
-		try{
-			isSuccess = stmnt.executeUpdate();
-		}catch(SQLException sqlE){
-			
+	public static int addSale(Media mObj, User cust, int num) {
+		int numRows = 0;
+		double price = 0, balance = 0;
+		int numInStock;
+
+		String sBal = "SELECT balance FROM Inventory WHERE uId=?";
+		String sInv = "SELECT price, numInStock FROM Inventory WHERE mId=?";
+
+		// Tests done in Java Transaction (does this cause it to be inefficient?
+		// Should the tests be done in SQL if possible?
+		// Does this cause loss of portability
+		String uBal = "UPDATE User SET balance=? WHERE uId=?";
+		String upInvStock = "UPDATE Inventory SET numInStock=? WHERE mId=?";
+		String upSales = "INSERT INTO Sales (mId, numSold, uId, date) VALUES (?,?,?,?)";
+
+		PreparedStatement getBal = null;
+		PreparedStatement getInv = null;
+		PreparedStatement decBal = null;
+		PreparedStatement decStock = null;
+		PreparedStatement insSales = null;
+		try {
+			getBal = con.prepareStatement(sBal);
+			getInv = con.prepareStatement(sInv);
+			decBal = con.prepareStatement(uBal);
+			decStock = con.prepareStatement(upInvStock);
+			insSales = con.prepareStatement(upSales);
+
+			con.setAutoCommit(false);
+			Savepoint save = con.setSavepoint();
+
+			ResultSet rs;
+
+			// Prepare getBal and call
+			getBal.setInt(0, cust.getID());
+			rs = getBal.executeQuery();
+			rs.first();
+			balance = rs.getDouble("balance");
+			rs.close();
+
+			// Prepare getInv and call
+			getInv.setInt(0, mObj.getId());
+			rs = getInv.executeQuery();
+			rs.first();
+			price = rs.getDouble("price");
+			numInStock = rs.getInt("numInStock");
+			rs.close();
+
+			// Prepare decBal and call
+			decBal.setDouble(0, balance - (num * price));
+			decBal.setInt(1, cust.getID());
+			numRows += decBal.executeUpdate();
+
+			// Prepare decStock and call
+			decStock.setInt(0, numInStock - num);
+			decStock.setInt(1, mObj.getId());
+			numRows += decStock.executeUpdate();
+
+			// Insert Sales
+			insSales.setInt(0, mObj.getId());
+			insSales.setInt(1, num);
+			insSales.setInt(2, cust.getID());
+			// today's date, conflict between java.sql.Date and java.util.Date
+			// there's really got to be a better way
+			insSales.setDate(3, new java.sql.Date((new Date().getTime())));
+			numRows += insSales.executeUpdate();
+
+			// If customer doesn't have enough money or there aren't that many
+			// in stock rollback
+			if ((num * price) > balance || numInStock < num) {
+				con.rollback(save);
+				numRows = -1;
+			}
+			con.commit();
+
+		} catch (SQLException sqlE) {
+			numRows = -1;
+		} finally {
+			// Try and close prepared statements, ignoring any exceptions
+			if (getBal != null)
+				try {
+					getBal.close();
+				} catch (SQLException ignore) {
+				}
+			if (getInv != null)
+				try {
+					getInv.close();
+				} catch (SQLException ignore) {
+				}
+			if (decBal != null)
+				try {
+					decBal.close();
+				} catch (SQLException ignore) {
+				}
+			if (decStock != null)
+				try {
+					decStock.close();
+				} catch (SQLException ignore) {
+				}
+			if (insSales != null)
+				try {
+					insSales.close();
+				} catch (SQLException ignore) {
+				}
+
 		}
+		return numRows;
 	}
+
+	// TODO: Should there be a removeSale and how should it do this? (thinking
+	// of audit trailing)
 
 	/**
 	 * Refreshes/resets media object with data in database
@@ -199,11 +378,9 @@ public class DBIO {
 			sb.addIntCondition("mId", "=", condArr, true);
 
 			results = executeQuery(sb);
-			mObj = result2Media(results)[0]; // Counting on finding exactly one
-												// row,
-												// probably should add some
-												// checks
-												// or something.
+			mObj = result2Media(results).get(0);
+			// TODO:Counting on finding exactly one row,probably should add some
+			// checks or something.
 		} catch (SQLException sqlE) {
 			mObj = null;
 		} catch (ArrayIndexOutOfBoundsException indexE) {
@@ -225,10 +402,11 @@ public class DBIO {
 	 * @throws SQLException
 	 *             if error reading from the ResultSet
 	 */
-	private static Media[] result2Media(ResultSet results) throws SQLException {
+	private static ArrayList<Media> result2Media(ResultSet results)
+			throws SQLException {
 		int mId, duration, numSold, numRating;
 		double price, avgRating;
-		String creator, name, genre;
+		String creator, name, genre, type;
 		ArrayList<Media> mediaObjs = new ArrayList<Media>();
 		do {
 			mId = results.getInt("mId");
@@ -241,14 +419,55 @@ public class DBIO {
 			price = results.getDouble("price");
 			numRating = results.getInt("numRating");
 			avgRating = results.getDouble("avgRating");
-			mediaObjs.add(new Media(creator, name, duration, genre, numSold,
-					price, numRating, avgRating, mId)); // TODO Inventory table
-			// should have
-			// type column to switch on
-			// so can create specific
-			// media not generic
+			type = results.getString("type");
+			if (type.equalsIgnoreCase("book")) {
+				mediaObjs.add(new Audiobook(creator, name, duration, genre,
+						numSold, price, numRating, avgRating, mId));
+			} else if (type.equalsIgnoreCase("album")) {
+				mediaObjs.add(new Album(creator, name, duration, genre,
+						numSold, price, numRating, avgRating, mId));
+			} else if (type.equalsIgnoreCase("movie")) {
+				mediaObjs.add(new Movie(creator, name, duration, genre,
+						numSold, price, numRating, avgRating, mId));
+			} else {
+				mediaObjs.add(new Media(creator, name, duration, genre,
+						numSold, price, numRating, avgRating, mId));
+			}
 		} while (results.next());
-		return (Media[]) mediaObjs.toArray();
+		return mediaObjs;
+	}
+
+	/**
+	 * Grabs all the media items of a certain type from the database as an
+	 * ArrayList of Media objects. Safe to cast each item to the correct
+	 * sub-type
+	 * 
+	 * @param type
+	 *            String type to get a list of
+	 * @return ArrayList of Media objects that representing all of the items of
+	 *         the type wanted in the inventory
+	 */
+	public static ArrayList<Media> listOfType(String type) {
+		String[] all = { "*" }, typeArr = { type };
+		SelectBuilder listType = DBIO.getSelectBuilder(all, "Inventory");
+		ArrayList<Media> retList;
+		try {
+			listType.addStringCondition("list", "=", typeArr, true);
+		} catch (SQLException sqlE) {
+			// Bug in code -- conditionArr is wrong size
+			return null;
+		} catch (Exception e) {
+			// Bug in code -- operator isn't one
+			return null;
+		}
+		try {
+			retList = result2Media(listType.executeSelect(con));
+		} catch (SQLException e) {
+			// Database connection problems or malformed sql
+			return null;
+		}
+		return retList;
+
 	}
 
 	/**
@@ -275,12 +494,39 @@ public class DBIO {
 	 * @param sb
 	 *            SelectBuilder containing the completed Select statement
 	 * @return ResultSet containing the results returned by the database
-	 * @throws SQLException
-	 *             on database access error
 	 */
-	public static ResultSet executeQuery(SelectBuilder sb) throws SQLException {
+	public static ResultSet executeQuery(SelectBuilder sb) {
 		// TODO Take care of this thrown exception either here or in the
 		// SelectBuilder class
-		return sb.executeSelect(con);
+		ResultSet rs;
+		try {
+			rs = sb.executeSelect(con);
+		} catch (SQLException sqlE) {
+			rs = null;
+		}
+		return rs;
+	}
+	/**
+	 * Gets the total sales of the store.
+	 * @return Double value of total sales of the store, NaN on error.
+	 */
+	public static double getTotalSales(){
+		String [] cols = {"numSold", "curPrice"};
+		SelectBuilder sales = DBIO.getSelectBuilder(cols, "Inventory");
+		ResultSet allSales=null;
+		double totalSales=0;
+		try{
+			allSales=sales.executeSelect(con);
+			while(allSales.next()){
+				int numSold = allSales.getInt("numSold");
+				double price = allSales.getInt("curPrice");
+				totalSales+= numSold*price;
+			}
+		}catch(SQLException sqlE){
+			totalSales=Double.NaN;
+		}finally{
+			if (allSales!=null){try{allSales.close();}catch(SQLException ignore){}}
+		}
+		return totalSales;
 	}
 }

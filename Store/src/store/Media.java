@@ -35,6 +35,7 @@ public class Media {
 	 * @param avgRating Average rating of the media object, represented as a double
 	 * @param id Integer unique id number
 	 */
+	//TODO: numSold is ignored change call
 	Media(String creator, String name, int duration, 
 			String genre, int numSold, double price,
 			int numRating, double avgRating, int id){
@@ -119,7 +120,7 @@ public class Media {
 		Integer [] conArr = {(Integer)this.id}; // Selecting number of sold of this media item, by id
 		int numSold;
 		SelectBuilder selectNumSold = DBIO.getSelectBuilder(colNames, "SALES");
-		
+		//TODO: should this be moved to DBIO?
 		try{
 			selectNumSold.addIntCondition("mId", "=", conArr, true);
 			numSold=DBIO.executeQuery(selectNumSold).getInt(0);

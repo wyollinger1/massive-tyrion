@@ -130,22 +130,17 @@ public class User {
 	//Allows the user to make a purchase of a media object, if the user doesn't have enough credit the item is not sold and a message is printed on screen.
 	public boolean purchase(Media mediaObj, String type)
 	{
-		boolean purchased = false;
+		int purchased = 0;
 		
 		if(balance > mediaObj.getPrice()) //checks user credit
 		{
-			if(DBIO.remove(mediaObj,type)) //checks that item is in stock
-			{
-				balance = balance - mediaObj.getPrice(); //subtracts amount from user balance
-				purchased = true; //purchase is completed
-				mediaObj.setNumSold(mediaObj.getNumSold()+1); //number sold is incremented
-			}
+			purchased=DBIO.addSale(mediaObj, this, 1);
 		}
 		else
 		{
 			System.out.println("Not enough money"); //item is not sold
 		}
-		return purchased;
+		return purchased>0;
 	}
 	
 	//Allows the user to rate a purchased media object
@@ -164,7 +159,7 @@ public class User {
 	
 	//Allows the user to get a list of all available media
 	public Media [] list(String type){
-		return DBIO.query(type);
+		return (Media[])DBIO.listOfType(type).toArray();
 	}
 	
     @Override

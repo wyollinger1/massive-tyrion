@@ -102,9 +102,10 @@ public class SelectBuilder {
 	 * @param operator String name of the operator, not IN or BETWEEN which are special
 	 * @param condition String array condition applied, NOT NULL
 	 * @param isAnd true if AND'ing in the condition otherwise false - meaningless for the first condition
-	 * @throws Exception if size of conditionArr does not match what is expected by the operator, or if the parameter, operator, is not a recognized operator
+	 * @throws SQLException if size of conditionArr does not match what is expected by the operator.
+	 * @throws Exception if the parameter, operator, is not a recognized operator
 	 */
-	public void addStringCondition(String colName, String operator, String[] conditionArr, boolean isAnd) throws Exception{
+	public void addStringCondition(String colName, String operator, String[] conditionArr, boolean isAnd) throws SQLException, Exception{
 		String condFormatStr=makeFormatString(colName, operator, conditionArr, isAnd);
 		
 		//Add to where-format-strings and string-parameters ArrayLists
