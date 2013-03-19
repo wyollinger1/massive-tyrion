@@ -123,9 +123,9 @@ public class DBIO {
 		PreparedStatement upInv = null;
 		try {
 			upInv=con.prepareStatement(upExist);
-			upInv.setInt(0, mId);
-			upInv.setInt(1, num);
-			upInv.setInt(2, mId);
+			upInv.setInt(1, mId);
+			upInv.setInt(2, num);
+			upInv.setInt(3, mId);
 			upInv.executeUpdate();
 		} catch (SQLException sqlE) {
 			isSuccess=-1;
@@ -157,25 +157,25 @@ public class DBIO {
 				con.setAutoCommit(false);
 				//Prepare the Insert statement
 				insStmnt=con.prepareStatement(insMedia);
-				insStmnt.setString(0, mObj.getCreator());
-				insStmnt.setString(1, mObj.getName());
-				insStmnt.setInt(2, mObj.getDuration());
-				insStmnt.setString(3, mObj.getGenre());
-				insStmnt.setInt(4, num);
-				insStmnt.setDouble(5, mObj.getPrice());
-				insStmnt.setString(6, type);
+				insStmnt.setString(1, mObj.getCreator());
+				insStmnt.setString(2, mObj.getName());
+				insStmnt.setInt(3, mObj.getDuration());
+				insStmnt.setString(4, mObj.getGenre());
+				insStmnt.setInt(5, num);
+				insStmnt.setDouble(6, mObj.getPrice());
+				insStmnt.setString(7, type);
 				
 				insStmnt.executeUpdate();
 				
 				//Prepare the select statement with same vals
 				selId=con.prepareStatement(selMid);
-				selId.setString(0, mObj.getCreator());
-				selId.setString(1, mObj.getName());
-				selId.setInt(2, mObj.getDuration());
-				selId.setString(3, mObj.getGenre());
-				selId.setInt(4, num);
-				selId.setDouble(5, mObj.getPrice());
-				selId.setString(6, type);
+				selId.setString(1, mObj.getCreator());
+				selId.setString(2, mObj.getName());
+				selId.setInt(3, mObj.getDuration());
+				selId.setString(4, mObj.getGenre());
+				selId.setInt(5, num);
+				selId.setDouble(6, mObj.getPrice());
+				selId.setString(7, type);
 				
 				//Get the newly inserted media object
 				rs = selId.executeQuery();
@@ -301,14 +301,14 @@ public class DBIO {
 			ResultSet rs;
 
 			// Prepare getBal and call
-			getBal.setInt(0, cust.getID());
+			getBal.setInt(1, cust.getID());
 			rs = getBal.executeQuery();
 			rs.first();
 			balance = rs.getDouble("balance");
 			rs.close();
 
 			// Prepare getInv and call
-			getInv.setInt(0, mObj.getId());
+			getInv.setInt(1, mObj.getId());
 			rs = getInv.executeQuery();
 			rs.first();
 			price = rs.getDouble("price");
@@ -316,22 +316,22 @@ public class DBIO {
 			rs.close();
 
 			// Prepare decBal and call
-			decBal.setDouble(0, balance - (num * price));
-			decBal.setInt(1, cust.getID());
+			decBal.setDouble(1, balance - (num * price));
+			decBal.setInt(2, cust.getID());
 			numRows += decBal.executeUpdate();
 
 			// Prepare decStock and call
-			decStock.setInt(0, numInStock - num);
-			decStock.setInt(1, mObj.getId());
+			decStock.setInt(1, numInStock - num);
+			decStock.setInt(2, mObj.getId());
 			numRows += decStock.executeUpdate();
 
 			// Insert Sales
-			insSales.setInt(0, mObj.getId());
-			insSales.setInt(1, num);
-			insSales.setInt(2, cust.getID());
+			insSales.setInt(1, mObj.getId());
+			insSales.setInt(2, num);
+			insSales.setInt(3, cust.getID());
 			// today's date, conflict between java.sql.Date and java.util.Date
 			// there's really got to be a better way
-			insSales.setDate(3, new java.sql.Date((new Date().getTime())));
+			insSales.setDate(4, new java.sql.Date((new Date().getTime())));
 			numRows += insSales.executeUpdate();
 
 			// If customer doesn't have enough money or there aren't that many
@@ -426,7 +426,7 @@ public class DBIO {
 		double price, avgRating;
 		String creator, name, genre, type;
 		ArrayList<Media> mediaObjs = new ArrayList<Media>();
-		do {
+		while(results.next()){
 			mId = results.getInt("mId");
 			creator = results.getString("creator");
 			name = results.getString("name");
@@ -451,7 +451,7 @@ public class DBIO {
 				mediaObjs.add(new Media(creator, name, duration, genre,
 						numSold, price, numRating, avgRating, mId));
 			}
-		} while (results.next());
+		} 
 		return mediaObjs;
 	}
 
