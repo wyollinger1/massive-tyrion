@@ -1,3 +1,7 @@
+package store;
+
+import java.util.ArrayList;
+
 /**
  * Name: Joshua Thrush, Jared Bean
  * Section: 1
@@ -159,7 +163,13 @@ public class User {
 	
 	//Allows the user to get a list of all available media
 	public Media [] list(String type){
-		return (Media[])DBIO.listOfType(type).toArray();
+		ArrayList<Media> retVal;
+		retVal = DBIO.listOfType(type);
+		if(retVal==null){
+			return null;
+		}else{
+			return (Media[])retVal.toArray();
+		} 
 	}
 	
     @Override

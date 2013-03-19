@@ -1,3 +1,4 @@
+package store;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -28,7 +29,7 @@ public class SelectBuilder {
 	private HashMap<Integer, Double[]> doubleParams;
 	private int numParams; //Number of parameters in all of the hashmaps combined
 	
-	private String [] columnArr; //Hods the columns to SELECT upon
+	private String [] columnArr; //Holds the columns to SELECT upon
 	private String tableName;  //Holds the table name to SELECT upon
 	
 	public static boolean isOperator(String op){
@@ -48,6 +49,9 @@ public class SelectBuilder {
 		this.tableName = tableName;
 		this.numParams=0;
 		this.whereStrArr = new ArrayList<String>();
+		this.intParams = new HashMap<Integer, Integer[]>();
+		this.stringParams = new HashMap<Integer, String[]>();
+		this.doubleParams = new HashMap<Integer, Double[]>();
 		
 	}
 	/**

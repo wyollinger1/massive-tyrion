@@ -1,3 +1,4 @@
+package store;
 /**
  * Name: Jared Bean, Josh Thrush
  * Section: 1
@@ -39,12 +40,16 @@ public class DBIO {
 	 * Initializes static class with the SQLite JDBC driver. TODO Docs claim
 	 * Class.forName() is no longer necessary ... which is all this init does
 	 * 
-	 * @throws ClassNotFoundException
+	 * @returns true on success and false otherwise
 	 */
-	public static void init() throws ClassNotFoundException {
-		Class.forName(driverName);
+	public static boolean init() {
+		try{
+			Class.forName(driverName);
+		}catch(ClassNotFoundException ignore){
+			return false;
+		}
+		return true;
 	}
-
 	/**
 	 * Set the current working database.
 	 * 
@@ -68,7 +73,20 @@ public class DBIO {
 			return false;
 		}
 	}
-
+	public static boolean isConnected(){
+		try{
+		if(con!=null){
+			if(!con.isClosed()){
+				return true;
+			}
+			return false;
+		}else{
+			return false;
+		}
+		}catch(SQLException e){
+			return false;
+		}
+	}
 	/**
 	 * Removes the num number of media object from the inventory.
 	 * 
@@ -452,7 +470,7 @@ public class DBIO {
 		SelectBuilder listType = DBIO.getSelectBuilder(all, "Inventory");
 		ArrayList<Media> retList;
 		try {
-			listType.addStringCondition("list", "=", typeArr, true);
+			listType.addStringCondition("type", "=", typeArr, true);
 		} catch (SQLException sqlE) {
 			// Bug in code -- conditionArr is wrong size
 			return null;
@@ -464,6 +482,7 @@ public class DBIO {
 			retList = result2Media(listType.executeSelect(con));
 		} catch (SQLException e) {
 			// Database connection problems or malformed sql
+			System.err.println(e.getMessage());
 			return null;
 		}
 		return retList;
