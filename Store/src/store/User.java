@@ -167,8 +167,8 @@ public class User {
 		retVal = DBIO.listOfType(type);
 		if(retVal==null){
 			return null;
-		}else{
-			return (Media[])retVal.toArray();
+		}else{			
+			return (Media[])(retVal.toArray(new Media[retVal.size()]));
 		} 
 	}
 	
