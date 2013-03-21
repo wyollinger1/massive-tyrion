@@ -119,7 +119,7 @@ public class User {
 	}
     
 	//Allows the user to search for a media object
-	public void Search(Media mediaObj)
+	public void search(String mediaObj)
 	{
 		
 	}
