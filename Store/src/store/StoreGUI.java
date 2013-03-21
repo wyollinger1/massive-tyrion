@@ -30,6 +30,9 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 	private JComboBox mediaType;
 	private JComboBox searchType;
 	private JTabbedPane tabs;
+	
+	//Current logged in user
+	User user;
 
 	// MANAGER LOG IN
 	private String managerPsw;
@@ -48,6 +51,8 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 
 	public StoreGUI() {
 		super("Store GUI");
+		//TODO: Debug only put in log in eventually
+		user = new Customer();
 		managerPsw = "password"; // temporary password
 
 		tabs = new JTabbedPane();
@@ -242,7 +247,10 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		
 		return itemDisp;
 	}
-	
+	protected void buildView(){
+		//TODO: build this -- Jared
+		//Media [] searchResults = user.search(mediaObj)  )
+	}
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
@@ -276,6 +284,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 			}
 
 		}
+		//TODO: can we just make these three just one if statement
 		// if the user selects Albums
 		if (e.getSource() == mediaType && mediaType.getSelectedIndex() == 0) {
 			searchByText.setVisible(true);
@@ -295,6 +304,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		}
 
 		if (e.getSource() == go) {
+			buildView();
 			tabs.addTab("View", view);
 			tabs.remove(search);
 		}
