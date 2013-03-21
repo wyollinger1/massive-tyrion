@@ -54,7 +54,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 
 		// 4 panels are created
 		search = new JPanel(new GridLayout(20, 2));
-		view = new JPanel();
+		view = new JPanel(new GridBagLayout());
 		purchase = new JPanel();
 		rate = new JPanel();
 		thankYou = new JPanel();
@@ -192,7 +192,57 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 
 		add(tabs);
 	}
-
+	
+	/**
+	 * Small helper function to set constraints and add a label to a JPanel
+	 * @param text String text shown in the label
+	 * @param gbl GridBagLayout to set the constraints on
+	 * @param c GridBagConstraints to set
+	 * @param jp JPanel to add the label to
+	 */
+	protected void makeLabel(String text, GridBagLayout gbl, GridBagConstraints c, JPanel jp){
+		Label label = new Label(text);
+		gbl.setConstraints(label, c);
+		jp.add(label);
+	}
+	/**
+	 * Creates a JPanel displaying a snippet view of an items information
+	 * @param mObj Media object to display info about
+	 * @return JPanel with information displayed
+	 */
+	protected JPanel makeItemSnippetPanel(Media mObj){
+		GridBagLayout gridBag = new GridBagLayout();
+		GridBagConstraints c = new GridBagConstraints();
+		JPanel itemDisp = new JPanel(gridBag);
+		
+		//Constraints default
+		c.fill = GridBagConstraints.BOTH;
+		c.weightx = 0;
+		//Name
+		c.anchor = GridBagConstraints.LINE_START;
+		makeLabel(mObj.getName(), gridBag, c, itemDisp);
+		
+		//type
+		c.anchor = GridBagConstraints.LINE_END;
+		if(mObj instanceof Album){
+			makeLabel("Album", gridBag, c, itemDisp);
+		}else if(mObj instanceof Audiobook){
+			makeLabel("Audiobook", gridBag, c, itemDisp);
+		}else if(mObj instanceof Movie){
+			makeLabel("Movie", gridBag, c, itemDisp);
+		}
+		
+		//creator
+		c.anchor = GridBagConstraints.LINE_START;
+		makeLabel(mObj.getCreator(), gridBag, c, itemDisp);
+		
+		//price
+		c.anchor = GridBagConstraints.LINE_END;
+		makeLabel(String.valueOf(mObj.getPrice()), gridBag, c, itemDisp);
+		
+		return itemDisp;
+	}
+	
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
