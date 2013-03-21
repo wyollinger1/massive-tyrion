@@ -1,3 +1,4 @@
+package store;
 /**
  * Name: Jared Bean, Josh Thrush
  * Section: 1

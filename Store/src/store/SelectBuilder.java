@@ -1,3 +1,4 @@
+package store;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -28,7 +29,7 @@ public class SelectBuilder {
 	private HashMap<Integer, Double[]> doubleParams;
 	private int numParams; //Number of parameters in all of the hashmaps combined
 	
-	private String [] columnArr; //Hods the columns to SELECT upon
+	private String [] columnArr; //Holds the columns to SELECT upon
 	private String tableName;  //Holds the table name to SELECT upon
 	
 	public static boolean isOperator(String op){
@@ -48,10 +49,13 @@ public class SelectBuilder {
 		this.tableName = tableName;
 		this.numParams=0;
 		this.whereStrArr = new ArrayList<String>();
+		this.intParams = new HashMap<Integer, Integer[]>();
+		this.stringParams = new HashMap<Integer, String[]>();
+		this.doubleParams = new HashMap<Integer, Double[]>();
 		
 	}
 	/**
-	 * Helper function to make the format string
+	 * Helper function to make the condition format string
 	 * @param colName String name of the column to apply the condition
 	 * @param operator String name of the operator, not IN or BETWEEN which are special
 	 * @param conditionArr String array condition applied, NOT NULL
@@ -157,16 +161,16 @@ public class SelectBuilder {
 		String[] strParamArr;
 		Integer[] intParamArr;
 		Double[] dblParamArr;
-		int paramIndex=0;
+		int paramIndex=1;
 		//Columns
 		if(this.columnArr.length>0){
-			sqlString+="?";
+			sqlString+=this.columnArr[0];
 		}
 		for(int i=1; i<this.columnArr.length; i++){
-			sqlString+=",?";
+			sqlString+=this.columnArr[i];
 		}
 		//Table
-		sqlString+=" FROM ? ";
+		sqlString+=" FROM "+ tableName+ " ";
 		
 		if(numParams>0){
 			sqlString += "WHERE ";
@@ -181,28 +185,20 @@ public class SelectBuilder {
 		
 		ps= con.prepareStatement(sqlString);
 		
-		//Add column names
-		for(int i=0; i<this.columnArr.length; i++){
-			ps.setString(paramIndex, this.columnArr[i]);
-			paramIndex++;
-		}
-		ps.setString(paramIndex, this.tableName);
-		paramIndex++;
-		
 		//Populate all the where params in order
 		for(int i=0; i<numParams; i++){
 			if((strParamArr=stringParams.get(i))!=null){
-				for(int j=0; j<strParamArr.length; i++){
+				for(int j=0; j<strParamArr.length; j++){
 					ps.setString(paramIndex, strParamArr[j]);
 					paramIndex++;
 				}
 			}else if((intParamArr=this.intParams.get(i))!=null){
-				for(int j=0; j<intParamArr.length; i++){
+				for(int j=0; j<intParamArr.length; j++){
 					ps.setInt(paramIndex, intParamArr[j]);
 					paramIndex++;
 				}
 			}else if((dblParamArr=this.doubleParams.get(i))!=null){
-				for(int j=0; j<dblParamArr.length; i++){
+				for(int j=0; j<dblParamArr.length; j++){
 					ps.setDouble(paramIndex, dblParamArr[j]);
 					paramIndex++;
 				}
