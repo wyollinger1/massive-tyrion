@@ -1,4 +1,4 @@
-package store;
+/*package store;
 
 public class StoreTest
 {
@@ -84,4 +84,4 @@ public class StoreTest
 		
 		
     }
-}
+}*/
