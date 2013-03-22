@@ -113,7 +113,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		// 4 panels are created
 		search = new JPanel(new GridLayout(20, 2));
 		view = new JPanel(new GridBagLayout());
-		purchase = new JPanel(new BorderLayout());
+		purchase = new JPanel(new GridLayout(8,1));
 		rate = new JPanel();
 		thankYou = new JPanel();
                 
@@ -253,8 +253,6 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		
 		view.add(viewItem); // adds the view button to the view panel
 		
-		
-		purchase.add(purchaseItem,BorderLayout.SOUTH); // adds the purchase button to the panel
 		
 		
 		rate.add(rateLabel); // adds the text "Rate: " to the rate panel
@@ -484,7 +482,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		}
 		//TODO: remove debug
 		view.setBackground(Color.BLUE);
-	}
+	}		
 	/**
 	 * Helper to turn a human-readable search type string to an enum
 	 * @param searchField
@@ -522,15 +520,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
-		if(purchase.isShowing()){
-			g.drawString("Creator: " + mediaObj.getCreator(), (purchase.getWidth()/2) -40 , 200);
-			g.drawString("Genre: " + mediaObj.getGenre(), (purchase.getWidth()/2) -40, 220);
-			g.drawString("Title: " + mediaObj.getName(), (purchase.getWidth()/2) -40, 240);
-			g.drawString("Duration: " + mediaObj.getDuration(), (purchase.getWidth()/2) -40, 260);
-			g.drawString("Price: $" + mediaObj.getPrice(), (purchase.getWidth()/2) -40, 280);
-			g.drawString("Number of Ratings: " + mediaObj.getNumRating(), (purchase.getWidth()/2) -40, 300);
-			g.drawString("Average Rating: " + mediaObj.getAvgRating(), (purchase.getWidth()/2) -40, 320);
-		}
+		
 		
 	}
 
@@ -708,9 +698,21 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 
 		if (viewButtons != null && viewButtons.containsKey(e.getSource())) {
 			mediaObj=viewButtons.get(e.getSource());
-			tabs.addTab("Purchase", purchase);
+			purchase.removeAll();
+			
+			purchase.add(new JLabel("Creator: " + mediaObj.getCreator()));
+			purchase.add(new JLabel("Genre: " + mediaObj.getGenre()));
+			purchase.add(new JLabel("Title: " + mediaObj.getName()));
+			purchase.add(new JLabel("Duration: " + mediaObj.getDuration()));
+			purchase.add(new JLabel("Price: $" + mediaObj.getPrice()));
+			purchase.add(new JLabel("Number of Ratings: " + mediaObj.getNumRating()));
+			purchase.add(new JLabel("Average Rating: " + mediaObj.getAvgRating()));
+			purchase.add(purchaseItem);
+			
+			tabs.addTab("Item Information", purchase);
 			tabs.remove(view);
 			repaint();
+			
 		}
 
 		if (e.getSource() == purchaseItem) {
