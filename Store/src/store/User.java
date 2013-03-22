@@ -118,10 +118,19 @@ public class User {
 		this.history = history;
 	}
     
-	//Allows the user to search for a media object
-	public void search(String searchStr, String searchField, String mediaType){
-		DBIO.searchInventory(searchStr, searchField, mediaType);
-		
+	/**
+	 * Searches on a field in the inventory for a string, filtering on a specific media type.
+	 * @param searchStr String to match on -- *searchStr* or in SQL %searchStr% is the pattern
+	 * @param searchField	String name of field to search on
+	 * @param mediaType	String name of media type to filter with
+	 * @return	ArrayList of Media obect results, an empty ArrayList is returned if there are none or there was an error
+	 */
+	public ArrayList<Media> search(String searchStr, String searchField, String mediaType){
+		ArrayList <Media> retVal = DBIO.searchInventory(searchStr, searchField, mediaType);
+		if(retVal==null){
+			retVal= new ArrayList<Media>();
+		}
+		return retVal;
 	}
 	
 	//Displays the attributes of the current media object on screen
