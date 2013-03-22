@@ -30,6 +30,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 	private JRadioButton rate4;
 	private JRadioButton rate5;
 	private double rating;
+	private String rated = "rated: " + rating;
 	private JButton submit;
 	private JComboBox mediaType;
 	private JComboBox searchType;
@@ -400,6 +401,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 
 		if (e.getSource() == submit) {
 			user.rateMedia(mediaObj, rating);
+			JOptionPane.showMessageDialog(this, rated );
 			tabs.addTab("Thank You!", thankYou);
 			tabs.remove(rate);
 		}
