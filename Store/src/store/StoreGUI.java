@@ -29,6 +29,8 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 	private JRadioButton rate3;
 	private JRadioButton rate4;
 	private JRadioButton rate5;
+	private double rating;
+	private String rated;
 	private JButton submit;
 	private JComboBox mediaType;
 	private JComboBox searchType;
@@ -46,7 +48,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 
 	// MEDIA
 	private Media mediaObj = DBIO.getMedia(4);
-	private String medType = "Movie";
+	private String medType = "movie";
 	
 	// PLACEHOLDER DATABASE
 	private String[] medTypeArray;
@@ -149,17 +151,18 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 													
 
 		ButtonGroup rateItem = new ButtonGroup(); // creates a button group
-
+		rating = 0;
 		rate1 = new JRadioButton("1", false); // instantiates button 1
-
+		rate1.addItemListener(this);
 		rate2 = new JRadioButton("2", false); // instantiates button 2
-
+		rate2.addItemListener(this);
 		rate3 = new JRadioButton("3", false); // instantiates button 3
-
+		rate3.addItemListener(this);
 		rate4 = new JRadioButton("4", false); // instantiates button 4
-
+		rate4.addItemListener(this);
 		rate5 = new JRadioButton("5", false); // instantiates button 5
-
+		rate5.addItemListener(this);
+		
 		submit = new JButton("Submit");
 		submit.addActionListener(this);
 		// adds all 5 rate buttons to the group
@@ -188,7 +191,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 										// search panel
 
 		tabs.addTab("Search", search);
-
+		
 		view.add(viewItem); // adds the view button to the view panel
 
 		purchase.add(purchaseItem); // adds the purchase button to the panel
@@ -323,7 +326,25 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 
 	@Override
 	public void itemStateChanged(ItemEvent e) {
-
+		if(e.getSource() == rate1 && e.getStateChange() == ItemEvent.SELECTED) { 
+           rating = 1;
+        }
+		
+		if(e.getSource() == rate2 && e.getStateChange() == ItemEvent.SELECTED) { 
+	       rating = 2;
+	    }
+		
+		if(e.getSource() == rate3 && e.getStateChange() == ItemEvent.SELECTED) { 
+		   rating = 3;
+		}
+		
+		if(e.getSource() == rate4 && e.getStateChange() == ItemEvent.SELECTED) { 
+		   rating = 4;
+		}
+		
+		if(e.getSource() == rate5 && e.getStateChange() == ItemEvent.SELECTED) { 
+		   rating = 5;
+		}
 	}
 
 	@Override
@@ -398,6 +419,9 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		}
 
 		if (e.getSource() == submit) {
+			rated = "Rated: " + rating;
+			user.rateMedia(mediaObj, rating);
+			JOptionPane.showMessageDialog(this, rated);
 			tabs.addTab("Thank You!", thankYou);
 			tabs.remove(rate);
 		}
