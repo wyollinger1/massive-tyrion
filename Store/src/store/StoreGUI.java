@@ -73,7 +73,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		// 4 panels are created
 		search = new JPanel(new GridLayout(20, 2));
 		view = new JPanel(new GridBagLayout());
-		purchase = new JPanel();
+		purchase = new JPanel(new BorderLayout());
 		rate = new JPanel();
 		thankYou = new JPanel();
 
@@ -145,6 +145,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		viewItem = new JButton("View"); 
 		viewItem.addActionListener(this);
 
+		
 		// creates the purchase button
 		purchaseItem = new JButton("Buy"); 
 		purchaseItem.addActionListener(this);
@@ -192,16 +193,15 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		search.add(searchByText);
 		search.add(searchType);
 		search.add(go); // adds the go button to the search panel
-		search.add(mngrLoginButton); // add the manager login button to the
-										// search panel
+		search.add(mngrLoginButton); // add the manager login button to the								
 
 		tabs.addTab("Search", search);
 		
 		view.add(viewItem); // adds the view button to the view panel
 		
 		
-		purchase.add(purchaseItem); // adds the purchase button to the panel
-
+		purchase.add(purchaseItem,BorderLayout.SOUTH); // adds the purchase button to the panel
+		
 		
 		rate.add(rateLabel); // adds the text "Rate: " to the rate panel
 		rate.add(rate1); // adds the lowest rating button to the panel
@@ -354,13 +354,13 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 	public void paint(Graphics g) {
 		super.paint(g);
 		if(purchase.isShowing()){
-			g.drawString("Creator: " + mediaObj.getCreator(), 50 , 200);
-			g.drawString("Genre: " + mediaObj.getGenre(), 50, 220);
-			g.drawString("Title: " + mediaObj.getName(), 50, 240);
-			g.drawString("Duration: " + mediaObj.getDuration(), 50, 260);
-			g.drawString("Price: $" + mediaObj.getPrice(), 50, 280);
-			g.drawString("Number of Ratings: " + mediaObj.getNumRating(), 50, 300);
-			g.drawString("Average Rating: " + mediaObj.getAvgRating(), 50, 320);
+			g.drawString("Creator: " + mediaObj.getCreator(), (purchase.getWidth()/2) -40 , 200);
+			g.drawString("Genre: " + mediaObj.getGenre(), (purchase.getWidth()/2) -40, 220);
+			g.drawString("Title: " + mediaObj.getName(), (purchase.getWidth()/2) -40, 240);
+			g.drawString("Duration: " + mediaObj.getDuration(), (purchase.getWidth()/2) -40, 260);
+			g.drawString("Price: $" + mediaObj.getPrice(), (purchase.getWidth()/2) -40, 280);
+			g.drawString("Number of Ratings: " + mediaObj.getNumRating(), (purchase.getWidth()/2) -40, 300);
+			g.drawString("Average Rating: " + mediaObj.getAvgRating(), (purchase.getWidth()/2) -40, 320);
 		}
 		
 	}
@@ -445,6 +445,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 			mediaObj=viewButtons.get(e.getSource());
 			tabs.addTab("Purchase", purchase);
 			tabs.remove(view);
+			repaint();
 		}
 
 		if (e.getSource() == purchaseItem) {
@@ -453,6 +454,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 				tabs.remove(purchase);
 			}
 			else{
+				JOptionPane.showMessageDialog(this, "Not enough money, Returning to Search Pane");
 				tabs.addTab("Search",search);
 				tabs.remove(purchase);
 			}
