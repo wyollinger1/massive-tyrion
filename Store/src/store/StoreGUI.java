@@ -36,7 +36,9 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 	private JComboBox mediaType;
 	private JComboBox searchType;
 	private JTabbedPane tabs;
-	private HashMap<JButton, Media>  viewButtons;
+	
+	//Maps buttons in view tab to media object being displayed
+	private HashMap<JButton, Media>  viewButtons; 
 	
 	//Current logged in user
 	User user;
@@ -236,31 +238,41 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		GridBagConstraints c = new GridBagConstraints();
 		JPanel itemDisp = new JPanel(gridBag); 
 		JButton viewButton = new JButton("View");
+		String creatorAlias = "";
+		
 		
 		//Constraints default
-		c.fill = GridBagConstraints.BOTH;
-		c.weightx = 0;
+	//	c.fill = GridBagConstraints.BOTH;
+		c.weightx =1;
+		c.weighty =1;
+		
 		//Name
 		c.anchor = GridBagConstraints.LINE_START;
 		makeLabel(mObj.getName(), gridBag, c, itemDisp);
 		
 		//type
 		c.anchor = GridBagConstraints.LINE_END;
+		c.gridwidth = GridBagConstraints.REMAINDER;
 		if(mObj instanceof Album){
-			makeLabel("Album", gridBag, c, itemDisp);
+			makeLabel("Genre: Album", gridBag, c, itemDisp);
+			creatorAlias = "Artist: ";
 		}else if(mObj instanceof Audiobook){
-			makeLabel("Audiobook", gridBag, c, itemDisp);
+			makeLabel("Genre: Audiobook", gridBag, c, itemDisp);
+			creatorAlias = "Author: ";
 		}else if(mObj instanceof Movie){
-			makeLabel("Movie", gridBag, c, itemDisp);
+			makeLabel("Genre: Movie", gridBag, c, itemDisp);
+			creatorAlias = "Producer: ";
 		}
 		
 		//creator
 		c.anchor = GridBagConstraints.LINE_START;
-		makeLabel(mObj.getCreator(), gridBag, c, itemDisp);
+		c.gridwidth = 1;
+		makeLabel(creatorAlias+mObj.getCreator(), gridBag, c, itemDisp);
 		
 		//price
 		c.anchor = GridBagConstraints.LINE_END;
-		makeLabel(String.valueOf(mObj.getPrice()), gridBag, c, itemDisp);
+		c.gridwidth = GridBagConstraints.REMAINDER;
+		makeLabel(String.format("Price: $%.2f", mObj.getPrice()), gridBag, c, itemDisp);
 		
 		//View button
 		viewButtons.put(viewButton, mObj);
@@ -269,7 +281,8 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		itemDisp.add(viewButton);
 		viewButton.addActionListener(this);
 		
-		
+		//Border
+		itemDisp.setBorder(BorderFactory.createMatteBorder(0, 0, 2, 0, Color.BLACK));
 		
 		return itemDisp;
 	}
@@ -280,14 +293,28 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		//TODO: build this -- Jared
 		String searchTypeStr = (String)searchType.getSelectedItem();
 		String mediaTypeStr = (String)mediaType.getSelectedItem();
+		GridBagLayout vLayout= (GridBagLayout)view.getLayout();
+		GridBagConstraints vConstraint = new GridBagConstraints();
+		JPanel itemSnippetPanel;
 		
 		ArrayList<Media> searchResults = user.search(searchField.getText(),
 				sTypeToEnum(searchTypeStr), mTypeToEnum(mediaTypeStr));
 		view.removeAll();
 		viewButtons = new HashMap<JButton, Media>();
+		
+		//Set constraints
+		vConstraint.gridwidth=GridBagConstraints.REMAINDER;
+		vConstraint.fill = GridBagConstraints.HORIZONTAL;
+		vConstraint.weightx =1;
+		
+		
 		for(Media searchResult : searchResults){
-			view.add(makeItemSnippetPanel(searchResult));
+			itemSnippetPanel=makeItemSnippetPanel(searchResult);
+			vLayout.setConstraints(itemSnippetPanel, vConstraint);
+			view.add(itemSnippetPanel);
 		}
+		//TODO: remove debug
+		view.setBackground(Color.BLUE);
 	}
 	/**
 	 * Helper to turn a human-readable search type string to an enum
