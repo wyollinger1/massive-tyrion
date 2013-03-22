@@ -32,9 +32,18 @@ public class Manager extends User {
 
 	// Adds media to store
 	// Takes in a Media object: mediaObj
-	// the type of media as a String
 	// and the number to add
-	public void addMedia(Media mediaObj, String type, int num) {
+	public void addMedia(Media mediaObj, int num) {
+		DBIO.Types type;
+		if(mediaObj instanceof Album){
+			type=DBIO.Types.ALBUM;
+		}else if(mediaObj instanceof Audiobook){
+			type=DBIO.Types.AUDIOBOOK;
+		}else if(mediaObj instanceof Movie){
+			type = DBIO.Types.MOVIE;
+		}else{
+			type =DBIO.Types.ALBUM;
+		}
 		DBIO.add(mediaObj, type, num);
 	}
 

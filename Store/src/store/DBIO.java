@@ -211,7 +211,7 @@ public class DBIO {
 	 * @param num Number to add to inventory
 	 * @return refreshed media object or null on error
 	 */
-	public static Media add(Media mObj, String type, int num){
+	public static Media add(Media mObj, DBIO.Types typeEnum, int num){
 		String insMedia = "INSERT INTO Inventory (creator, name, duration, genre, numInStock, price, type)"
 				+ "VALUES(?, ?, ?, ?, ?, ?, ?)";
 		String selMid = "SELECT mId FROM Inventory WHERE creator=? AND name=? AND duration=? AND price=? AND type=? ORDER BY mId DESC";
@@ -219,6 +219,7 @@ public class DBIO {
 		PreparedStatement selId = null;
 		ResultSet rs;
 		Media retVal=null;
+		String type = enumToType(typeEnum);
 		try{
 			if(mObj.getId()==0){
 				con.setAutoCommit(false);
