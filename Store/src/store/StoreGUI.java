@@ -34,6 +34,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 	private JComboBox searchType;
 	private JTabbedPane tabs;
 	private HashMap<JButton, Media>  viewButtons;
+	
 	//Current logged in user
 	User user;
 
@@ -58,7 +59,10 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		super("Store GUI");
 		//TODO: Debug only put in log in eventually
 		user = new Customer();
-		DBIO.setDb("Store.sqlite");
+		if(DBIO.setDb("/home/jbean/Code/221/massive-tyrion/Store/src/store/Store.sqlite")==false){
+			System.err.println("con is null");
+			System.exit(0);
+		}
 		managerPsw = "password"; // temporary password
 		
 		tabs = new JTabbedPane();
@@ -77,7 +81,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 																			// array
 
 		searchTypeArray = new String[] { "Genre", "Artist", "Producer",
-				"Author" };
+				"Author", "Item Name" };
 
 		albumGenreArray = new String[] { "Rock", "Hip-Hop", "Country", "Dance" };
 
@@ -256,8 +260,11 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 	}
 	protected void buildView(){
 		//TODO: build this -- Jared
+		String searchTypeStr = (String)searchType.getSelectedItem();
+		String mediaTypeStr = (String)mediaType.getSelectedItem();
+		
 		ArrayList<Media> searchResults = user.search(searchField.getText(),
-				(String)searchType.getSelectedItem(), (String)mediaType.getSelectedItem());
+				sTypeToEnum(searchTypeStr), mTypeToEnum(mediaTypeStr));
 		view.removeAll();
 		viewButtons = new HashMap<JButton, Media>();
 		for(Media searchResult : searchResults){
@@ -266,6 +273,30 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 			viewItem.addActionListener(this);
 			viewButtons.put(viewItem, searchResult);
 		}
+	}
+	private DBIO.SearchField sTypeToEnum(String searchField){
+		if(searchField.equalsIgnoreCase("Genre")){
+			return DBIO.SearchField.GENRE;
+		}else if (searchField.equalsIgnoreCase("Artist") || 
+				searchField.equalsIgnoreCase("Producer") ||
+				searchField.equalsIgnoreCase("Author")){
+			return DBIO.SearchField.CREATOR;
+		}else if (searchField.equalsIgnoreCase("Item Name")){
+			return DBIO.SearchField.NAME;
+		}
+		return DBIO.SearchField.NAME;
+		
+		
+	}
+	private DBIO.Types mTypeToEnum(String mType){
+		if(mType.equalsIgnoreCase("Albums")){
+			return DBIO.Types.ALBUM;
+		}else if (mType.equalsIgnoreCase("Movies")){
+			return DBIO.Types.MOVIE;
+		}else if (mType.equalsIgnoreCase("Audiobooks")){
+			return DBIO.Types.AUDIOBOOK;
+		}
+		return DBIO.Types.ALBUM;
 	}
 	@Override
 	public void paint(Graphics g) {
@@ -330,7 +361,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 			tabs.remove(search);
 		}
 
-		if (viewButtons.containsKey(e.getSource())) {
+		if (viewButtons != null && viewButtons.containsKey(e.getSource())) {
 			mediaObj=viewButtons.get(e.getSource());
 			tabs.addTab("Purchase", purchase);
 			tabs.remove(view);

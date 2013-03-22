@@ -125,7 +125,7 @@ public class User {
 	 * @param mediaType	String name of media type to filter with
 	 * @return	ArrayList of Media obect results, an empty ArrayList is returned if there are none or there was an error
 	 */
-	public ArrayList<Media> search(String searchStr, String searchField, String mediaType){
+	public ArrayList<Media> search(String searchStr, DBIO.SearchField searchField, DBIO.Types mediaType){
 		ArrayList <Media> retVal = DBIO.searchInventory(searchStr, searchField, mediaType);
 		if(retVal==null){
 			retVal= new ArrayList<Media>();
