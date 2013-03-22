@@ -54,7 +54,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 	public StoreGUI() {
 		super("Store GUI");
 		//TODO: Debug only put in log in eventually
-		user = new Customer();
+		user = new cCustomer();
 		managerPsw = "password"; // temporary password
 
 		tabs = new JTabbedPane();
