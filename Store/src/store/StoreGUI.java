@@ -650,7 +650,11 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
                     addedMedia.numRating = Integer.parseInt(newDefRateText.getText());
                     addedMedia.avgRating = Double.parseDouble(newAvgRateText.getText());
                     addedMedia.id = Integer.parseInt(newID.getText());
-                    //DBIO.add(addedMedia,"string", 1 );
+                    
+                    if(user instanceof Manager){
+                    	((Manager)user).addMedia(addedMedia, 1);
+                    }
+                    
                 }
                 
                 //HANDLE CLEAR BUTTON : addMediaPanel
