@@ -624,14 +624,15 @@ public class DBIO {
 	 * @param mediaType String name of mediaType to filter on
 	 * @return ArrayList of Media objects or null on error
 	 */
-	public static ArrayList<Media> searchInventory(String searchStr, String searchField, String mediaType){
+	public static ArrayList<Media> searchInventory(String searchStr, SearchField searchField, Types mediaType){
 		SelectBuilder sbInv=DBIO.search(searchStr, searchField, "Inventory");
-		String [] typeCond = {mediaType};
-		if(sbInv!=null){
+		String type = enumToType(mediaType);
+		String [] typeCond={type};
+		
+		
+		if(sbInv!=null && type!=null){
 			try{
-				//TODO:security flaw here on searchField can't trust the user - need some sort of schema to check against
-				//Security on all outward facing -- public -- or security on all actual database accesses?
-				sbInv.addStringCondition(searchField, "=", typeCond, true);
+				sbInv.addStringCondition("type", "=", typeCond, true);
 				return result2Media(sbInv.executeSelect(con));
 			}catch(SQLException sqlE){
 				return null;
@@ -649,22 +650,23 @@ public class DBIO {
 	 * @param tableName String name of table to search on
 	 * @return SelectBuilder with search condition applied to it.
 	 */
-	public static SelectBuilder search(String searchStr, String searchField, String tableName){
+	private static SelectBuilder search(String searchStr, SearchField searchField, String tableName){
 		String [] cols = {"*"};
 		String [] searchCond = {"%"+searchStr+"%"}; //SelectBuilder needs it as an array
-		//TODO: make an enum for the database schema to switch on
-		SelectBuilder sb = DBIO.getSelectBuilder(cols,	 tableName);
+		String searchColName = enumToCol(searchField);
 		
-		try{
-			sb.addStringCondition(searchField, "LIKE", searchCond, true);
-		}catch(SQLException sqlE){
-			return null;
-		}catch(Exception e){
+		SelectBuilder sb = DBIO.getSelectBuilder(cols,	 tableName);
+		if(searchColName!=null){
+			try{
+				sb.addStringCondition(searchColName, "LIKE", searchCond, true);
+			}catch(SQLException sqlE){
+				return null;
+			}catch(Exception e){
+				return null;
+			}
+		}else{
 			return null;
 		}
-		
-		
-		
-		return null;
+		return sb;
 	}
 }
