@@ -459,13 +459,17 @@ public class DBIO {
 		ResultSet results;
 		Media mObj;
 		SelectBuilder sb = getSelectBuilder(cols, "Inventory");
+		ArrayList<Media> mObjs;
 		try {
 			sb.addIntCondition("mId", "=", condArr, true);
 
 			results = executeQuery(sb);
-			mObj = result2Media(results).get(0);
-			// TODO:Counting on finding exactly one row,probably should add some
-			// checks or something.
+			mObjs =result2Media(results);
+			if(mObjs!=null && !mObjs.isEmpty()){
+				mObj = mObjs.get(0);
+			}else{
+				mObj=null;
+			}
 		} catch (SQLException sqlE) {
 			mObj = null;
 		} catch (ArrayIndexOutOfBoundsException indexE) {
@@ -670,5 +674,69 @@ public class DBIO {
 			return null;
 		}
 		return sb;
+	}
+	/**
+	 * Logs in user and returns the user which is really either a Customer or Manager. 
+	 * @param name String name of user to log in
+	 * @param password String password of user to log in
+	 * @return
+	 */
+	public static User login(String name, String password){
+		String [] cols = {"uId", "name", "balance", "isManager"};
+		String [] nameArr = {name};
+		String [] passArr = {password};
+		ArrayList<User> users;
+		User loggedInUser=null;
+		SelectBuilder sb = DBIO.getSelectBuilder(cols, "User");
+		try{
+			sb.addStringCondition("name", "=", nameArr, true);
+			sb.addStringCondition("pass", "=", passArr, true);
+			
+			users=result2User(sb.executeSelect(con));
+			if(users!=null && users.size()>0){
+				loggedInUser = users.get(0);
+			}
+			
+		}catch(SQLException sqlE){
+			return null;
+		}catch(Exception e){
+			return null;
+		}
+		
+		return loggedInUser;
+	}
+	/**
+	 * Helper to turn a ResultSet into a ArrayList of User objects.
+	 * Each User object can be cast to either subtype - Customer or Manager
+	 * @param results ResultSet containing
+	 * @return	ArrayList of User objects each of which is one of the two subtypes - Customer or Manager; null on null ResultSet and empty list on empty ResultSet
+	 * @throws SQLException on database access error or ResultSet was closed
+	 */
+	private static ArrayList<User> result2User(ResultSet results)
+			throws SQLException {
+		int uId;
+		String name, city="State College", shoppingCart = "Doesn't make sense as a string", history="Also shouldn't be a string";
+		double balance;
+		boolean isManager;
+		ArrayList<User> userObjs = new ArrayList<User>();
+		//can handle null input
+		if(results==null){
+			return null;
+		}
+		while(results.next()){
+			uId = results.getInt("uId");
+			name = results.getString("name");
+			
+			balance = results.getDouble("balance");
+			isManager = results.getBoolean("isManager");
+			
+			//TODO: fix city, shoppingCart, and history - obviously we aren't going to be sending password back to the user
+			if (isManager) {
+				userObjs.add(new Manager(uId, name, "", city, balance, shoppingCart, history));
+			} else {
+				userObjs.add(new Customer(uId, name, "", city, balance, shoppingCart, history));
+			}
+		} 
+		return userObjs;
 	}
 }
