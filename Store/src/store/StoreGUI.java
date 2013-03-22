@@ -41,7 +41,9 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 	private JPasswordField passField;
 
 	// MEDIA
-
+	private Movie mediaObj = (Movie) DBIO.getMedia(4);
+	private String medType = "Movie";
+	
 	// PLACEHOLDER DATABASE
 	private String[] medTypeArray;
 	private String[] albumGenreArray;
@@ -53,10 +55,11 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		super("Store GUI");
 		//TODO: Debug only put in log in eventually
 		user = new Customer();
+		DBIO.setDb("Store.sqlite");
 		managerPsw = "password"; // temporary password
-
+		
 		tabs = new JTabbedPane();
-
+		
 		// 4 panels are created
 		search = new JPanel(new GridLayout(20, 2));
 		view = new JPanel(new GridBagLayout());
@@ -320,8 +323,15 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		}
 
 		if (e.getSource() == purchaseItem) {
-			tabs.addTab("Rate", rate);
-			tabs.remove(purchase);
+			if(user.purchase(mediaObj, medType)){
+				tabs.addTab("Rate", rate);
+				tabs.remove(purchase);
+			}
+			else{
+				tabs.addTab("Search",search);
+				tabs.remove(purchase);
+			}
+			
 		}
 
 		if (e.getSource() == submit) {

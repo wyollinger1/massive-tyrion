@@ -39,7 +39,7 @@ public class User {
         password = "";
 		city = "";
 		shoppingCart = "";
-        balance = 0.0;
+        balance = 15.0;
 		history = "";
     }
     
