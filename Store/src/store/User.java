@@ -157,17 +157,9 @@ public class User {
 	}
 	
 	//Allows the user to rate a purchased media object
-	public void rateMovie(Media movieObj, double rating)
+	public void rateMedia(Media mediaObj, double rating)
 	{	
-		movieObj.addRating(rating);
-	}
-	public void rateBook(Media bookObj, double rating)
-	{	
-		bookObj.addRating(rating);
-	}
-	public void rateAlbum(Media albumObj, double rating)
-	{	
-		albumObj.addRating(rating);
+		mediaObj.addRating(rating);
 	}
 	
 	//Allows the user to get a list of all available media
