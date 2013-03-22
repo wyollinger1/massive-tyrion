@@ -30,7 +30,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 	private JRadioButton rate4;
 	private JRadioButton rate5;
 	private double rating;
-	private String rated = "rated: " + rating;
+	private String rated;
 	private JButton submit;
 	private JComboBox mediaType;
 	private JComboBox searchType;
@@ -153,17 +153,18 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 													
 
 		ButtonGroup rateItem = new ButtonGroup(); // creates a button group
-
+		rating = 0;
 		rate1 = new JRadioButton("1", false); // instantiates button 1
-
+		rate1.addItemListener(this);
 		rate2 = new JRadioButton("2", false); // instantiates button 2
-
+		rate2.addItemListener(this);
 		rate3 = new JRadioButton("3", false); // instantiates button 3
-
+		rate3.addItemListener(this);
 		rate4 = new JRadioButton("4", false); // instantiates button 4
-
+		rate4.addItemListener(this);
 		rate5 = new JRadioButton("5", false); // instantiates button 5
-
+		rate5.addItemListener(this);
+		
 		submit = new JButton("Submit");
 		submit.addActionListener(this);
 		// adds all 5 rate buttons to the group
@@ -400,8 +401,9 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		}
 
 		if (e.getSource() == submit) {
+			rated = "Rated: " + rating;
 			user.rateMedia(mediaObj, rating);
-			JOptionPane.showMessageDialog(this, rated );
+			JOptionPane.showMessageDialog(this, rated);
 			tabs.addTab("Thank You!", thankYou);
 			tabs.remove(rate);
 		}
