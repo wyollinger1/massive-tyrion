@@ -43,7 +43,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 	private JPasswordField passField;
 
 	// MEDIA
-	private Movie mediaObj = (Movie) DBIO.getMedia(4);
+	private Media mediaObj = DBIO.getMedia(4);
 	private String medType = "Movie";
 	
 	// PLACEHOLDER DATABASE
