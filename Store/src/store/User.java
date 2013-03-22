@@ -119,8 +119,8 @@ public class User {
 	}
     
 	//Allows the user to search for a media object
-	public void search(String searchStr, String searchField, String mediaType)
-	{
+	public void search(String searchStr, String searchField, String mediaType){
+		DBIO.searchInventory(searchStr, searchField, mediaType);
 		
 	}
 	
