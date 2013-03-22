@@ -5,6 +5,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.ListIterator;
 
 public class StoreGUI extends JFrame implements ItemListener, ActionListener {
@@ -32,7 +33,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 	private JComboBox mediaType;
 	private JComboBox searchType;
 	private JTabbedPane tabs;
-	
+	private HashMap<JButton, Media>  viewButtons;
 	//Current logged in user
 	User user;
 
@@ -223,7 +224,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 	protected JPanel makeItemSnippetPanel(Media mObj){
 		GridBagLayout gridBag = new GridBagLayout();
 		GridBagConstraints c = new GridBagConstraints();
-		JPanel itemDisp = new JPanel(gridBag);
+		JPanel itemDisp = new JPanel(gridBag); 
 		
 		//Constraints default
 		c.fill = GridBagConstraints.BOTH;
@@ -250,6 +251,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		c.anchor = GridBagConstraints.LINE_END;
 		makeLabel(String.valueOf(mObj.getPrice()), gridBag, c, itemDisp);
 		
+		
 		return itemDisp;
 	}
 	protected void buildView(){
@@ -257,8 +259,12 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		ArrayList<Media> searchResults = user.search(searchField.getText(),
 				(String)searchType.getSelectedItem(), (String)mediaType.getSelectedItem());
 		view.removeAll();
+		viewButtons = new HashMap<JButton, Media>();
 		for(Media searchResult : searchResults){
 			view.add(makeItemSnippetPanel(searchResult));
+			viewItem = new JButton("View"); 
+			viewItem.addActionListener(this);
+			viewButtons.put(viewItem, searchResult);
 		}
 	}
 	@Override
@@ -324,7 +330,8 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 			tabs.remove(search);
 		}
 
-		if (e.getSource() == viewItem) {
+		if (viewButtons.containsKey(e.getSource())) {
+			mediaObj=viewButtons.get(e.getSource());
 			tabs.addTab("Purchase", purchase);
 			tabs.remove(view);
 		}
