@@ -243,18 +243,12 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		search.add(mediaType);
 		search.add(searchByText);
 		search.add(searchType);
-<<<<<<< HEAD
-		search.add(go); // adds the go button to the search panel
-		search.add(mngrLoginButton); // add the manager login button to the								
 
-=======
-		search.add(new JLabel());
-                search.add(new JLabel());
-                
-                search.add(custLoginButton); // add the customer login button
+		search.add(go); // adds the go button to the search panel							
+		search.add(custLoginButton); // add the customer login button
 		search.add(mngrLoginButton); // add the manager login button 
 						
->>>>>>> d63fa85ca4d857521e0cadeccb62e4737f4041c0
+
 		tabs.addTab("Search", search);
 		
 		view.add(viewItem); // adds the view button to the view panel
