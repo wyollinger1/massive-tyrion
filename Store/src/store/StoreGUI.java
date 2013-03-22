@@ -23,6 +23,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 	private JButton mngrLoginButton;
 	private JButton viewItem;
 	private JButton purchaseItem;
+	private JLabel purchaseInfo;
 	private JButton searchAgain;
 	private JRadioButton rate1;
 	private JRadioButton rate2;
@@ -145,7 +146,9 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		// creates the purchase button
 		purchaseItem = new JButton("Buy"); 
 		purchaseItem.addActionListener(this);
+		
 
+		
 		// label for the rate button group
 		JLabel rateLabel = new JLabel("Rate: "); 
 													
@@ -193,9 +196,11 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		tabs.addTab("Search", search);
 		
 		view.add(viewItem); // adds the view button to the view panel
-
+		
+		
 		purchase.add(purchaseItem); // adds the purchase button to the panel
 
+		
 		rate.add(rateLabel); // adds the text "Rate: " to the rate panel
 		rate.add(rate1); // adds the lowest rating button to the panel
 		rate.add(rate2); // adds the next lowest rating button to the panel
@@ -321,7 +326,16 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
-
+		if(purchase.isShowing()){
+			g.drawString("Creator: " + mediaObj.getCreator(), 50 , 200);
+			g.drawString("Genre: " + mediaObj.getGenre(), 50, 220);
+			g.drawString("Title: " + mediaObj.getName(), 50, 240);
+			g.drawString("Duration: " + mediaObj.getDuration(), 50, 260);
+			g.drawString("Price: $" + mediaObj.getPrice(), 50, 280);
+			g.drawString("Number of Ratings: " + mediaObj.getNumRating(), 50, 300);
+			g.drawString("Average Rating: " + mediaObj.getAvgRating(), 50, 320);
+		}
+		
 	}
 
 	@Override
