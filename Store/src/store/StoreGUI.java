@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.Border;
+import java.util.ArrayList;
+import java.util.ListIterator;
 
 public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 
@@ -252,7 +254,12 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 	}
 	protected void buildView(){
 		//TODO: build this -- Jared
-		//Media [] searchResults = user.search(mediaObj)  )
+		ArrayList<Media> searchResults = user.search(searchField.getText(),
+				(String)searchType.getSelectedItem(), (String)mediaType.getSelectedItem());
+		view.removeAll();
+		for(Media searchResult : searchResults){
+			view.add(makeItemSnippetPanel(searchResult));
+		}
 	}
 	@Override
 	public void paint(Graphics g) {
