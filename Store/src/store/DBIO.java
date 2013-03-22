@@ -14,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Savepoint;
 import java.sql.Statement;
+import java.sql.DatabaseMetaData;
 import java.util.ArrayList;
 
 /**
@@ -35,7 +36,69 @@ public class DBIO {
 																// url's
 	private static Connection con;
 	private static Statement stmnt;
-
+	
+	//Schema for validation checking
+	/**
+	 * Enum of valid media type values.
+	 * @author jbean
+	 *
+	 */
+	public static enum Types { 
+		ALBUM(0), AUDIOBOOK(1), MOVIE(2);
+		private int index;
+		private Types(int index){
+			this.index=index;
+		}
+		public int getIndex(){
+			return this.index;
+		}
+	};
+	
+	//Array of legitimate database media type values
+	private static String [] mediaNames = {"album", "book", "movie" }; 
+	/**
+	 * Enum of valid inventory fields a user can search on
+	 * @author jbean
+	 *
+	 */
+	public static enum SearchField {
+		NAME(0), GENRE(1), CREATOR(2);
+		private int index;
+		private SearchField(int index){
+			this.index=index;
+		}
+		public int getIndex(){
+			return this.index;
+		}
+	}
+	//Array of legitimate database column names we can search on in the Inventory table
+	private static String [] searchColNames = {"name", "genre", "creator"};
+	/**
+	 * Helper to get media type name from enum
+	 * @param type enum value to transform into a legitmate database media type value
+	 * @return String media type value or null if media type does not exist
+	 */
+	private static String enumToType(Types type){
+		if(type.getIndex()<mediaNames.length){
+			return mediaNames[type.getIndex()];
+		}
+		else{
+			return null;
+		}
+	}
+	/**
+	 * Helper to get column name from enum
+	 * @param column enum value that has the column index of searchColNames
+	 * @return String column name or null if column does not exist
+	 */
+	private static String enumToCol(SearchField column){
+		if(column.getIndex()<searchColNames.length){
+			return searchColNames[column.getIndex()];
+		}
+		else{
+			return null;
+		}
+	}
 	/**
 	 * Initializes static class with the SQLite JDBC driver. TODO Docs claim
 	 * Class.forName() is no longer necessary ... which is all this init does
@@ -61,7 +124,9 @@ public class DBIO {
 		try {
 			con = DriverManager.getConnection(jdbcUrlPre + dbUrl);
 			try {
+				
 				stmnt = con.createStatement();
+				
 			} catch (SQLException sqlE) {
 				stmnt = null;
 				con.close();
@@ -565,6 +630,7 @@ public class DBIO {
 		if(sbInv!=null){
 			try{
 				//TODO:security flaw here on searchField can't trust the user - need some sort of schema to check against
+				//Security on all outward facing -- public -- or security on all actual database accesses?
 				sbInv.addStringCondition(searchField, "=", typeCond, true);
 				return result2Media(sbInv.executeSelect(con));
 			}catch(SQLException sqlE){
