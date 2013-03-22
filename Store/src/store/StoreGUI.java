@@ -59,10 +59,8 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		super("Store GUI");
 		//TODO: Debug only put in log in eventually
 		user = new Customer();
-		if(DBIO.setDb("/home/jbean/Code/221/massive-tyrion/Store/src/store/Store.sqlite")==false){
-			System.err.println("con is null");
-			System.exit(0);
-		}
+		DBIO.init();
+		DBIO.setDb("src/store/Store.sqlite");
 		managerPsw = "password"; // temporary password
 		
 		tabs = new JTabbedPane();
@@ -229,6 +227,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		GridBagLayout gridBag = new GridBagLayout();
 		GridBagConstraints c = new GridBagConstraints();
 		JPanel itemDisp = new JPanel(gridBag); 
+		JButton viewButton = new JButton("View");
 		
 		//Constraints default
 		c.fill = GridBagConstraints.BOTH;
@@ -255,9 +254,20 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		c.anchor = GridBagConstraints.LINE_END;
 		makeLabel(String.valueOf(mObj.getPrice()), gridBag, c, itemDisp);
 		
+		//View button
+		viewButtons.put(viewButton, mObj);
+		c.anchor = GridBagConstraints.CENTER;
+		gridBag.setConstraints(viewButton, c);		
+		itemDisp.add(viewButton);
+		viewButton.addActionListener(this);
+		
+		
 		
 		return itemDisp;
 	}
+	/**
+	 * Build the view tab
+	 */
 	protected void buildView(){
 		//TODO: build this -- Jared
 		String searchTypeStr = (String)searchType.getSelectedItem();
@@ -269,11 +279,13 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		viewButtons = new HashMap<JButton, Media>();
 		for(Media searchResult : searchResults){
 			view.add(makeItemSnippetPanel(searchResult));
-			viewItem = new JButton("View"); 
-			viewItem.addActionListener(this);
-			viewButtons.put(viewItem, searchResult);
 		}
 	}
+	/**
+	 * Helper to turn a human-readable search type string to an enum
+	 * @param searchField
+	 * @return
+	 */
 	private DBIO.SearchField sTypeToEnum(String searchField){
 		if(searchField.equalsIgnoreCase("Genre")){
 			return DBIO.SearchField.GENRE;
@@ -288,6 +300,11 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		
 		
 	}
+	/**
+	 * Helper to turn human-readable media type string to an enum
+	 * @param mType
+	 * @return
+	 */
 	private DBIO.Types mTypeToEnum(String mType){
 		if(mType.equalsIgnoreCase("Albums")){
 			return DBIO.Types.ALBUM;
@@ -353,6 +370,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		if (e.getSource() == go) {
 			buildView();
 			tabs.addTab("View", view);
+			tabs.validate();
 			tabs.remove(search);
 		}
 

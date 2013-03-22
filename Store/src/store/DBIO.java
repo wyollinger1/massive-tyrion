@@ -122,6 +122,8 @@ public class DBIO {
 	 */
 	public static boolean setDb(String dbUrl) {
 		try {
+			System.err.println(System.getProperty("user.dir"));
+			System.err.println(jdbcUrlPre + dbUrl);
 			con = DriverManager.getConnection(jdbcUrlPre + dbUrl);
 			try {
 				
