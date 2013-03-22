@@ -56,7 +56,7 @@ public class SelectBuilder {
 	}
 	/**
 	 * Helper function to make the condition format string
-	 * @param colName String name of the column to apply the condition
+	 * @param colName String name of the column to apply the condition - no sanitization on colName
 	 * @param operator String name of the operator, not IN or BETWEEN which are special
 	 * @param conditionArr String array condition applied, NOT NULL
 	 * @param isAnd true if AND'ing in the condition otherwise false - meaningless for the first condition

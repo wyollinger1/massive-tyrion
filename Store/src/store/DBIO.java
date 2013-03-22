@@ -426,6 +426,10 @@ public class DBIO {
 		double price, avgRating;
 		String creator, name, genre, type;
 		ArrayList<Media> mediaObjs = new ArrayList<Media>();
+		//can handle null input
+		if(results==null){
+			return null;
+		}
 		while(results.next()){
 			mId = results.getInt("mId");
 			creator = results.getString("creator");
@@ -547,5 +551,54 @@ public class DBIO {
 			if (allSales!=null){try{allSales.close();}catch(SQLException ignore){}}
 		}
 		return totalSales;
+	}
+	/**
+	 * Search's a field in inventory for a string, filtering by a media type.
+	 * @param searchStr String to match on -- searches *searchStr* or in SQL LIKE %searchStr%
+	 * @param searchField String name of field to match on
+	 * @param mediaType String name of mediaType to filter on
+	 * @return ArrayList of Media objects or null on error
+	 */
+	public static ArrayList<Media> searchInventory(String searchStr, String searchField, String mediaType){
+		SelectBuilder sbInv=DBIO.search(searchStr, searchField, "Inventory");
+		String [] typeCond = {mediaType};
+		if(sbInv!=null){
+			try{
+				//TODO:security flaw here on searchField can't trust the user - need some sort of schema to check against
+				sbInv.addStringCondition(searchField, "=", typeCond, true);
+				return result2Media(sbInv.executeSelect(con));
+			}catch(SQLException sqlE){
+				return null;
+			}catch(Exception e){
+				return null;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Queries the specific table for the pattern on the table on a specific media type if that makes sense on this context.
+	 * @param searchStr	String pattern to match on
+	 * @param searchField String name of column name to search on
+	 * @param tableName String name of table to search on
+	 * @return SelectBuilder with search condition applied to it.
+	 */
+	public static SelectBuilder search(String searchStr, String searchField, String tableName){
+		String [] cols = {"*"};
+		String [] searchCond = {"%"+searchStr+"%"}; //SelectBuilder needs it as an array
+		//TODO: make an enum for the database schema to switch on
+		SelectBuilder sb = DBIO.getSelectBuilder(cols,	 tableName);
+		
+		try{
+			sb.addStringCondition(searchField, "LIKE", searchCond, true);
+		}catch(SQLException sqlE){
+			return null;
+		}catch(Exception e){
+			return null;
+		}
+		
+		
+		
+		return null;
 	}
 }
