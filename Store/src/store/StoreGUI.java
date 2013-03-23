@@ -4,6 +4,9 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.Border;
+
+import sun.security.krb5.internal.ccache.CCacheInputStream;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.ListIterator;
@@ -17,6 +20,8 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 	private JPanel thankYou;
     private JPanel managerPanel;
     private JPanel addMediaPanel;
+    private JPanel custInfoPanel;
+    private JPanel custInfoSubPanel;
 	private JLabel welcomeLabel;
 	private JLabel medTypeText;
 	private JLabel searchByText;
@@ -42,6 +47,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
     private JTextField newIDText;
     private JTextField addTypeText;
     private JTextField addAmountText;
+    private JTextField custIdText;
 	private JButton go;
 	private JButton mngrLoginButton;
 	private JButton viewItem;
@@ -56,8 +62,10 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
     private JButton mngrLogout;
     private JButton addButton;
     private JButton clearButton; 
-    private JButton back1Button; 
+    private JButton back1Button;
+    private JButton searchCustInfo;
     private JButton custLoginButton;
+    private JButton custInfoSubmit;
 	private JRadioButton rate1;
 	private JRadioButton rate2;
 	private JRadioButton rate3;
@@ -381,10 +389,103 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
                 managerPanel.add(mngrCustInfo);
                 managerPanel.add(mngrLogout);
                 
+                //Customer info panel
+                buildCustInfo();
+                
 
 		add(tabs);
 	}
-	
+	/**
+	 * Initialize custInfoPanel - Panel Manager can look at customer info
+	 */
+	protected void buildCustInfo(){
+		GridBagLayout gbl = new GridBagLayout();
+		GridBagConstraints c = new GridBagConstraints();
+		custInfoPanel = new JPanel(gbl);
+		JLabel lookupLabel;
+		
+		
+		c.weightx=1;
+		
+		//Lookup Label
+		lookupLabel =new JLabel("Lookup Customer by ID Number");
+		gbl.setConstraints(lookupLabel, c);
+		custInfoPanel.add(lookupLabel);
+		
+		//Lookup Text Area
+		custIdText = new JTextField(10);
+		c.gridwidth = GridBagConstraints.REMAINDER;
+		gbl.setConstraints(custIdText, c);
+		custInfoPanel.add(custIdText);
+		
+		//Submit Search
+		custInfoSubmit = new JButton("Submit");
+		gbl.setConstraints(custInfoSubmit, c);
+		custInfoSubmit.addActionListener(this);
+		custInfoPanel.add(custInfoSubmit);
+		
+		//Back Button
+		custInfoPanel.add(back1Button);
+		
+	}
+	/**
+	 * Refresh customer info information in custInfoPanel with uId' info.
+	 * @param uId ID Number of uId to lookup
+	 */
+	protected void refreshCustInfo(int uId){
+		if(custInfoSubPanel!=null){
+			custInfoPanel.remove(custInfoSubPanel);
+		}
+		User user = DBIO.getUser(uId);
+		GridBagLayout gbl = new GridBagLayout();
+		GridBagConstraints c = new GridBagConstraints();
+		custInfoSubPanel = new JPanel(gbl);
+		if(user!=null){
+			c.weightx = 1;
+			c.gridwidth = GridBagConstraints.REMAINDER;
+			//Customer name
+			JLabel name = new JLabel("Name: "+ user.getName());
+			gbl.setConstraints(name, c);
+			custInfoSubPanel.add(name);
+			
+			//Customer Balance
+			JLabel bal = new JLabel(String.format("Balance: $%.2f", user.getBalance()));
+			gbl.setConstraints(bal, c);
+			custInfoSubPanel.add(bal);
+			
+			//Customer ID
+			JLabel id = new JLabel(String.format("ID: %d", user.getID()));
+			gbl.setConstraints(id, c);
+			custInfoSubPanel.add(id);
+			
+			//Customer City
+			JLabel city = new JLabel("City: " + user.getcity());
+			gbl.setConstraints(city, c);
+			custInfoSubPanel.add(city);
+			
+			//Customer History
+			JLabel hist = new JLabel("History: " + user.getHistory());
+			gbl.setConstraints(hist, c);
+			custInfoSubPanel.add(hist);
+			
+			//Customer Shopping Cart
+			JLabel shpCrt = new JLabel("Shopping Cart: " + user.getShoppingCart() );
+			gbl.setConstraints(shpCrt, c);
+			custInfoSubPanel.add(shpCrt);
+		}else{
+			JLabel noSuch = new JLabel("No such user");
+			gbl.setConstraints(noSuch, c);
+			custInfoSubPanel.add(noSuch);
+		}
+		//Change up of gbl and c
+		gbl = (GridBagLayout)custInfoPanel.getLayout();
+		c.fill = GridBagConstraints.BOTH;
+		c.gridwidth = 1;
+		gbl.setConstraints(custInfoSubPanel, c);
+		custInfoPanel.add(custInfoSubPanel);
+		
+		
+	}
 	/**
 	 * Small helper function to set constraints and add a label to a JPanel
 	 * @param text String text shown in the label
@@ -559,6 +660,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		Integer uid; //Used in custInfoSubmit if
 		// Handle the manager login attempt
 		if (e.getSource() == mngrLoginButton) // if manager button is pressed
 		{
@@ -622,6 +724,21 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
                      JOptionPane.showMessageDialog(addMediaPanel, newTotalSales, "Total Store Sales", 2);
                 }
                 
+                //Handle mngrCustInfo
+                if(e.getSource() == mngrCustInfo){
+                	tabs.addTab("Customer Info", custInfoPanel);
+                	tabs.remove(managerPanel);
+            
+                }
+                if(e.getSource() == custInfoSubmit){
+                	try{
+                		 uid= new Integer(custIdText.getText());
+                	}catch(NumberFormatException nfe){
+                		uid=0;
+                	}
+                	refreshCustInfo(uid);
+                	tabs.validate();
+                }
                 
                 //Handle the Manager Logout button in managerPanel
                 if(e.getSource() == mngrLogout) //if manager logout button is pressed
@@ -678,6 +795,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
                 {
                      tabs.addTab("Manager", managerPanel);
                      tabs.remove(addMediaPanel);
+                     tabs.remove(custInfoPanel);
                 }
 		//TODO: can we just make these three just one if statement
 		// if the user selects Albums

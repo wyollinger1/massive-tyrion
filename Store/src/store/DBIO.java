@@ -632,7 +632,8 @@ public class DBIO {
 	 * @return ArrayList of Media objects or null on error
 	 */
 	public static ArrayList<Media> searchInventory(String searchStr, SearchField searchField, Types mediaType){
-		SelectBuilder sbInv=DBIO.search(searchStr, searchField, "Inventory");
+		String searchColName = enumToCol(searchField);
+		SelectBuilder sbInv=DBIO.search(searchStr, searchColName, "Inventory");
 		String type = enumToType(mediaType);
 		String [] typeCond={type};
 		
@@ -657,10 +658,9 @@ public class DBIO {
 	 * @param tableName String name of table to search on
 	 * @return SelectBuilder with search condition applied to it.
 	 */
-	private static SelectBuilder search(String searchStr, SearchField searchField, String tableName){
+	private static SelectBuilder search(String searchStr, String searchColName, String tableName){
 		String [] cols = {"*"};
 		String [] searchCond = {"%"+searchStr+"%"}; //SelectBuilder needs it as an array
-		String searchColName = enumToCol(searchField);
 		
 		SelectBuilder sb = DBIO.getSelectBuilder(cols,	 tableName);
 		if(searchColName!=null){
@@ -705,6 +705,31 @@ public class DBIO {
 		}
 		
 		return loggedInUser;
+	}
+	/**
+	 * Get a user for view by manager
+	 * @param uId Integer id of user to get
+	 * @return User whose id is uId
+	 */
+	public static User getUser(int uId){
+		String [] cols = {"*"};
+		Integer [] conArr = {uId};
+		SelectBuilder sb = DBIO.getSelectBuilder(cols, "User");
+		ArrayList<User> custs;
+		User user=null;
+		try{
+			sb.addIntCondition("uId", "=", conArr, true);
+			System.err.println(con.isClosed());
+			custs=result2User(sb.executeSelect(con));
+			if(custs!=null && custs.size() >0){
+				user=custs.get(0);
+			}
+		}catch(SQLException sqlE){
+			return null;
+		}catch(Exception e){
+			return null;
+		}
+		return user;
 	}
 	/**
 	 * Helper to turn a ResultSet into a ArrayList of User objects.
