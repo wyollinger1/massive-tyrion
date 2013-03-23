@@ -186,7 +186,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		
 		// creates the text field for searching
 		searchField = new JTextField(10); 
-		searchField.addActionListener(this);
+	
 
 		// creates the search button
 		go = new JButton("GO!"); 
@@ -429,7 +429,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		}else if(mObj instanceof Movie){
 			makeLabel("Genre: Movie", gridBag, c, itemDisp);
 			creatorAlias = "Producer: ";
-		}
+		}else
 		
 		//creator
 		c.anchor = GridBagConstraints.LINE_START;
@@ -479,6 +479,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 			itemSnippetPanel=makeItemSnippetPanel(searchResult);
 			vLayout.setConstraints(itemSnippetPanel, vConstraint);
 			view.add(itemSnippetPanel);
+			
 		}
 		//TODO: remove debug
 		view.setBackground(Color.BLUE);
@@ -690,14 +691,11 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 
 		if (e.getSource() == go) {
 			buildView();
+			tabs.remove(search);
 			tabs.addTab("View", view);
+			tabs.addTab("Search", search);
 			tabs.validate();
-			tabs.remove(search);
-		}
-
-		if (e.getSource() == searchField) {
-			tabs.addTab("View", view);
-			tabs.remove(search);
+			
 		}
 
 		if (viewButtons != null && viewButtons.containsKey(e.getSource())) {
@@ -713,8 +711,9 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 			purchase.add(new JLabel("Average Rating: " + mediaObj.getAvgRating()));
 			purchase.add(purchaseItem);
 			
+			tabs.removeAll();
 			tabs.addTab("Item Information", purchase);
-			tabs.remove(view);
+			
 			repaint();
 			
 		}
