@@ -79,6 +79,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
     private JButton checkItemButton;
     private JButton clear3Button;
     private JButton back3Button;
+    private JButton back4Button;
     private JButton custInfoSubmit;
     private JRadioButton rate1;
     private JRadioButton rate2;
@@ -477,8 +478,11 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		
 		//Back Button
 		c.gridwidth = 1;
-		gbl.setConstraints(back1Button, c);
-		custInfoPanel.add(back1Button);
+		back4Button = new JButton("Back to Manager Page");
+        back4Button.addActionListener(this);
+        back4Button.setToolTipText("Go back to the Manager Home Screen.");
+		gbl.setConstraints(back4Button, c);
+		custInfoPanel.add(back4Button);
 		
 		//Submit Search
 		c.gridwidth = GridBagConstraints.REMAINDER;
@@ -603,7 +607,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		}else if(mObj instanceof Movie){
 			makeLabel("Genre: Movie", gridBag, c, itemDisp);
 			creatorAlias = "Producer: ";
-		}else
+		}
 		
 		//creator
 		c.anchor = GridBagConstraints.LINE_START;
@@ -794,6 +798,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
                 	tabs.remove(managerPanel);
             
                 }
+                //Handle customer info lookup
                 if(e.getSource() == custInfoSubmit){
                 	try{
                 		 uid= new Integer(custIdText.getText());
@@ -802,6 +807,11 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
                 	}
                 	refreshCustInfo(uid);
                 	tabs.validate();
+                }
+                if(e.getSource() == back4Button)
+                {
+                     tabs.addTab("Manager", managerPanel);
+                     tabs.remove(custInfoPanel);
                 }
                 
                 //Handle the Manager Logout button in managerPanel
@@ -859,7 +869,6 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
                 {
                      tabs.addTab("Manager", managerPanel);
                      tabs.remove(addMediaPanel);
-                     tabs.remove(custInfoPanel);
                 }
                 
                 //HANDLE WHEN MANAGER WANTS TO GO TO THE REMOVE MEDIA PANEL
@@ -953,6 +962,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 			tabs.addTab("View", view);
 			tabs.addTab("Search", search);
 			tabs.validate();
+			
 			
 		}
 
