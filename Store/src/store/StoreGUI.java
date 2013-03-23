@@ -5,7 +5,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.Border;
 
-import sun.security.krb5.internal.ccache.CCacheInputStream;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,10 +22,12 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
     private JPanel addMediaPanel;
     private JPanel custInfoPanel;
     private JPanel custInfoSubPanel;
-	private JLabel welcomeLabel;
-	private JLabel medTypeText;
-	private JLabel searchByText;
-	private JTextField searchField;
+    private JPanel removeMediaPanel;
+    private JPanel checkItemPanel;
+    private JLabel welcomeLabel;
+    private JLabel medTypeText;
+    private JLabel searchByText;
+    private JTextField searchField;
     private JLabel mngrText;
     private JLabel creatorLabel;
     private JLabel mediaNameLabel; 
@@ -37,6 +39,8 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
     private JLabel newID;
     private JLabel addType;
     private JLabel addAmount;
+    private JLabel removeLabel;
+    private JLabel checkItemLabel;
     private JTextField creatorText;
     private JTextField newNameText;
     private JTextField newDurationText;
@@ -48,12 +52,15 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
     private JTextField addTypeText;
     private JTextField addAmountText;
     private JTextField custIdText;
-	private JButton go;
-	private JButton mngrLoginButton;
-	private JButton viewItem;
-	private JButton purchaseItem;
-	private JLabel purchaseInfo;
-	private JButton searchAgain;
+    private JTextField removeText1;
+    private JTextField removeText2;
+    private JTextField checkItemText;
+    private JButton go;
+    private JButton mngrLoginButton;
+    private JButton viewItem;
+    private JButton purchaseItem;
+    private JLabel purchaseInfo;
+    private JButton searchAgain;
     private JButton mngrAdd;
     private JButton mngrRemove;
     private JButton mngrChkSales;
@@ -65,18 +72,24 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
     private JButton back1Button;
     private JButton searchCustInfo;
     private JButton custLoginButton;
+    private JButton removeMediaButton;
+    private JButton back2Button;
+    private JButton clear2Button;
+    private JButton checkItemButton;
+    private JButton clear3Button;
+    private JButton back3Button;
     private JButton custInfoSubmit;
-	private JRadioButton rate1;
-	private JRadioButton rate2;
-	private JRadioButton rate3;
-	private JRadioButton rate4;
-	private JRadioButton rate5;
-	private double rating;
-	private String rated;
-	private JButton submit;
-	private JComboBox mediaType;
-	private JComboBox searchType;
-	private JTabbedPane tabs;
+    private JRadioButton rate1;
+    private JRadioButton rate2;
+    private JRadioButton rate3;
+    private JRadioButton rate4;
+    private JRadioButton rate5;
+    private double rating;
+    private String rated;
+    private JButton submit;
+    private JComboBox mediaType;
+    private JComboBox searchType;
+    private JTabbedPane tabs;
 	
 	//Maps buttons in view tab to media object being displayed
 	private HashMap<JButton, Media>  viewButtons; 
@@ -128,6 +141,8 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
                 //Create Manager panel,display only when correct password is input
                 managerPanel = new JPanel(new GridLayout(14,2, 10,10));
                 addMediaPanel = new JPanel(new GridLayout(12,2));
+                removeMediaPanel = new JPanel(new GridLayout(12,2));
+                checkItemPanel = new JPanel(new GridLayout(12,2));
 
 
 		// PLACEHOLDER DATABASE
@@ -387,6 +402,47 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
                 managerPanel.add(mngrCustInfo);
                 managerPanel.add(mngrLogout);
                 
+                //REMOVE MEDIA PANEL
+                removeLabel = new JLabel("In order to Remove Media, input the ID# "
+                                         + "and amount you wish to remove from out inventory:");
+                removeText1 = new JTextField(20);
+                removeText2 = new JTextField(20);
+                removeMediaButton = new JButton("Remove");
+                removeMediaButton.addActionListener(this);
+                removeMediaButton.setToolTipText("Will delete the specified number of"
+                                                  + "a Media object from inventory.");
+                
+                clear2Button = new JButton("Clear Entries");
+                clear2Button.addActionListener(this);
+                clear2Button.setToolTipText("Clears the text Fields");
+                
+                back2Button = new JButton("Back to Manager Screen");
+                back2Button.addActionListener(this);
+                back2Button.setToolTipText("Takes you back to the Manager Home Screen");
+
+                removeMediaPanel.add(removeLabel);
+                removeMediaPanel.add(removeText1);
+                removeMediaPanel.add(removeText2);
+                removeMediaPanel.add(removeMediaButton);
+                removeMediaPanel.add(clear2Button);
+                removeMediaPanel.add(back2Button);
+                
+                //CHECK ITEM SALE PANEL
+                checkItemLabel = new JLabel("Enter the ID# to see the total sales of that item.");
+                checkItemText = new JTextField(20);
+                checkItemButton = new JButton("Check Sales");
+                checkItemButton.addActionListener(this);
+                clear3Button = new JButton("Clear Entry");
+                clear3Button.addActionListener(this);
+                back3Button = new JButton("Back to Manager Screen");
+                back3Button.addActionListener(this);
+                
+                checkItemPanel.add(checkItemLabel);
+                checkItemPanel.add(checkItemText);
+                checkItemPanel.add(checkItemButton);
+                checkItemPanel.add(clear3Button);
+                checkItemPanel.add(back3Button);
+                
                 //Customer info panel
                 buildCustInfo();
                 
@@ -416,14 +472,19 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		gbl.setConstraints(custIdText, c);
 		custInfoPanel.add(custIdText);
 		
+		//Back Button
+		c.gridwidth = 1;
+		gbl.setConstraints(back1Button, c);
+		custInfoPanel.add(back1Button);
+		
 		//Submit Search
+		c.gridwidth = GridBagConstraints.REMAINDER;
 		custInfoSubmit = new JButton("Submit");
 		gbl.setConstraints(custInfoSubmit, c);
 		custInfoSubmit.addActionListener(this);
 		custInfoPanel.add(custInfoSubmit);
 		
-		//Back Button
-		custInfoPanel.add(back1Button);
+		
 		
 	}
 	/**
@@ -441,8 +502,16 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		if(user!=null){
 			c.weightx = 1;
 			c.gridwidth = GridBagConstraints.REMAINDER;
+			
+			//Info Title
+			JLabel infoTitle =new JLabel(String.format("Customer Info %d", user.getID()));
+			c.insets = new Insets(5, 5, 5, 5);
+			gbl.setConstraints(infoTitle, c);
+			custInfoSubPanel.add(infoTitle);
+			
 			//Customer name
 			JLabel name = new JLabel("Name: "+ user.getName());
+			c.insets = new Insets(0,0,0,0);
 			gbl.setConstraints(name, c);
 			custInfoSubPanel.add(name);
 			
@@ -478,7 +547,8 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		//Change up of gbl and c
 		gbl = (GridBagLayout)custInfoPanel.getLayout();
 		c.fill = GridBagConstraints.BOTH;
-		c.gridwidth = 1;
+		c.gridwidth = 2;
+		c.insets = new Insets(10, 10, 10, 10);
 		gbl.setConstraints(custInfoSubPanel, c);
 		custInfoPanel.add(custInfoSubPanel);
 		
@@ -788,6 +858,73 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
                      tabs.remove(addMediaPanel);
                      tabs.remove(custInfoPanel);
                 }
+                
+                //HANDLE WHEN MANAGER WANTS TO GO TO THE REMOVE MEDIA PANEL
+                if(e.getSource() == mngrRemove)
+                {
+                    tabs.addTab("Remove Media", removeMediaPanel);
+                    tabs.remove(managerPanel);
+                }
+                
+                //HANDLE CLEAR BUTTON ON REMOVE MEDIA PANEL
+                if(e.getSource() == clear2Button)
+                {
+                    removeText1.setText("");
+                    removeText2.setText("");
+                }
+                
+                //HANDLE BACK BUTTON ON REMOVE MEDIA PANEL
+                if(e.getSource() == back2Button)
+                {
+                    tabs.addTab("Manager", managerPanel);
+                    tabs.remove(removeMediaPanel); 
+                }
+                
+                //HANDLE REMOVING A MEDIA OBJECT
+                if(e.getSource() == removeMediaButton)
+                {
+                    Media removedMedia = null;
+                    removedMedia.id = Integer.parseInt(removeText1.getText());
+                    int num = Integer.parseInt(removeText2.getText());
+                    
+                    if(user instanceof Manager)
+                    {
+                       ((Manager)user).deleteMedia(removedMedia, num );
+                    }
+                }
+                
+                //HANDLE THE CHECK ITEM SALES BUTTON : mngrPanel
+                if(e.getSource() == mngrChkSales)
+                {
+                    tabs.addTab("Check Sales of an Item", checkItemPanel);
+                    tabs.remove(managerPanel);
+                }
+                
+                //HANDLE checkItemButton
+                if(e.getSource() == checkItemButton)
+                {
+                    Media checkMedia = null;
+                    
+                    checkMedia.id = Integer.parseInt(checkItemText.getText());   
+                    if(user instanceof Manager)
+                    {
+                       ((Manager)user).getnumSold(checkMedia);
+                    }
+                }
+                
+                //HANDLE clear3Button
+                if(e.getSource() == clear3Button)
+                {
+                    checkItemText.setText("");
+                }
+                
+                //HANDLE back3Button
+                if(e.getSource() == back3Button)
+                {
+                    tabs.addTab("Manager", managerPanel);
+                    tabs.remove(checkItemPanel);
+                }
+                
 		//TODO: can we just make these three just one if statement
 		// if the user selects Albums
 		if (e.getSource() == mediaType && mediaType.getSelectedIndex() == 0) {
