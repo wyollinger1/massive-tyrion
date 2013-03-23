@@ -603,7 +603,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		}else if(mObj instanceof Movie){
 			makeLabel("Genre: Movie", gridBag, c, itemDisp);
 			creatorAlias = "Producer: ";
-		}else
+		}
 		
 		//creator
 		c.anchor = GridBagConstraints.LINE_START;
