@@ -61,6 +61,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
     private JButton purchaseItem;
     private JLabel purchaseInfo;
     private JButton searchAgain;
+	private JButton goBack;
     private JButton mngrAdd;
     private JButton mngrRemove;
     private JButton mngrChkSales;
@@ -134,7 +135,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		// 4 panels are created
 		search = new JPanel(new GridLayout(20, 2));
 		view = new JPanel(new GridBagLayout());
-		purchase = new JPanel(new GridLayout(8,1));
+		purchase = new JPanel(new GridLayout(9,1));
 		rate = new JPanel();
 		thankYou = new JPanel();
                 
@@ -223,6 +224,8 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		// creates the purchase button
 		purchaseItem = new JButton("Buy"); 
 		purchaseItem.addActionListener(this);
+		goBack = new JButton("Go Back");
+		goBack.addActionListener(this);
 		
 
 		
@@ -965,6 +968,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 			purchase.add(new JLabel("Number of Ratings: " + mediaObj.getNumRating()));
 			purchase.add(new JLabel("Average Rating: " + mediaObj.getAvgRating()));
 			purchase.add(purchaseItem);
+			purchase.add(goBack);
 			
 			tabs.removeAll();
 			tabs.addTab("Item Information", purchase);
@@ -984,6 +988,12 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 				tabs.remove(purchase);
 			}
 			
+		}
+		
+		if(e.getSource() == goBack){
+			tabs.addTab("View", view);
+			tabs.addTab("Search", search);
+			tabs.remove(purchase);
 		}
 
 		if (e.getSource() == submit) {
