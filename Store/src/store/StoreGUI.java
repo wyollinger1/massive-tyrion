@@ -793,7 +793,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 			//If User clicks OK
 			if (custPswInt == JOptionPane.OK_OPTION) {
 				//If login successfully
-				if((curUser=(Customer)DBIO.login(custUserField.getText(), new String(pass)))!=null){
+				if((curUser=DBIO.login(custUserField.getText(), new String(pass)))!=null){
 					//Add Manger tabs if the user logged in is a manager
 					if(curUser instanceof Manager){
 						isManager = true;

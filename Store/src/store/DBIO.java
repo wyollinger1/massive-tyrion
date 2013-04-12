@@ -757,6 +757,8 @@ public class DBIO {
 		String[] passArr = { password };
 		ArrayList<User> users;
 		User loggedInUser = null;
+		System.out.println(name);
+		System.out.println(password);
 		SelectBuilder sb = DBIO.getSelectBuilder(cols, "User");
 		try {
 			sb.addStringCondition("name", "=", nameArr, true);
