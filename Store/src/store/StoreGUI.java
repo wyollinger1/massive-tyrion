@@ -164,6 +164,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		custLogout.addActionListener(this);
 		custLogout.setToolTipText("Log out of system, return to Search screen.");
 		
+		
 		// creates a label for the search field
 		JLabel searchLabel = new JLabel("Search");
 
@@ -688,9 +689,10 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 					tabs.addTab("Manager", managerPanel);
 					tabs.remove(search); // login
 				}
-				else {
+				else if (user instanceof Customer){
 					search.add(custLogout);
 					search.remove(loginButton);
+					customerCredit = new JLabel("Balance: $" + user.getBalance());
 					search.add(customerCredit);
 				}
 				JOptionPane.showMessageDialog(this, "Welcome Back!");
@@ -836,16 +838,17 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 
 		}
 		// Handle customer logout button
-		if (e.getSource() == custLogout) // if custoemr logout button is pressed
+		if (e.getSource() == custLogout) // if customer logout button is pressed
 		{
 			pswInt = JOptionPane.showConfirmDialog(null, null,
 					"Are you sure you want to log out?",
 					JOptionPane.YES_NO_OPTION);
 
-			if (pswInt == JOptionPane.YES_OPTION) // prompts the custoemr to
-			{ // to make sure they really
+			if (pswInt == JOptionPane.YES_OPTION) // prompts the customer to
+			{ // to make sure they really want to logout
 				search.add(loginButton);
 				search.remove(custLogout);
+				search.remove(customerCredit);
 				
 			}
 
