@@ -880,16 +880,37 @@ public class DBIO {
 		sb.addIntCondition("uId", "=", new Integer[]{uId}, true);
 		rs=sb.executeSelect(con);
 		while(rs.next()){
-			
+			orders.add(new Order(rs.getInt("mId"), rs.getInt("numSold"), new Date())); //TODO Update SQL Table to have a date
 		}
 		}catch(SQLException sqlE){
-			
+			return null;
 		}catch(Exception e){
-			
+			return null;
 		}
-		return null;
+		return orders.toArray(new Order[0]);
 	}
+	/**
+	 * Get the purchase order history for a user.
+	 * 
+	 * @param uId Integer id of the user
+	 * @return	Order array holding all the customers past purchases
+	 */
 	public static Order[] getOrderHistory(int uId){
-		return null;
+		SelectBuilder sb = DBIO.getSelectBuilder(new String[]{"*"}, "CART");
+		ResultSet rs;
+		ArrayList<Order> orders = new ArrayList<Order>();
+		
+		try{
+		sb.addIntCondition("uId", "=", new Integer[]{uId}, true);
+		rs=sb.executeSelect(con);
+		while(rs.next()){
+			orders.add(new Order(rs.getInt("mId"), rs.getInt("numSold"), rs.getDate("date")));
+		}
+		}catch(SQLException sqlE){
+			return null;
+		}catch(Exception e){
+			return null;
+		}
+		return orders.toArray(new Order[0]);
 	}
 }
