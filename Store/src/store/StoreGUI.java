@@ -633,7 +633,6 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 	 * Build the view tab
 	 */
 	protected void buildView() {
-		// TODO: build this -- Jared
 		String searchTypeStr = (String) searchType.getSelectedItem();
 		String mediaTypeStr = (String) mediaType.getSelectedItem();
 		GridBagLayout vLayout = (GridBagLayout) view.getLayout();
@@ -951,20 +950,11 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		}
 
 		// TODO: can we just make these three just one if statement
-		// if the user selects Albums
-		if (e.getSource() == mediaType && mediaType.getSelectedIndex() == 0) {
-			searchByText.setVisible(true);
-			searchType.setVisible(true);
-		}
-
-		// if user selects Movies
-		if (e.getSource() == mediaType && mediaType.getSelectedIndex() == 1) {
-			searchByText.setVisible(true);
-			searchType.setVisible(true);
-		}
-
-		// if user selects audiobooks
-		if (e.getSource() == mediaType && mediaType.getSelectedIndex() == 2) {
+		// if the user selects Albums, Movies, or Audiobooks
+		if (e.getSource() == mediaType && 
+				mediaType.getSelectedIndex() == 0 ||
+				mediaType.getSelectedIndex() ==1 ||
+				mediaType.getSelectedIndex() ==2) {
 			searchByText.setVisible(true);
 			searchType.setVisible(true);
 		}
