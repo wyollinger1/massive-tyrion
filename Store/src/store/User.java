@@ -146,6 +146,9 @@ public class User {
 		} else {
 			System.out.println("Not enough money"); // item is not sold
 		}
+		//Refresh history and shoppingcart
+		this.shoppingCart = DBIO.getShoppingCart(this.ID);
+		this.history = DBIO.getOrderHistory(this.ID);
 		return purchased > 0;
 	}
 

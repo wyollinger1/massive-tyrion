@@ -708,7 +708,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 	 * Add a media object functionality.
 	 */
 	private void addMedia() {
-
+		//TODO:implement this
 	}
 
 	/**

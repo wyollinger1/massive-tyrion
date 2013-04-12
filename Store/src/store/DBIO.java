@@ -13,6 +13,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.sql.Savepoint;
 import java.sql.Statement;
 import java.sql.DatabaseMetaData;
@@ -384,7 +385,7 @@ public class DBIO {
 		double price = 0, balance = 0;
 		int numInStock;
 
-		String sBal = "SELECT balance FROM Inventory WHERE uId=?";
+		String sBal = "SELECT balance FROM User WHERE uId=?";
 		String sInv = "SELECT price, numInStock FROM Inventory WHERE mId=?";
 
 		// Tests done in Java Transaction (does this cause it to be inefficient?
@@ -407,21 +408,22 @@ public class DBIO {
 			insSales = con.prepareStatement(upSales);
 
 			con.setAutoCommit(false);
-			Savepoint save = con.setSavepoint();
+			System.out.println(con.getAutoCommit());
+			//Savepoint save = con.setSavepoint(); SQLite does not support savepoints
 
 			ResultSet rs;
 
 			// Prepare getBal and call
 			getBal.setInt(1, cust.getID());
 			rs = getBal.executeQuery();
-			rs.first();
+			rs.next();
 			balance = rs.getDouble("balance");
 			rs.close();
 
 			// Prepare getInv and call
 			getInv.setInt(1, mObj.getId());
 			rs = getInv.executeQuery();
-			rs.first();
+			rs.next();
 			price = rs.getDouble("price");
 			numInStock = rs.getInt("numInStock");
 			rs.close();
@@ -448,12 +450,21 @@ public class DBIO {
 			// If customer doesn't have enough money or there aren't that many
 			// in stock rollback
 			if ((num * price) > balance || numInStock < num) {
-				con.rollback(save);
+				con.rollback();
 				numRows = -1;
+			}else{
+				con.commit();	
 			}
-			con.commit();
 
-		} catch (SQLException sqlE) {
+		}catch (SQLException sqlE) {
+			if(con!=null){
+				try{
+					con.rollback();
+				}catch(SQLException ignore){
+					
+				}
+			}
+			
 			numRows = -1;
 		} finally {
 			// Try and close prepared statements, ignoring any exceptions
@@ -482,6 +493,13 @@ public class DBIO {
 					insSales.close();
 				} catch (SQLException ignore) {
 				}
+			if(con != null){
+				try{
+					con.setAutoCommit(true);
+				}catch(SQLException ignore){
+					
+				}
+			}
 
 		}
 		return numRows;
@@ -551,8 +569,6 @@ public class DBIO {
 			name = results.getString("name");
 			duration = results.getInt("duration");
 			genre = results.getString("genre");
-			numSold = results.getInt("numInStock"); // TODO: This is just plain
-													// wrong
 			price = results.getDouble("price");
 			numRating = results.getInt("numRating");
 			avgRating = results.getDouble("avgRating");
