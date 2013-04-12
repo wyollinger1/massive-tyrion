@@ -95,17 +95,14 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 	private HashMap<JButton, Media> viewButtons;
 
 	// Current logged in user
-	User user;
+	private User user;
 
-	// MANAGER LOG IN
-	private String managerPsw;
-	private String psw;
+	// MANAGER-only LOG IN
 	private int pswInt;
 	private JPasswordField passField;
 	private boolean isManager;
 
-	// CUSTOMER LOG IN (ASSUMING ALL CUSTOMERS HAVE ID == '1'(for now)
-	private User curUser;
+	// User (Customer and Manager) LOG IN
 	private int custPswInt;
 	private JPanel custPanel;
 	private JTextField custUserField;
@@ -125,13 +122,13 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 	public StoreGUI() {
 		super("Store GUI");
 		// TODO: Debug only put in log in eventually
-		user = new Customer();
+
 		DBIO.init();
 		DBIO.setDb("src/store/Store.sqlite");
-		managerPsw = "password"; // temporary password
+
+		user = null;
 		isManager = false;
-		//custLoginID = 1; // temporary customer log-in ID TODO: remove
-		curUser = null;
+
 		tabs = new JTabbedPane();
 
 		// 4 panels are created
@@ -146,12 +143,10 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		addMediaPanel = new JPanel(new GridLayout(12, 2));
 		removeMediaPanel = new JPanel(new GridLayout(12, 2));
 		checkItemPanel = new JPanel(new GridLayout(12, 2));
+		
+		// placeholder media type array TODO: grab these from database
+		medTypeArray = new String[] { "Albums", "Movies", "Audiobooks" }; 
 
-		// PLACEHOLDER DATABASE
-		medTypeArray = new String[] { "Albums", "Movies", "Audiobooks" }; // placeholder
-																			// media
-																			// type
-																			// array
 
 		searchTypeArray = new String[] { "Genre", "Artist", "Producer",
 				"Author", "Item Name" };
@@ -163,7 +158,6 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 
 		audiobookGenreArray = new String[] { "Action/Adventure", "Horror",
 				"Romance", "Sci-Fi" };
-
 		// creates the welcome label
 		welcomeLabel = new JLabel("Welcome to our Media Store!");
 		welcomeLabel.setHorizontalAlignment(JLabel.CENTER);
@@ -174,14 +168,6 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		loginButton = new JButton("Login");
 		loginButton.setHorizontalAlignment(JButton.CENTER);
 		loginButton.addActionListener(this);
-
-		// set up the manager login button TODO: remove as now just one loginButton
-	/*	mngrLoginButton = new JButton("Manager Login");
-		Border emptyBorder = BorderFactory.createEmptyBorder();
-		mngrLoginButton.setBorder(emptyBorder);
-		mngrLoginButton.setForeground(Color.GRAY);
-		mngrLoginButton.setHorizontalAlignment(JButton.CENTER);
-		mngrLoginButton.addActionListener(this);*/
 
 		// creates a label for the search field
 		JLabel searchLabel = new JLabel("Search");
@@ -267,7 +253,6 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 
 		search.add(go); // adds the go button to the search panel
 		search.add(loginButton); // add the customer login button
-	//	search.add(mngrLoginButton); // add the manager login button TODO: remove
 
 		tabs.addTab("Search", search);
 
@@ -445,10 +430,10 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 
 		// Customer info panel
 		buildCustInfo();
-		
+
 		// Customer Login Panel (used in dialog)
 		buildCustLogin();
-		
+
 		add(tabs);
 	}
 
@@ -655,7 +640,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		GridBagConstraints vConstraint = new GridBagConstraints();
 		JPanel itemSnippetPanel;
 
-		ArrayList<Media> searchResults = user.search(searchField.getText(),
+		ArrayList<Media> searchResults = User.search(searchField.getText(),
 				sTypeToEnum(searchTypeStr), mTypeToEnum(mediaTypeStr));
 		view.removeAll();
 		viewButtons = new HashMap<JButton, Media>();
@@ -674,11 +659,12 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		// TODO: remove debug
 		view.setBackground(Color.BLUE);
 	}
+
 	/**
 	 * Build customer login pane
 	 */
-	protected void buildCustLogin(){
-		custPanel  = new JPanel(new GridLayout(2,2,0,10));
+	protected void buildCustLogin() {
+		custPanel = new JPanel(new GridLayout(2, 2, 0, 10));
 		custUserField = new JTextField(10);
 		custPassField = new JPasswordField(10);
 		custPanel.add(new JLabel("Username:"));
@@ -687,6 +673,45 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		custPanel.add(new JLabel("Password:"));
 		custPanel.add(custPassField);
 	}
+
+	/**
+	 * Logs in functionality
+	 */
+	private void loginUser() {
+		custPswInt = JOptionPane.showConfirmDialog(null, custPanel,
+				"Enter your username and password to login.",
+				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+		char pass[] = custPassField.getPassword();
+		// If User clicks OK
+		if (custPswInt == JOptionPane.OK_OPTION) {
+			// If login successfully
+			if ((user = DBIO.login(custUserField.getText(), new String(pass))) != null) {
+				// Add Manger tabs if the user logged in is a manager
+				if (user instanceof Manager) {
+					isManager = true;
+					// Display the manager tab only on correct
+					tabs.addTab("Manager", managerPanel);
+					tabs.remove(search); // login
+				}
+				JOptionPane.showMessageDialog(this, "Welcome Back!");
+			} else {
+				JOptionPane.showMessageDialog(this, "Incorrect Password");
+			}
+		}
+		// ALWAYS reset text password for security
+		for (int i = 0; i < pass.length; i++) {
+			pass[i] = 0;
+		}
+	}
+
+	/**
+	 * Add a media object functionality.
+	 */
+	private void addMedia() {
+
+	}
+
 	/**
 	 * Helper to turn a human-readable search type string to an enum
 	 * 
@@ -757,59 +782,9 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		Integer uid; // Used in custInfoSubmit if
 		// Handle the manager login attempt
-		/*
-		if (e.getSource() == mngrLoginButton) // if manager button is pressed
-		{
-
-			passField = new JPasswordField();
-			pswInt = JOptionPane.showConfirmDialog(null, passField,
-					"Enter your Password", JOptionPane.OK_CANCEL_OPTION,
-					JOptionPane.PLAIN_MESSAGE);
-
-			if (pswInt == JOptionPane.OK_OPTION) {
-				psw = new String(passField.getPassword());
-				if (psw.equals(managerPsw)) {
-					JOptionPane.showMessageDialog(this, "Correct Password");
-					isManager = true;
-					tabs.addTab("Manager", managerPanel); // Display the manager
-															// tab only on
-															// correct
-					tabs.remove(search); // login
-				} else {
-					JOptionPane.showMessageDialog(this, "Incorrect Password");
-				}
-			}
-		}*/ //TODO: Make sure this ok to remove since now replicated in customer loggin
-
-		if (e.getSource() == loginButton) // if customer login button is
-												// pressed TODO:also logs in manager
-												// remove manager button and just call login
-		{
-			custPswInt = JOptionPane.showConfirmDialog(null, custPanel,
-					"Enter your username and password to login.",
-					JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-
-			char pass[]=custPassField.getPassword();
-			//If User clicks OK
-			if (custPswInt == JOptionPane.OK_OPTION) {
-				//If login successfully
-				if((curUser=DBIO.login(custUserField.getText(), new String(pass)))!=null){
-					//Add Manger tabs if the user logged in is a manager
-					if(curUser instanceof Manager){
-						isManager = true;
-						// Display the manager tab only on correct
-						tabs.addTab("Manager", managerPanel); 
-						tabs.remove(search); // login
-					}
-					JOptionPane.showMessageDialog(this, "Welcome Back!");
-				}else {
-					JOptionPane.showMessageDialog(this, "Incorrect Password");
-				}
-			}
-			//ALWAYS reset text password for security
-			for(int i=0; i<pass.length; i++){
-				pass[i]=0;
-			}
+		// if customer login button is pressed
+		if (e.getSource() == loginButton) {
+			loginUser();
 		}
 
 		// Handle the mngrAdd button
@@ -864,18 +839,32 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 
 		// HANDLE ADDING A MEDIA OBJECT
 		if (e.getSource() == addButton) {
-			Media addedMedia = null;
-			addedMedia.creator = creatorText.getText();
-			addedMedia.name = newNameText.getText();
-			addedMedia.duration = Integer.parseInt(newDurationText.getText());
-			addedMedia.genre = newGenreText.getText();
-			addedMedia.price = Double.parseDouble(newPriceText.getText());
-			addedMedia.numRating = Integer.parseInt(newDefRateText.getText());
-			addedMedia.avgRating = Double.parseDouble(newAvgRateText.getText());
-			addedMedia.id = Integer.parseInt(newID.getText());
-
+			/*
+			 * Media addedMedia = null; addedMedia.creator =
+			 * creatorText.getText(); addedMedia.name = newNameText.getText();
+			 * addedMedia.duration =
+			 * Integer.parseInt(newDurationText.getText()); addedMedia.genre =
+			 * newGenreText.getText(); addedMedia.price =
+			 * Double.parseDouble(newPriceText.getText()); addedMedia.numRating
+			 * = Integer.parseInt(newDefRateText.getText());
+			 * addedMedia.avgRating =
+			 * Double.parseDouble(newAvgRateText.getText()); addedMedia.id =
+			 * Integer.parseInt(newID.getText());
+			 * 
+			 * if (user instanceof Manager) { ((Manager)
+			 * user).addMedia(addedMedia, 1); }
+			 */// TODO: this was obviously broken (null pointer)
+				// TODO:Assigning an id number should not happen -- should have
+				// two different add media pages
 			if (user instanceof Manager) {
-				((Manager) user).addMedia(addedMedia, 1);
+				((Manager) user).addMedia(
+						new Media(creatorText.getText(), newNameText.getText(),
+								Integer.parseInt(newDurationText.getText()),
+								newGenreText.getText(), 0, Double
+										.parseDouble(newPriceText.getText()),
+								Integer.parseInt(newDefRateText.getText()),
+								Double.parseDouble(newAvgRateText.getText()),
+								Integer.parseInt(newID.getText())), 1);
 			}
 
 		}
@@ -921,6 +910,8 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 
 		// HANDLE REMOVING A MEDIA OBJECT
 		if (e.getSource() == removeMediaButton) {
+			//TODO: Should be a search page with input number to remove and submit button
+			//TODO: Obviously broken null pointer
 			Media removedMedia = null;
 			removedMedia.id = Integer.parseInt(removeText1.getText());
 			int num = Integer.parseInt(removeText2.getText());
@@ -938,6 +929,8 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 
 		// HANDLE checkItemButton
 		if (e.getSource() == checkItemButton) {
+			//TODO: search for media obviously -- mixin some buttons maybe
+			//Or pass in next page to buildView() maybe???
 			Media checkMedia = null;
 
 			checkMedia.id = Integer.parseInt(checkItemText.getText());
@@ -985,6 +978,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 
 		}
 
+		//PURCHASE TIME
 		if (viewButtons != null && viewButtons.containsKey(e.getSource())) {
 			mediaObj = viewButtons.get(e.getSource());
 			purchase.removeAll();
@@ -1027,6 +1021,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 			tabs.remove(purchase);
 		}
 
+		//RATE
 		if (e.getSource() == submit) {
 			rated = "Rated: " + rating;
 			user.rateMedia(mediaObj, rating);
