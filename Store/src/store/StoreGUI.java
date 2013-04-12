@@ -70,7 +70,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 	private JButton clearButton;
 	private JButton back1Button;
 	private JButton searchCustInfo;
-	private JButton custLoginButton;
+	private JButton loginButton;
 	private JButton removeMediaButton;
 	private JButton back2Button;
 	private JButton clear2Button;
@@ -105,8 +105,10 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 	private boolean isManager;
 
 	// CUSTOMER LOG IN (ASSUMING ALL CUSTOMERS HAVE ID == '1'(for now)
-	private int custLoginID;
+	private User curUser;
 	private int custPswInt;
+	private JPanel custPanel;
+	private JTextField custUserField;
 	private JPasswordField custPassField;
 
 	// MEDIA
@@ -128,7 +130,8 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		DBIO.setDb("src/store/Store.sqlite");
 		managerPsw = "password"; // temporary password
 		isManager = false;
-		custLoginID = 1; // temporary customer log-in ID
+		//custLoginID = 1; // temporary customer log-in ID TODO: remove
+		curUser = null;
 		tabs = new JTabbedPane();
 
 		// 4 panels are created
@@ -168,17 +171,17 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		welcomeLabel.setFont(new Font("", Font.BOLD, 24));
 
 		// set up the customer login button
-		custLoginButton = new JButton("Customer Login");
-		custLoginButton.setHorizontalAlignment(JButton.CENTER);
-		custLoginButton.addActionListener(this);
+		loginButton = new JButton("Login");
+		loginButton.setHorizontalAlignment(JButton.CENTER);
+		loginButton.addActionListener(this);
 
-		// set up the manager login button
-		mngrLoginButton = new JButton("Manager Login");
+		// set up the manager login button TODO: remove as now just one loginButton
+	/*	mngrLoginButton = new JButton("Manager Login");
 		Border emptyBorder = BorderFactory.createEmptyBorder();
 		mngrLoginButton.setBorder(emptyBorder);
 		mngrLoginButton.setForeground(Color.GRAY);
 		mngrLoginButton.setHorizontalAlignment(JButton.CENTER);
-		mngrLoginButton.addActionListener(this);
+		mngrLoginButton.addActionListener(this);*/
 
 		// creates a label for the search field
 		JLabel searchLabel = new JLabel("Search");
@@ -263,8 +266,8 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		search.add(searchType);
 
 		search.add(go); // adds the go button to the search panel
-		search.add(custLoginButton); // add the customer login button
-		search.add(mngrLoginButton); // add the manager login button
+		search.add(loginButton); // add the customer login button
+	//	search.add(mngrLoginButton); // add the manager login button TODO: remove
 
 		tabs.addTab("Search", search);
 
@@ -442,7 +445,10 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 
 		// Customer info panel
 		buildCustInfo();
-
+		
+		// Customer Login Panel (used in dialog)
+		buildCustLogin();
+		
 		add(tabs);
 	}
 
@@ -668,7 +674,19 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		// TODO: remove debug
 		view.setBackground(Color.BLUE);
 	}
-
+	/**
+	 * Build customer login pane
+	 */
+	protected void buildCustLogin(){
+		custPanel  = new JPanel(new GridLayout(2,2,0,10));
+		custUserField = new JTextField(10);
+		custPassField = new JPasswordField(10);
+		custPanel.add(new JLabel("Username:"));
+		custPanel.add(custUserField);
+		custPanel.add(Box.createVerticalStrut(10));
+		custPanel.add(new JLabel("Password:"));
+		custPanel.add(custPassField);
+	}
 	/**
 	 * Helper to turn a human-readable search type string to an enum
 	 * 
@@ -739,6 +757,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		Integer uid; // Used in custInfoSubmit if
 		// Handle the manager login attempt
+		/*
 		if (e.getSource() == mngrLoginButton) // if manager button is pressed
 		{
 
@@ -760,24 +779,36 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 					JOptionPane.showMessageDialog(this, "Incorrect Password");
 				}
 			}
-		}
+		}*/ //TODO: Make sure this ok to remove since now replicated in customer loggin
 
-		if (e.getSource() == custLoginButton) // if customer login button is
-												// pressed
+		if (e.getSource() == loginButton) // if customer login button is
+												// pressed TODO:also logs in manager
+												// remove manager button and just call login
 		{
-			custPassField = new JPasswordField();
-			custPswInt = JOptionPane.showConfirmDialog(null, custPassField,
-					"Enter your Personal ID number to login.",
+			custPswInt = JOptionPane.showConfirmDialog(null, custPanel,
+					"Enter your username and password to login.",
 					JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
+			char pass[]=custPassField.getPassword();
+			//If User clicks OK
 			if (custPswInt == JOptionPane.OK_OPTION) {
-				if (custLoginID == Integer.parseInt(custPassField.getText())) {
+				//If login successfully
+				if((curUser=(Customer)DBIO.login(custUserField.getText(), new String(pass)))!=null){
+					//Add Manger tabs if the user logged in is a manager
+					if(curUser instanceof Manager){
+						isManager = true;
+						// Display the manager tab only on correct
+						tabs.addTab("Manager", managerPanel); 
+						tabs.remove(search); // login
+					}
 					JOptionPane.showMessageDialog(this, "Welcome Back!");
-					mngrLoginButton.setVisible(false);
-
-				} else {
+				}else {
 					JOptionPane.showMessageDialog(this, "Incorrect Password");
 				}
+			}
+			//ALWAYS reset text password for security
+			for(int i=0; i<pass.length; i++){
+				pass[i]=0;
 			}
 		}
 
