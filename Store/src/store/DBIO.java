@@ -1,4 +1,5 @@
 package store;
+
 /**
  * Name: Jared Bean, Josh Thrush
  * Section: 1
@@ -36,69 +37,84 @@ public class DBIO {
 																// url's
 	private static Connection con;
 	private static Statement stmnt;
-	
-	//Schema for validation checking
+
+	// Schema for validation checking
 	/**
 	 * Enum of valid media type values.
+	 * 
 	 * @author jbean
-	 *
+	 * 
 	 */
-	public static enum Types { 
+	public static enum Types {
 		ALBUM(0), AUDIOBOOK(1), MOVIE(2);
 		private int index;
-		private Types(int index){
-			this.index=index;
+
+		private Types(int index) {
+			this.index = index;
 		}
-		public int getIndex(){
+
+		public int getIndex() {
 			return this.index;
 		}
 	};
-	
-	//Array of legitimate database media type values
-	private static String [] mediaNames = {"album", "book", "movie" }; 
+
+	// Array of legitimate database media type values
+	private static String[] mediaNames = { "album", "book", "movie" };
+
 	/**
 	 * Enum of valid inventory fields a user can search on
+	 * 
 	 * @author jbean
-	 *
+	 * 
 	 */
 	public static enum SearchField {
 		NAME(0), GENRE(1), CREATOR(2);
 		private int index;
-		private SearchField(int index){
-			this.index=index;
+
+		private SearchField(int index) {
+			this.index = index;
 		}
-		public int getIndex(){
+
+		public int getIndex() {
 			return this.index;
 		}
 	}
-	//Array of legitimate database column names we can search on in the Inventory table
-	private static String [] searchColNames = {"name", "genre", "creator"};
+
+	// Array of legitimate database column names we can search on in the
+	// Inventory table
+	private static String[] searchColNames = { "name", "genre", "creator" };
+
 	/**
 	 * Helper to get media type name from enum
-	 * @param type enum value to transform into a legitmate database media type value
+	 * 
+	 * @param type
+	 *            enum value to transform into a legitmate database media type
+	 *            value
 	 * @return String media type value or null if media type does not exist
 	 */
-	private static String enumToType(Types type){
-		if(type.getIndex()<mediaNames.length){
+	private static String enumToType(Types type) {
+		if (type.getIndex() < mediaNames.length) {
 			return mediaNames[type.getIndex()];
-		}
-		else{
+		} else {
 			return null;
 		}
 	}
+
 	/**
 	 * Helper to get column name from enum
-	 * @param column enum value that has the column index of searchColNames
+	 * 
+	 * @param column
+	 *            enum value that has the column index of searchColNames
 	 * @return String column name or null if column does not exist
 	 */
-	private static String enumToCol(SearchField column){
-		if(column.getIndex()<searchColNames.length){
+	private static String enumToCol(SearchField column) {
+		if (column.getIndex() < searchColNames.length) {
 			return searchColNames[column.getIndex()];
-		}
-		else{
+		} else {
 			return null;
 		}
 	}
+
 	/**
 	 * Initializes static class with the SQLite JDBC driver. TODO Docs claim
 	 * Class.forName() is no longer necessary ... which is all this init does
@@ -106,13 +122,14 @@ public class DBIO {
 	 * @returns true on success and false otherwise
 	 */
 	public static boolean init() {
-		try{
+		try {
 			Class.forName(driverName);
-		}catch(ClassNotFoundException ignore){
+		} catch (ClassNotFoundException ignore) {
 			return false;
 		}
 		return true;
 	}
+
 	/**
 	 * Set the current working database.
 	 * 
@@ -126,9 +143,9 @@ public class DBIO {
 			System.err.println(jdbcUrlPre + dbUrl);
 			con = DriverManager.getConnection(jdbcUrlPre + dbUrl);
 			try {
-				
+
 				stmnt = con.createStatement();
-				
+
 			} catch (SQLException sqlE) {
 				stmnt = null;
 				con.close();
@@ -140,20 +157,22 @@ public class DBIO {
 			return false;
 		}
 	}
-	public static boolean isConnected(){
-		try{
-		if(con!=null){
-			if(!con.isClosed()){
-				return true;
+
+	public static boolean isConnected() {
+		try {
+			if (con != null) {
+				if (!con.isClosed()) {
+					return true;
+				}
+				return false;
+			} else {
+				return false;
 			}
-			return false;
-		}else{
-			return false;
-		}
-		}catch(SQLException e){
+		} catch (SQLException e) {
 			return false;
 		}
 	}
+
 	/**
 	 * Removes the num number of media object from the inventory.
 	 * 
@@ -186,45 +205,54 @@ public class DBIO {
 	 */
 	public static int add(int mId, int num) {
 		int isSuccess = 0;
-		String upExist="UPDATE Inventory SET numInStock =(SELECT numInStock FROM Inventory WHERE mId=?)+? WHERE mId=?";
+		String upExist = "UPDATE Inventory SET numInStock =(SELECT numInStock FROM Inventory WHERE mId=?)+? WHERE mId=?";
 		PreparedStatement upInv = null;
 		try {
-			upInv=con.prepareStatement(upExist);
+			upInv = con.prepareStatement(upExist);
 			upInv.setInt(1, mId);
 			upInv.setInt(2, num);
 			upInv.setInt(3, mId);
 			upInv.executeUpdate();
 		} catch (SQLException sqlE) {
-			isSuccess=-1;
-		}finally{
-			//Try to close the statement but ignore any exceptions
-			if(upInv!=null)try{upInv.close();}catch(SQLException ignore){} 
+			isSuccess = -1;
+		} finally {
+			// Try to close the statement but ignore any exceptions
+			if (upInv != null)
+				try {
+					upInv.close();
+				} catch (SQLException ignore) {
+				}
 		}
 		return isSuccess;
 	}
+
 	/**
 	 * Either adds a number of existing media objects to the number in stock or
-	 * inserts a new media object into the inventory and refreshes the media object 
-	 * with its new id number.
-	 * @param mObj Media object to add, id of zero if new
-	 * @param type Type of object to add 
-	 * @param num Number to add to inventory
+	 * inserts a new media object into the inventory and refreshes the media
+	 * object with its new id number.
+	 * 
+	 * @param mObj
+	 *            Media object to add, id of zero if new
+	 * @param type
+	 *            Type of object to add
+	 * @param num
+	 *            Number to add to inventory
 	 * @return refreshed media object or null on error
 	 */
-	public static Media add(Media mObj, DBIO.Types typeEnum, int num){
+	public static Media add(Media mObj, DBIO.Types typeEnum, int num) {
 		String insMedia = "INSERT INTO Inventory (creator, name, duration, genre, numInStock, price, type)"
 				+ "VALUES(?, ?, ?, ?, ?, ?, ?)";
 		String selMid = "SELECT mId FROM Inventory WHERE creator=? AND name=? AND duration=? AND price=? AND type=? ORDER BY mId DESC";
-		PreparedStatement insStmnt=null;
+		PreparedStatement insStmnt = null;
 		PreparedStatement selId = null;
 		ResultSet rs;
-		Media retVal=null;
+		Media retVal = null;
 		String type = enumToType(typeEnum);
-		try{
-			if(mObj.getId()==0){
+		try {
+			if (mObj.getId() == 0) {
 				con.setAutoCommit(false);
-				//Prepare the Insert statement
-				insStmnt=con.prepareStatement(insMedia);
+				// Prepare the Insert statement
+				insStmnt = con.prepareStatement(insMedia);
 				insStmnt.setString(1, mObj.getCreator());
 				insStmnt.setString(2, mObj.getName());
 				insStmnt.setInt(3, mObj.getDuration());
@@ -232,11 +260,11 @@ public class DBIO {
 				insStmnt.setInt(5, num);
 				insStmnt.setDouble(6, mObj.getPrice());
 				insStmnt.setString(7, type);
-				
+
 				insStmnt.executeUpdate();
-				
-				//Prepare the select statement with same vals
-				selId=con.prepareStatement(selMid);
+
+				// Prepare the select statement with same vals
+				selId = con.prepareStatement(selMid);
 				selId.setString(1, mObj.getCreator());
 				selId.setString(2, mObj.getName());
 				selId.setInt(3, mObj.getDuration());
@@ -244,35 +272,50 @@ public class DBIO {
 				selId.setInt(5, num);
 				selId.setDouble(6, mObj.getPrice());
 				selId.setString(7, type);
-				
-				//Get the newly inserted media object
+
+				// Get the newly inserted media object
 				rs = selId.executeQuery();
-				if(rs.first()){
-					retVal=	DBIO.getMedia(rs.getInt("mId"));
-				}else{
+				if (rs.first()) {
+					retVal = DBIO.getMedia(rs.getInt("mId"));
+				} else {
 					throw new SQLException("Couldn't get inserted media");
 				}
 				con.commit();
-			}else{
-				//If it already has a non-zero mId we can use the simpler add
+			} else {
+				// If it already has a non-zero mId we can use the simpler add
 				DBIO.add(mObj.getId(), num);
 			}
-		}catch(SQLException sqlE){
-			//Rollback query if we have any problems
-			if(con!=null){
+		} catch (SQLException sqlE) {
+			// Rollback query if we have any problems
+			if (con != null) {
 				try {
 					con.rollback();
-				} catch (SQLException ignore) {}
+				} catch (SQLException ignore) {
+				}
 			}
-			retVal=null;
-		}finally{
-			//Try to close things and put things back as we found them
-			if (insStmnt!=null){try{insStmnt.close();} catch(SQLException ignore){}}
-			if (selId!=null){try{selId.close();} catch(SQLException ignore){}}
-			try{con.setAutoCommit(true);}catch(SQLException ignore){}
+			retVal = null;
+		} finally {
+			// Try to close things and put things back as we found them
+			if (insStmnt != null) {
+				try {
+					insStmnt.close();
+				} catch (SQLException ignore) {
+				}
+			}
+			if (selId != null) {
+				try {
+					selId.close();
+				} catch (SQLException ignore) {
+				}
+			}
+			try {
+				con.setAutoCommit(true);
+			} catch (SQLException ignore) {
+			}
 		}
 		return retVal;
 	}
+
 	/**
 	 * Manager method to update/manipulate item's descriptive data. Note:
 	 * ratings data and number in stock have separate manipulation functions.
@@ -465,11 +508,11 @@ public class DBIO {
 			sb.addIntCondition("mId", "=", condArr, true);
 
 			results = executeQuery(sb);
-			mObjs =result2Media(results);
-			if(mObjs!=null && !mObjs.isEmpty()){
+			mObjs = result2Media(results);
+			if (mObjs != null && !mObjs.isEmpty()) {
 				mObj = mObjs.get(0);
-			}else{
-				mObj=null;
+			} else {
+				mObj = null;
 			}
 		} catch (SQLException sqlE) {
 			mObj = null;
@@ -498,11 +541,11 @@ public class DBIO {
 		double price, avgRating;
 		String creator, name, genre, type;
 		ArrayList<Media> mediaObjs = new ArrayList<Media>();
-		//can handle null input
-		if(results==null){
+		// can handle null input
+		if (results == null) {
 			return null;
 		}
-		while(results.next()){
+		while (results.next()) {
 			mId = results.getInt("mId");
 			creator = results.getString("creator");
 			name = results.getString("name");
@@ -527,7 +570,7 @@ public class DBIO {
 				mediaObjs.add(new Media(creator, name, duration, genre,
 						numSold, price, numRating, avgRating, mId));
 			}
-		} 
+		}
 		return mediaObjs;
 	}
 
@@ -601,168 +644,206 @@ public class DBIO {
 		}
 		return rs;
 	}
+
 	/**
 	 * Gets the total sales of the store.
+	 * 
 	 * @return Double value of total sales of the store, NaN on error.
 	 */
-	public static double getTotalSales(){
-		String [] cols = {"numSold", "curPrice"};
+	public static double getTotalSales() {
+		String[] cols = { "numSold", "curPrice" };
 		SelectBuilder sales = DBIO.getSelectBuilder(cols, "Inventory");
-		ResultSet allSales=null;
-		double totalSales=0;
-		try{
-			allSales=sales.executeSelect(con);
-			while(allSales.next()){
+		ResultSet allSales = null;
+		double totalSales = 0;
+		try {
+			allSales = sales.executeSelect(con);
+			while (allSales.next()) {
 				int numSold = allSales.getInt("numSold");
 				double price = allSales.getInt("curPrice");
-				totalSales+= numSold*price;
+				totalSales += numSold * price;
 			}
-		}catch(SQLException sqlE){
-			totalSales=Double.NaN;
-		}finally{
-			if (allSales!=null){try{allSales.close();}catch(SQLException ignore){}}
+		} catch (SQLException sqlE) {
+			totalSales = Double.NaN;
+		} finally {
+			if (allSales != null) {
+				try {
+					allSales.close();
+				} catch (SQLException ignore) {
+				}
+			}
 		}
 		return totalSales;
 	}
+
 	/**
 	 * Search's a field in inventory for a string, filtering by a media type.
-	 * @param searchStr String to match on -- searches *searchStr* or in SQL LIKE %searchStr%
-	 * @param searchField String name of field to match on
-	 * @param mediaType String name of mediaType to filter on
+	 * 
+	 * @param searchStr
+	 *            String to match on -- searches *searchStr* or in SQL LIKE
+	 *            %searchStr%
+	 * @param searchField
+	 *            String name of field to match on
+	 * @param mediaType
+	 *            String name of mediaType to filter on
 	 * @return ArrayList of Media objects or null on error
 	 */
-	public static ArrayList<Media> searchInventory(String searchStr, SearchField searchField, Types mediaType){
+	public static ArrayList<Media> searchInventory(String searchStr,
+			SearchField searchField, Types mediaType) {
 		String searchColName = enumToCol(searchField);
-		SelectBuilder sbInv=DBIO.search(searchStr, searchColName, "Inventory");
+		SelectBuilder sbInv = DBIO
+				.search(searchStr, searchColName, "Inventory");
 		String type = enumToType(mediaType);
-		String [] typeCond={type};
-		
-		
-		if(sbInv!=null && type!=null){
-			try{
+		String[] typeCond = { type };
+
+		if (sbInv != null && type != null) {
+			try {
 				sbInv.addStringCondition("type", "=", typeCond, true);
 				return result2Media(sbInv.executeSelect(con));
-			}catch(SQLException sqlE){
+			} catch (SQLException sqlE) {
 				return null;
-			}catch(Exception e){
+			} catch (Exception e) {
 				return null;
 			}
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Queries the specific table for the pattern on the table on a specific media type if that makes sense on this context.
-	 * @param searchStr	String pattern to match on
-	 * @param searchField String name of column name to search on
-	 * @param tableName String name of table to search on
+	 * Queries the specific table for the pattern on the table on a specific
+	 * media type if that makes sense on this context.
+	 * 
+	 * @param searchStr
+	 *            String pattern to match on
+	 * @param searchField
+	 *            String name of column name to search on
+	 * @param tableName
+	 *            String name of table to search on
 	 * @return SelectBuilder with search condition applied to it.
 	 */
-	private static SelectBuilder search(String searchStr, String searchColName, String tableName){
-		String [] cols = {"*"};
-		String [] searchCond = {"%"+searchStr+"%"}; //SelectBuilder needs it as an array
-		
-		SelectBuilder sb = DBIO.getSelectBuilder(cols,	 tableName);
-		if(searchColName!=null){
-			try{
+	private static SelectBuilder search(String searchStr, String searchColName,
+			String tableName) {
+		String[] cols = { "*" };
+		String[] searchCond = { "%" + searchStr + "%" }; // SelectBuilder needs
+															// it as an array
+
+		SelectBuilder sb = DBIO.getSelectBuilder(cols, tableName);
+		if (searchColName != null) {
+			try {
 				sb.addStringCondition(searchColName, "LIKE", searchCond, true);
-			}catch(SQLException sqlE){
+			} catch (SQLException sqlE) {
 				return null;
-			}catch(Exception e){
+			} catch (Exception e) {
 				return null;
 			}
-		}else{
+		} else {
 			return null;
 		}
 		return sb;
 	}
+
 	/**
-	 * Logs in user and returns the user which is really either a Customer or Manager. 
-	 * @param name String name of user to log in
-	 * @param password String password of user to log in
+	 * Logs in user and returns the user which is really either a Customer or
+	 * Manager.
+	 * 
+	 * @param name
+	 *            String name of user to log in
+	 * @param password
+	 *            String password of user to log in
 	 * @return
 	 */
-	public static User login(String name, String password){
-		String [] cols = {"uId", "name", "balance", "isManager"};
-		String [] nameArr = {name};
-		String [] passArr = {password};
+	public static User login(String name, String password) {
+		String[] cols = { "uId", "name", "balance", "isManager" };
+		String[] nameArr = { name };
+		String[] passArr = { password };
 		ArrayList<User> users;
-		User loggedInUser=null;
+		User loggedInUser = null;
 		SelectBuilder sb = DBIO.getSelectBuilder(cols, "User");
-		try{
+		try {
 			sb.addStringCondition("name", "=", nameArr, true);
 			sb.addStringCondition("pass", "=", passArr, true);
-			
-			users=result2User(sb.executeSelect(con));
-			if(users!=null && users.size()>0){
+
+			users = result2User(sb.executeSelect(con));
+			if (users != null && users.size() > 0) {
 				loggedInUser = users.get(0);
 			}
-			
-		}catch(SQLException sqlE){
+
+		} catch (SQLException sqlE) {
 			return null;
-		}catch(Exception e){
+		} catch (Exception e) {
 			return null;
 		}
-		
+
 		return loggedInUser;
 	}
+
 	/**
 	 * Get a user for view by manager
-	 * @param uId Integer id of user to get
+	 * 
+	 * @param uId
+	 *            Integer id of user to get
 	 * @return User whose id is uId
 	 */
-	public static User getUser(int uId){
-		String [] cols = {"*"};
-		Integer [] conArr = {uId};
+	public static User getUser(int uId) {
+		String[] cols = { "*" };
+		Integer[] conArr = { uId };
 		SelectBuilder sb = DBIO.getSelectBuilder(cols, "User");
 		ArrayList<User> custs;
-		User user=null;
-		try{
+		User user = null;
+		try {
 			sb.addIntCondition("uId", "=", conArr, true);
 			System.err.println(con.isClosed());
-			custs=result2User(sb.executeSelect(con));
-			if(custs!=null && custs.size() >0){
-				user=custs.get(0);
+			custs = result2User(sb.executeSelect(con));
+			if (custs != null && custs.size() > 0) {
+				user = custs.get(0);
 			}
-		}catch(SQLException sqlE){
+		} catch (SQLException sqlE) {
 			return null;
-		}catch(Exception e){
+		} catch (Exception e) {
 			return null;
 		}
 		return user;
 	}
+
 	/**
-	 * Helper to turn a ResultSet into a ArrayList of User objects.
-	 * Each User object can be cast to either subtype - Customer or Manager
-	 * @param results ResultSet containing
-	 * @return	ArrayList of User objects each of which is one of the two subtypes - Customer or Manager; null on null ResultSet and empty list on empty ResultSet
-	 * @throws SQLException on database access error or ResultSet was closed
+	 * Helper to turn a ResultSet into a ArrayList of User objects. Each User
+	 * object can be cast to either subtype - Customer or Manager
+	 * 
+	 * @param results
+	 *            ResultSet containing
+	 * @return ArrayList of User objects each of which is one of the two
+	 *         subtypes - Customer or Manager; null on null ResultSet and empty
+	 *         list on empty ResultSet
+	 * @throws SQLException
+	 *             on database access error or ResultSet was closed
 	 */
 	private static ArrayList<User> result2User(ResultSet results)
 			throws SQLException {
 		int uId;
-		String name, city="State College", shoppingCart = "Doesn't make sense as a string", history="Also shouldn't be a string";
+		String name, city = "State College", shoppingCart = "Doesn't make sense as a string", history = "Also shouldn't be a string";
 		double balance;
 		boolean isManager;
 		ArrayList<User> userObjs = new ArrayList<User>();
-		//can handle null input
-		if(results==null){
+		// can handle null input
+		if (results == null) {
 			return null;
 		}
-		while(results.next()){
+		while (results.next()) {
 			uId = results.getInt("uId");
 			name = results.getString("name");
-			
+
 			balance = results.getDouble("balance");
 			isManager = results.getBoolean("isManager");
-			
-			//TODO: fix city, shoppingCart, and history - obviously we aren't going to be sending password back to the user
+
+			// TODO: fix city, shoppingCart, and history - obviously we aren't
+			// going to be sending password back to the user
 			if (isManager) {
-				userObjs.add(new Manager(uId, name, "", city, balance, shoppingCart, history));
+				userObjs.add(new Manager(uId, name, "", city, balance,
+						shoppingCart, history));
 			} else {
-				userObjs.add(new Customer(uId, name, "", city, balance, shoppingCart, history));
+				userObjs.add(new Customer(uId, name, "", city, balance,
+						shoppingCart, history));
 			}
-		} 
+		}
 		return userObjs;
 	}
 }

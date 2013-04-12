@@ -1,4 +1,5 @@
 package store;
+
 /**
  * Name: Tyler Madouse, Joshua Thrush, Jared Bean
  * Section: 1
@@ -10,10 +11,11 @@ package store;
  */
 
 /**
- * The manager class has default and initializer constructors which inherit from the user superclass.
- * The class also contains methods for adding media, removing media, getting customer info, getting sales for an item, and
- * getting the total sales for the media store.
- * The rest of the methods are inherited from the user superclass
+ * The manager class has default and initializer constructors which inherit from
+ * the user superclass. The class also contains methods for adding media,
+ * removing media, getting customer info, getting sales for an item, and getting
+ * the total sales for the media store. The rest of the methods are inherited
+ * from the user superclass
  * 
  * @author Tyler Madouse
  * @author Joshua Thrush
@@ -35,14 +37,14 @@ public class Manager extends User {
 	// and the number to add
 	public void addMedia(Media mediaObj, int num) {
 		DBIO.Types type;
-		if(mediaObj instanceof Album){
-			type=DBIO.Types.ALBUM;
-		}else if(mediaObj instanceof Audiobook){
-			type=DBIO.Types.AUDIOBOOK;
-		}else if(mediaObj instanceof Movie){
+		if (mediaObj instanceof Album) {
+			type = DBIO.Types.ALBUM;
+		} else if (mediaObj instanceof Audiobook) {
+			type = DBIO.Types.AUDIOBOOK;
+		} else if (mediaObj instanceof Movie) {
 			type = DBIO.Types.MOVIE;
-		}else{
-			type =DBIO.Types.ALBUM;
+		} else {
+			type = DBIO.Types.ALBUM;
 		}
 		DBIO.add(mediaObj, type, num);
 	}
