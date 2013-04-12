@@ -28,8 +28,8 @@ public class Manager extends User {
 	}
 
 	public Manager(int ID, String name, String password, String city,
-			double balance, String shoppingCart, String history) {
-		super(ID, name, password, city, balance, shoppingCart, history);
+			double balance) {
+		super(ID, name, password, city, balance);
 	}
 
 	// Adds media to store

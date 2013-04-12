@@ -28,8 +28,8 @@ public class Customer extends User {
 
 	// Initializer constructor- sets data members through user class
 	public Customer(int ID, String name, String password, String city,
-			double balance, String shoppingCart, String customerHistory) {
-		super(ID, name, password, city, balance, shoppingCart, customerHistory);
+			double balance) {
+		super(ID, name, password, city, balance);
 
 	}
 

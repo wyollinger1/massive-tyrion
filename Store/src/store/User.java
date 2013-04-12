@@ -28,9 +28,9 @@ public class User {
 	protected String name; // name of the user
 	protected String password; // user password
 	protected String city; // city where user lives
-	protected String shoppingCart; // user's current items up for purchase
+	protected Order[] shoppingCart; // user's current items up for purchase
 	protected double balance; // user credit
-	protected String history; // user purchase history
+	protected Order[] history; // user purchase history
 
 	// default constructor - sets all data members to blank or 0
 	public User() {
@@ -38,21 +38,21 @@ public class User {
 		name = "";
 		password = "";
 		city = "";
-		shoppingCart = "";
+		shoppingCart = null;
 		balance = 0.0;
-		history = "";
+		history = null;
 	}
 
 	// Initializer constructor - gets data members from the test driver
 	public User(int ID, String name, String password, String city,
-			double balance, String shoppingCart, String userHistory) {
+			double balance) {
 		this.ID = ID;
 		this.name = name;
 		this.password = password;
 		this.city = city;
 		this.balance = balance;
-		this.shoppingCart = shoppingCart;
-		this.history = userHistory;
+		this.shoppingCart = DBIO.getShoppingCart(this.ID);
+		this.history = DBIO.getOrderHistory(this.ID);
 	}
 
 	// Auto-generated setters and getters
@@ -88,12 +88,8 @@ public class User {
 		this.city = city;
 	}
 
-	public String getShoppingCart() {
+	public Order[] getShoppingCart() {
 		return shoppingCart;
-	}
-
-	public void setShoppingCart(String shoppingCart) {
-		this.shoppingCart = shoppingCart;
 	}
 
 	public double getBalance() {
@@ -104,12 +100,8 @@ public class User {
 		this.balance = balance;
 	}
 
-	public String getHistory() {
+	public Order[] getHistory() {
 		return history;
-	}
-
-	public void setHistory(String history) {
-		this.history = history;
 	}
 
 	/**

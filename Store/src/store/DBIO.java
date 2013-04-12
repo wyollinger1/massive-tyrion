@@ -847,7 +847,7 @@ public class DBIO {
 	private static ArrayList<User> result2User(ResultSet results)
 			throws SQLException {
 		int uId;
-		String name, city = "State College", shoppingCart = "Doesn't make sense as a string", history = "Also shouldn't be a string";
+		String name, city, shoppingCart = "Doesn't make sense as a string", history = "Also shouldn't be a string";
 		double balance;
 		boolean isManager;
 		ArrayList<User> userObjs = new ArrayList<User>();
@@ -858,20 +858,24 @@ public class DBIO {
 		while (results.next()) {
 			uId = results.getInt("uId");
 			name = results.getString("name");
-
+			city = results.getString("city");
 			balance = results.getDouble("balance");
 			isManager = results.getBoolean("isManager");
 
 			// TODO: fix city, shoppingCart, and history - obviously we aren't
 			// going to be sending password back to the user
 			if (isManager) {
-				userObjs.add(new Manager(uId, name, "", city, balance,
-						shoppingCart, history));
+				userObjs.add(new Manager(uId, name, "", city, balance));
 			} else {
-				userObjs.add(new Customer(uId, name, "", city, balance,
-						shoppingCart, history));
+				userObjs.add(new Customer(uId, name, "", city, balance));
 			}
 		}
 		return userObjs;
+	}
+	public static Order[] getShoppingCart(int uId){
+		return null;
+	}
+	public static Order[] getOrderHistory(int uId){
+		return null;
 	}
 }
