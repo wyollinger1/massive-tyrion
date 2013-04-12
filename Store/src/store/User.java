@@ -126,7 +126,7 @@ public class User {
 	 * @return ArrayList of Media obect results, an empty ArrayList is returned
 	 *         if there are none or there was an error
 	 */
-	public ArrayList<Media> search(String searchStr,
+	public static ArrayList<Media> search(String searchStr,
 			DBIO.SearchField searchField, DBIO.Types mediaType) {
 		ArrayList<Media> retVal = DBIO.searchInventory(searchStr, searchField,
 				mediaType);
