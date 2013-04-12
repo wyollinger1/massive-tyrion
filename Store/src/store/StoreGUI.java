@@ -114,15 +114,11 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 
 	// PLACEHOLDER DATABASE
 	private String[] medTypeArray;
-	private String[] albumGenreArray;
-	private String[] movieGenreArray;
-	private String[] audiobookGenreArray;
 	private String[] searchTypeArray;
 
 	public StoreGUI() {
 		super("Store GUI");
-		// TODO: Debug only put in log in eventually
-
+		
 		DBIO.init();
 		DBIO.setDb("src/store/Store.sqlite");
 
@@ -144,20 +140,12 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		removeMediaPanel = new JPanel(new GridLayout(12, 2));
 		checkItemPanel = new JPanel(new GridLayout(12, 2));
 		
-		// placeholder media type array TODO: grab these from database
+		//ComboBox arrays, neither of these will change so no db interaction needed
 		medTypeArray = new String[] { "Albums", "Movies", "Audiobooks" }; 
 
 
 		searchTypeArray = new String[] { "Genre", "Artist", "Producer",
 				"Author", "Item Name" };
-
-		albumGenreArray = new String[] { "Rock", "Hip-Hop", "Country", "Dance" };
-
-		movieGenreArray = new String[] { "Action/Adventure", "Comedy", "Drama",
-				"Horror" };
-
-		audiobookGenreArray = new String[] { "Action/Adventure", "Horror",
-				"Romance", "Sci-Fi" };
 		// creates the welcome label
 		welcomeLabel = new JLabel("Welcome to our Media Store!");
 		welcomeLabel.setHorizontalAlignment(JLabel.CENTER);
@@ -859,7 +847,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 				((Manager) user).addMedia(
 						new Media(creatorText.getText(), newNameText.getText(),
 								Integer.parseInt(newDurationText.getText()),
-								newGenreText.getText(), 0, Double
+								newGenreText.getText(), Double
 										.parseDouble(newPriceText.getText()),
 								Integer.parseInt(newDefRateText.getText()),
 								Double.parseDouble(newAvgRateText.getText()),
@@ -949,8 +937,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 			tabs.remove(checkItemPanel);
 		}
 
-		// TODO: can we just make these three just one if statement
-		// if the user selects Albums, Movies, or Audiobooks
+		// HANDLE mediaType combobox (for search page)
 		if (e.getSource() == mediaType && 
 				mediaType.getSelectedIndex() == 0 ||
 				mediaType.getSelectedIndex() ==1 ||
@@ -959,6 +946,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 			searchType.setVisible(true);
 		}
 
+		// HANDLE go button (search)
 		if (e.getSource() == go) {
 			buildView();
 			tabs.remove(search);
@@ -968,7 +956,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 
 		}
 
-		//PURCHASE TIME
+		//BUILD Purchase Panel
 		if (viewButtons != null && viewButtons.containsKey(e.getSource())) {
 			mediaObj = viewButtons.get(e.getSource());
 			purchase.removeAll();
@@ -991,7 +979,8 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 			repaint();
 
 		}
-
+		
+		// Purchase Item functionality
 		if (e.getSource() == purchaseItem) {
 			if (user.purchase(mediaObj, medType)) {
 				tabs.addTab("Rate", rate);
@@ -1004,7 +993,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 			}
 
 		}
-
+		//HANDLE Purchase page's goBack button
 		if (e.getSource() == goBack) {
 			tabs.addTab("View", view);
 			tabs.addTab("Search", search);
