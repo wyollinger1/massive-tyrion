@@ -227,7 +227,7 @@ public class SelectBuilder {
 			sqlString += this.columnArr[0];
 		}
 		for (int i = 1; i < this.columnArr.length; i++) {
-			sqlString += this.columnArr[i];
+			sqlString += ", "+this.columnArr[i];
 		}
 		// Table
 		sqlString += " FROM " + tableName + " ";
