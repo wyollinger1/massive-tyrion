@@ -559,16 +559,16 @@ public class DBIO {
 			type = results.getString("type");
 			if (type.equalsIgnoreCase("book")) {
 				mediaObjs.add(new Audiobook(creator, name, duration, genre,
-						numSold, price, numRating, avgRating, mId));
+						price, numRating, avgRating, mId));
 			} else if (type.equalsIgnoreCase("album")) {
 				mediaObjs.add(new Album(creator, name, duration, genre,
-						numSold, price, numRating, avgRating, mId));
+						price, numRating, avgRating, mId));
 			} else if (type.equalsIgnoreCase("movie")) {
 				mediaObjs.add(new Movie(creator, name, duration, genre,
-						numSold, price, numRating, avgRating, mId));
+						price, numRating, avgRating, mId));
 			} else {
 				mediaObjs.add(new Media(creator, name, duration, genre,
-						numSold, price, numRating, avgRating, mId));
+						price, numRating, avgRating, mId));
 			}
 		}
 		return mediaObjs;
@@ -634,8 +634,6 @@ public class DBIO {
 	 * @return ResultSet containing the results returned by the database
 	 */
 	public static ResultSet executeQuery(SelectBuilder sb) {
-		// TODO Take care of this thrown exception either here or in the
-		// SelectBuilder class
 		ResultSet rs;
 		try {
 			rs = sb.executeSelect(con);
@@ -741,6 +739,34 @@ public class DBIO {
 		return sb;
 	}
 
+	/*//TODO: remove as unneeded Code
+	public static ArrayList<ArrayList<String>> getGenres(){
+		ArrayList<ArrayList<String>> genres = new ArrayList<ArrayList<String>>();
+		String genre;
+		String type;
+		try{			
+			ResultSet rs=con.createStatement().executeQuery("SELECT genre, type FROM Inventory GROUP BY genre");
+			
+			for(int i=0; i<3; i++){
+				genres.add(new ArrayList<String>());
+			}
+			
+			while(rs.next()){
+				genre = rs.getString("genre");
+				type = rs.getString("type");
+				if(type.equalsIgnoreCase("Album")){
+					genres.get(0).add(genre);
+				}else if(type.equalsIgnoreCase("Movie")){
+					genres.get(1).add(genre);
+				}else if(type.equalsIgnoreCase("Book")){
+					genres.get(2).add(genre);
+				}
+			}
+		}catch(SQLException sqle){
+			return null;
+		}
+		return genres;
+	}*/
 	/**
 	 * Logs in user and returns the user which is really either a Customer or
 	 * Manager.
