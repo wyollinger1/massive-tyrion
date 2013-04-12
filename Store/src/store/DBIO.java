@@ -778,7 +778,7 @@ public class DBIO {
 	 * @return
 	 */
 	public static User login(String name, String password) {
-		String[] cols = { "uId", "name", "balance", "isManager" };
+		String[] cols = { "uId", "name", "balance", "isManager", "city" };
 		String[] nameArr = { name };
 		String[] passArr = { password };
 		ArrayList<User> users;
@@ -873,6 +873,20 @@ public class DBIO {
 		return userObjs;
 	}
 	public static Order[] getShoppingCart(int uId){
+		SelectBuilder sb = DBIO.getSelectBuilder(new String[]{"*"}, "CART");
+		ResultSet rs;
+		ArrayList<Order> orders = new ArrayList<Order>();
+		try{
+		sb.addIntCondition("uId", "=", new Integer[]{uId}, true);
+		rs=sb.executeSelect(con);
+		while(rs.next()){
+			
+		}
+		}catch(SQLException sqlE){
+			
+		}catch(Exception e){
+			
+		}
 		return null;
 	}
 	public static Order[] getOrderHistory(int uId){
