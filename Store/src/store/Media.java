@@ -40,8 +40,6 @@ public class Media {
 	 *            Integer duration in seconds
 	 * @param genre
 	 *            String name of genre
-	 * @param numSold
-	 *            Integer number of media objects sold in the store
 	 * @param price
 	 *            Price in dollars
 	 * @param numRating
@@ -51,8 +49,7 @@ public class Media {
 	 * @param id
 	 *            Integer unique id number
 	 */
-	// TODO: numSold is ignored change call
-	Media(String creator, String name, int duration, String genre, int numSold,
+	Media(String creator, String name, int duration, String genre,
 			double price, int numRating, double avgRating, int id) {
 		this.creator = creator;
 		this.name = name;
