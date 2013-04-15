@@ -285,6 +285,7 @@ public class DBIO {
 			} else {
 				// If it already has a non-zero mId we can use the simpler add
 				DBIO.add(mObj.getId(), num);
+				retVal = DBIO.getMedia(mObj.getId());
 			}
 		} catch (SQLException sqlE) {
 			// Rollback query if we have any problems

@@ -35,7 +35,7 @@ public class Manager extends User {
 	// Adds media to store
 	// Takes in a Media object: mediaObj
 	// and the number to add
-	public void addMedia(Media mediaObj, int num) {
+	public Media addMedia(Media mediaObj, int num) {
 		DBIO.Types type;
 		if (mediaObj instanceof Album) {
 			type = DBIO.Types.ALBUM;
@@ -46,7 +46,7 @@ public class Manager extends User {
 		} else {
 			type = DBIO.Types.ALBUM;
 		}
-		DBIO.add(mediaObj, type, num);
+		return DBIO.add(mediaObj, type, num);
 	}
 
 	// Removes media from store

@@ -1,5 +1,12 @@
 package servs;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Iterator;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
+
 import store.DBIO;
 import store.Media;
 
@@ -18,7 +25,7 @@ public class Util {
 				mObj.getGenre(), mObj.getPrice(), mObj.getAvgRating(),
 				mObj.getId());
 		}else{
-			return null;
+			return "{}";
 		}
 	}
 	/**
@@ -59,5 +66,24 @@ public class Util {
 		}else{
 			return null;
 		}
+	}
+	public static void closeRes(HttpServletResponse res, PrintWriter w){
+		w.flush();
+		w.close();
+		try{
+			res.flushBuffer();
+		}catch(IOException ignore){
+			//TODO:Maybe reset here
+		}
+	}
+	public static boolean validateParams(Map<String, String[]> params, String... args){
+		for(int i=0; i<args.length; i++){
+			if(params.containsKey(args[i]) && params.get(args[i]).length>0){
+				continue;
+			}else{
+				return false;
+			}
+		}
+		return true;
 	}
 }
