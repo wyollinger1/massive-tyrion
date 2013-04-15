@@ -35,6 +35,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 	private JLabel defaultRating;
 	private JLabel defaultAvgRating;
 	private JLabel newID;
+	private JLabel customerCredit;
 	private JLabel addType;
 	private JLabel addAmount;
 	private JLabel removeLabel;
@@ -57,6 +58,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 	private JButton mngrLoginButton;
 	private JButton viewItem;
 	private JButton purchaseItem;
+	private JButton custLogout;
 	private JLabel purchaseInfo;
 	private JButton searchAgain;
 	private JButton goBack;
@@ -156,7 +158,13 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		loginButton = new JButton("Login");
 		loginButton.setHorizontalAlignment(JButton.CENTER);
 		loginButton.addActionListener(this);
-
+		
+		// set up customer logout button
+		custLogout = new JButton("Logout");
+		custLogout.addActionListener(this);
+		custLogout.setToolTipText("Log out of system, return to Search screen.");
+		
+		
 		// creates a label for the search field
 		JLabel searchLabel = new JLabel("Search");
 
@@ -681,6 +689,12 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 					tabs.addTab("Manager", managerPanel);
 					tabs.remove(search); // login
 				}
+				else if (user instanceof Customer){
+					search.add(custLogout);
+					search.remove(loginButton);
+					customerCredit = new JLabel("Balance: $" + user.getBalance());
+					search.add(customerCredit);
+				}
 				JOptionPane.showMessageDialog(this, "Welcome Back!");
 			} else {
 				JOptionPane.showMessageDialog(this, "Incorrect Password");
@@ -823,7 +837,22 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 			}
 
 		}
+		// Handle customer logout button
+		if (e.getSource() == custLogout) // if customer logout button is pressed
+		{
+			pswInt = JOptionPane.showConfirmDialog(null, null,
+					"Are you sure you want to log out?",
+					JOptionPane.YES_NO_OPTION);
 
+			if (pswInt == JOptionPane.YES_OPTION) // prompts the customer to
+			{ // to make sure they really want to logout
+				search.add(loginButton);
+				search.remove(custLogout);
+				search.remove(customerCredit);
+				
+			}
+
+		}
 		// HANDLE ADDING A MEDIA OBJECT
 		if (e.getSource() == addButton) {
 			/*
