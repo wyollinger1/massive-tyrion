@@ -877,9 +877,7 @@ public class DBIO {
 			city = results.getString("city");
 			balance = results.getDouble("balance");
 			isManager = results.getBoolean("isManager");
-
-			// TODO: fix city, shoppingCart, and history - obviously we aren't
-			// going to be sending password back to the user
+			
 			if (isManager) {
 				userObjs.add(new Manager(uId, name, "", city, balance));
 			} else {
