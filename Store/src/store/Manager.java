@@ -52,8 +52,9 @@ public class Manager extends User {
 	// Removes media from store
 	// Takes in Media object: mediaObj
 	// and number of media objects to remove
-	public void deleteMedia(Media mediaObj, int num) {
+	public Media deleteMedia(Media mediaObj, int num) {
 		DBIO.remove(mediaObj.getId(), num);
+		return DBIO.getMedia(mediaObj.getId());
 	}
 
 	// Retrieve all information of any customer
