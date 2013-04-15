@@ -67,9 +67,9 @@ public class Login extends HttpServlet {
 				session.setAttribute("user", user);
 				session.setAttribute("isManager", isManager);
 				session.setAttribute("loggedIn", loggedIn);
-				resWrite.write(String.format("[{\"name\":%s,\"balance\":%.2f,"+
-				"\"id\":%d}]", user.getName(), user.getBalance(),
-				user.getID()));
+				resWrite.write(String.format("[{\"name\":\"%s\","+
+				"\"balance\":%.2f, \"id\":%d}]", user.getName(), 
+				user.getBalance(), user.getID()));
 				resWrite.flush();
 				resWrite.close();
 				response.flushBuffer();
