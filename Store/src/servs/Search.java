@@ -44,7 +44,7 @@ public class Search extends HttpServlet {
 		DBIO.SearchField sField=null;
 		String searchStr="";
 		String json="[]";
-		ArrayList<Media> results=null;
+		ArrayList<store.Media> results=null;
 		Map <String, String[]> paramMap=request.getParameterMap();
 		
 		//Going to return JSON so set header
@@ -67,7 +67,7 @@ public class Search extends HttpServlet {
 		if(mType!=null && sField!=null){
 			json="[";
 			results=Customer.search(searchStr, sField, mType);
-			for(Iterator<Media> iter=results.iterator(); iter.hasNext(); ){
+			for(Iterator<store.Media> iter=results.iterator(); iter.hasNext(); ){
 				json+=Util.mediaToJson(iter.next());
 				json+=",";
 			}
