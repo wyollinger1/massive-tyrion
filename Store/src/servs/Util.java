@@ -7,8 +7,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
-import store.DBIO;
 import store.Media;
+import store.*;
 
 public class Util {
 	/**
@@ -17,13 +17,33 @@ public class Util {
 	 * @return String JSON representation of the media object
 	 */
 	public  static String mediaToJson(Media mObj){
+		String type= "";
+		if(mObj instanceof Album){type="album";}
+		else if(mObj instanceof Audiobook){type="book";}
+		else if(mObj instanceof Movie){type="movie";}
+		
 		if(mObj!=null){
 			return String.format("{\"name\":\"%s\", \"duration\":%d, "+
-				"\"creator\":\"%s\", \"genre\":\"%s\", \"price\":%.2f, " +
-				"\"rating\":%.2f, \"id\":%d}",
+				"\"creator\":\"%s\", \"genre\":\"%s\", \"type\":\"%s\"," +
+				"\"price\":%.2f, \"rating\":%.2f, \"id\":%d}",
 				mObj.getName(), mObj.getDuration(), mObj.getCreator(),
-				mObj.getGenre(), mObj.getPrice(), mObj.getAvgRating(),
-				mObj.getId());
+				mObj.getGenre(), type, mObj.getPrice(), 
+				mObj.getAvgRating(), mObj.getId());
+		}else{
+			return "{}";
+		}
+	}
+	/**
+	 * Turns a media object into a JSON string.
+	 * @param mObj Media object to get the JSON string for
+	 * @return String JSON representation of the media object
+	 */
+	public  static String userToJson(store.User uObj){
+		if(uObj!=null){
+			return String.format("{\"name\":\"%s\", \"city\":%s, "+
+				"\"balance\":\"%.2f\", \"numOrders\":\"%d\", \"id\":%d}",
+				uObj.getName(), uObj.getcity(), uObj.getBalance(),
+				uObj.getHistory().length, uObj.getID());
 		}else{
 			return "{}";
 		}
