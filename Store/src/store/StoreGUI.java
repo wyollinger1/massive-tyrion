@@ -951,7 +951,6 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 			pswInt = JOptionPane.showConfirmDialog(null, null,
 					"Are you sure you want to log out?",
 					JOptionPane.YES_NO_OPTION);
-
 			if (pswInt == JOptionPane.YES_OPTION) // prompts the customer to
 			{ // to make sure they really want to logout
 				search.add(loginButton);
