@@ -82,7 +82,7 @@ public class Manager extends User {
 				+ " Password: %20s \n" + " City:	  %20s \n"
 				+ " Balance: %20f \n" + " Shopping Cart: %20s \n"
 				+ " History: %20s \n", this.ID, this.name, this.password,
-				this.city, this.balance, this.shoppingCart, this.history);
+				this.city, this.balance, User.ordersToString(this.shoppingCart), User.ordersToString(this.history));
 
 	}
 }

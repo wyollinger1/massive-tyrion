@@ -180,7 +180,22 @@ public class User {
 				+ "Password:%20s \n" + "City:%20s \n" + "Balance:%20f \n"
 				+ "Shopping Cart:%20s \n" + "History:%20s \n", this.ID,
 				this.name, this.password, this.city, this.balance,
-				this.shoppingCart, this.history);
+				User.ordersToString(this.shoppingCart), User.ordersToString(this.history));
 
+	}
+	/**
+	 * Utility function to turn an order array into a JSON-esque string representation
+	 * @param orders Array of orders create the string from
+	 * @return	String representation of the orders array
+	 */
+	public static String ordersToString(Order[] orders){
+		String retVal="[";
+		for(Order oObj : orders){
+			String.format("{\"media\":%d, \"numBought\":%d,"+
+					"\"date\":\"%s\"}", oObj.getMedia().getId(), oObj.getNumBought(),
+					oObj.getDate().toString());
+		}
+		retVal+="]";
+		return retVal;
 	}
 }
