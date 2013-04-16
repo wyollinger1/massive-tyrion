@@ -585,13 +585,13 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 			custInfoSubPanel.add(city);
 
 			// Customer History
-			JLabel hist = new JLabel("History: " + user.getHistory());
+			JLabel hist = new JLabel("History: " + String.format("%d", user.getHistory().length));
 			gbl.setConstraints(hist, c);
 			custInfoSubPanel.add(hist);
 
 			// Customer Shopping Cart
 			JLabel shpCrt = new JLabel("Shopping Cart: "
-					+ user.getShoppingCart());
+					+ String.format("%d", user.getShoppingCart().length));
 			gbl.setConstraints(shpCrt, c);
 			custInfoSubPanel.add(shpCrt);
 		} else {
