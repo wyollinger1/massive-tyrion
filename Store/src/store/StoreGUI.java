@@ -882,12 +882,17 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 			tabs.remove(addCheckPanel);
                 }
 
-                //HANDLE ADDING OLD MEDIA PANEL					
+              //HANDLE ADDING OLD MEDIA PANEL					
                 if (e.getSource() == addOldMediaButton)
                 {
-                    Media addOldMedia = null;
-			addOldMedia.id = Integer.parseInt(oldIDText.getText());
-			int num = Integer.parseInt(oldAmountText.getText());
+                    Media oldMedia = DBIO.getMedia(Integer.parseInt(oldIDText.getText()));
+                    
+                    if(user instanceof Manager)
+		    {
+                        ((Manager) user).addMedia(oldMedia,
+                                            Integer.parseInt(oldAmountText.getText()));
+                                        
+                    }
                 }
                 
                 if(e.getSource() == addOldMediaClear)
@@ -1033,17 +1038,18 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		}
 
 		// HANDLE REMOVING A MEDIA OBJECT
-		if (e.getSource() == removeMediaButton) {
-			//TODO: Should be a search page with input number to remove and submit button
-			//TODO: Obviously broken null pointer
-			Media removedMedia = null;
-			removedMedia.id = Integer.parseInt(removeText1.getText());
-			int num = Integer.parseInt(removeText2.getText());
+				if (e.getSource() == removeMediaButton) 
+			        {
+		                   
+		                    Media rmvMedia = DBIO.getMedia(Integer.parseInt(removeText1.getText()));
+		                    
+		                    if(user instanceof Manager)
+			            {
+		                        ((Manager) user).deleteMedia(rmvMedia,
+		                                            Integer.parseInt(removeText2.getText()));
 
-			if (user instanceof Manager) {
-				((Manager) user).deleteMedia(removedMedia, num);
-			}
-		}
+				    }
+		                }
 
 		// HANDLE THE CHECK ITEM SALES BUTTON : mngrPanel
 		if (e.getSource() == mngrChkSales) {
