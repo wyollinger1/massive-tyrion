@@ -112,7 +112,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 
 	// MEDIA
 	private Media mediaObj = DBIO.getMedia(4);
-	private String medType = "movie";
+	private int num = 1;
 
 	// PLACEHOLDER DATABASE
 	private String[] medTypeArray;
@@ -1011,7 +1011,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		
 		// Purchase Item functionality
 		if (e.getSource() == purchaseItem) {
-			if (user.purchase(mediaObj, medType)) {
+			if (user.purchase(mediaObj, num)) {
 				customerCredit = new JLabel("Balance: $" + user.getBalance());
 				tabs.addTab("Rate", rate);
 				tabs.remove(purchase);
