@@ -914,7 +914,7 @@ public class DBIO {
 	 * @return	Order array holding all the customers past purchases
 	 */
 	public static Order[] getOrderHistory(int uId){
-		SelectBuilder sb = DBIO.getSelectBuilder(new String[]{"*"}, "CART");
+		SelectBuilder sb = DBIO.getSelectBuilder(new String[]{"*"}, "SALES");
 		ResultSet rs;
 		ArrayList<Order> orders = new ArrayList<Order>();
 		
