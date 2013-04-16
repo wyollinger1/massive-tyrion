@@ -355,9 +355,9 @@ public class DBIO {
 		int mId = mObj.getId();
 		int isUpdated = 0;
 		try {
-			isUpdated = stmnt.executeUpdate("UPDATE Inventory SET"
+			isUpdated = stmnt.executeUpdate("UPDATE Inventory SET "
 					+ "avgRating=(avgRating*numRating +" + rating
-					+ ")/(numRating+1), " + "numRating=numRating+1"
+					+ ")/(numRating+1), " + "numRating=numRating+1 "
 					+ "WHERE mId=" + mId);
 			if (isUpdated != 0) { // Don't make an unnecessary SQL query
 				mObj = getMedia(mObj.getId());
