@@ -988,7 +988,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 										.parseDouble(newPriceText.getText()),
 								Integer.parseInt(newDefRateText.getText()),
 								Double.parseDouble(newAvgRateText.getText()),
-								Integer.parseInt(newID.getText())), 1);
+								0), Integer.parseInt(addAmountText.getText()));
 			}
 
 		}

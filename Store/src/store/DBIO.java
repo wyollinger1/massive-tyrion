@@ -243,7 +243,7 @@ public class DBIO {
 	public static Media add(Media mObj, DBIO.Types typeEnum, int num) {
 		String insMedia = "INSERT INTO Inventory (creator, name, duration, genre, numInStock, price, type)"
 				+ "VALUES(?, ?, ?, ?, ?, ?, ?)";
-		String selMid = "SELECT mId FROM Inventory WHERE creator=? AND name=? AND duration=? AND price=? AND type=? ORDER BY mId DESC";
+		String selMid = "SELECT mId FROM Inventory WHERE creator=? AND name=? AND duration=? AND genre=? AND numInStock=? AND price=? AND type=? ORDER BY mId DESC";
 		PreparedStatement insStmnt = null;
 		PreparedStatement selId = null;
 		ResultSet rs;
@@ -276,7 +276,7 @@ public class DBIO {
 
 				// Get the newly inserted media object
 				rs = selId.executeQuery();
-				if (rs.first()) {
+				if (rs.next()) {
 					retVal = DBIO.getMedia(rs.getInt("mId"));
 				} else {
 					throw new SQLException("Couldn't get inserted media");
