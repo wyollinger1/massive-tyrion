@@ -285,6 +285,7 @@ public class DBIO {
 			} else {
 				// If it already has a non-zero mId we can use the simpler add
 				DBIO.add(mObj.getId(), num);
+				retVal = DBIO.getMedia(mObj.getId());
 			}
 		} catch (SQLException sqlE) {
 			// Rollback query if we have any problems
@@ -555,7 +556,7 @@ public class DBIO {
 	 */
 	private static ArrayList<Media> result2Media(ResultSet results)
 			throws SQLException {
-		int mId, duration, numSold, numRating;
+		int mId, duration, numRating;
 		double price, avgRating;
 		String creator, name, genre, type;
 		ArrayList<Media> mediaObjs = new ArrayList<Media>();
@@ -863,7 +864,7 @@ public class DBIO {
 	private static ArrayList<User> result2User(ResultSet results)
 			throws SQLException {
 		int uId;
-		String name, city, shoppingCart = "Doesn't make sense as a string", history = "Also shouldn't be a string";
+		String name, city;
 		double balance;
 		boolean isManager;
 		ArrayList<User> userObjs = new ArrayList<User>();
