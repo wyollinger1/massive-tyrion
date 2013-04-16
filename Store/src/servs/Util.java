@@ -2,7 +2,6 @@ package servs;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -11,6 +10,16 @@ import store.Media;
 import store.*;
 
 public class Util {
+	public static String orderToJson(Order oObj){
+		if(oObj!=null){
+			store.Media mObj=DBIO.getMedia(oObj.getMedia().getId());
+			return String.format("{\"media\":%s, \"numBought\":%d,"+
+			"\"date\":\"%s\"}", mediaToJson(mObj), oObj.getNumBought(),
+			oObj.getDate().toString());
+		}else{
+			return "{}";
+		}
+	}
 	/**
 	 * Turns a media object into a JSON string.
 	 * @param mObj Media object to get the JSON string for
@@ -39,7 +48,17 @@ public class Util {
 	 * @return String JSON representation of the media object
 	 */
 	public  static String userToJson(store.User uObj){
+		String orderArr;
 		if(uObj!=null){
+			//Construct the user's purchase history as a JSON array of JSON
+			//Order objs
+			
+			orderArr="[";
+			for(Order oObj : uObj.getHistory()){
+				orderArr+=orderToJson(oObj)+",";
+			}
+			orderArr=orderArr.substring(0, orderArr.length()-1)+"]";
+			//Make the actual user JSON obj
 			return String.format("{\"name\":\"%s\", \"city\":%s, "+
 				"\"balance\":\"%.2f\", \"numOrders\":\"%d\", \"id\":%d}",
 				uObj.getName(), uObj.getcity(), uObj.getBalance(),
