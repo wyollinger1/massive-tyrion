@@ -769,6 +769,8 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		for (int i = 0; i < pass.length; i++) {
 			pass[i] = 0;
 		}
+		custUserField.setText("");
+		custPassField.setText("");
 	}
 
 	/**
@@ -953,9 +955,14 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 					JOptionPane.YES_NO_OPTION);
 			if (pswInt == JOptionPane.YES_OPTION) // prompts the customer to
 			{ // to make sure they really want to logout
-				search.add(loginButton);
+				user = null;
+				view.remove(purchaseItem);
 				search.remove(custLogout);
 				search.remove(customerCredit);
+				search.add(loginButton);
+				
+				view.revalidate();
+				search.revalidate();
 				
 			}
 
@@ -1107,7 +1114,10 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 					+ mediaObj.getNumRating()));
 			purchase.add(new JLabel("Average Rating: "
 					+ mediaObj.getAvgRating()));
+			if(user != null){
 			purchase.add(purchaseItem);
+			}
+			
 			purchase.add(goBack);
 
 			tabs.removeAll();
