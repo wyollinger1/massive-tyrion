@@ -191,9 +191,12 @@ public class User {
 	public static String ordersToString(Order[] orders){
 		String retVal="[";
 		for(Order oObj : orders){
-			String.format("{\"media\":%d, \"numBought\":%d,"+
-					"\"date\":\"%s\"}", oObj.getMedia().getId(), oObj.getNumBought(),
+			retVal+=String.format("{\"media\":%d, \"numBought\":%d,"+
+					"\"date\":\"%s\"},", oObj.getMedia().getId(), oObj.getNumBought(),
 					oObj.getDate().toString());
+		}
+		if(retVal.length()>0){ //Extra comma IE6/7 makes you freak out over these things
+			retVal=retVal.substring(0, retVal.length()-1);
 		}
 		retVal+="]";
 		return retVal;
