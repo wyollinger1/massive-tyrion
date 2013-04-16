@@ -1012,11 +1012,13 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		// Purchase Item functionality
 		if (e.getSource() == purchaseItem) {
 			if (user.purchase(mediaObj, medType)) {
+				customerCredit = new JLabel("Balance: $" + user.getBalance());
 				tabs.addTab("Rate", rate);
 				tabs.remove(purchase);
+				
 			} else {
 				JOptionPane.showMessageDialog(this,
-						"Not enough money, Returning to Search Pane");
+				"Not enough money, Returning to Search Pane");
 				tabs.addTab("Search", search);
 				tabs.remove(purchase);
 			}
