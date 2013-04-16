@@ -126,7 +126,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 
 	// MEDIA
 	private Media mediaObj = DBIO.getMedia(4);
-	private int num = 1;
+	private int numToBuy = 1;
 
 	// PLACEHOLDER DATABASE
 	private String[] medTypeArray;
@@ -177,7 +177,6 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		custLogout = new JButton("Logout");
 		custLogout.addActionListener(this);
 		custLogout.setToolTipText("Log out of system, return to Search screen.");
-		
 		
 		// creates a label for the search field
 		JLabel searchLabel = new JLabel("Search");
@@ -531,7 +530,13 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		custInfoPanel.add(custInfoSubmit);
 
 	}
-
+	public JLabel getCustCredit(){
+		if(customerCredit != null){
+			search.remove(customerCredit);
+		}
+			customerCredit = new JLabel("Balance: $" + user.getBalance());
+		return customerCredit;
+	}
 	/**
 	 * Refresh customer info information in custInfoPanel with uId' info.
 	 * 
@@ -752,7 +757,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 				else if (user instanceof Customer){
 					search.add(custLogout);
 					search.remove(loginButton);
-					customerCredit = new JLabel("Balance: $" + user.getBalance());
+					getCustCredit();
 					search.add(customerCredit);
 				}
 				JOptionPane.showMessageDialog(this, "Welcome Back!");
@@ -1115,8 +1120,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		
 		// Purchase Item functionality
 		if (e.getSource() == purchaseItem) {
-			if (user.purchase(mediaObj, num)) {
-				customerCredit = new JLabel("Balance: $" + user.getBalance());
+			if (user.purchase(mediaObj, numToBuy)) {
 				tabs.addTab("Rate", rate);
 				tabs.remove(purchase);
 				
@@ -1147,6 +1151,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		if (e.getSource() == searchAgain) {
 			tabs.addTab("Search", search);
 			tabs.remove(thankYou);
+			
 		}
 
 		repaint();
