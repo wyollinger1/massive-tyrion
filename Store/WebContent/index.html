@@ -26,7 +26,7 @@
 				<li class="active divider-vertical"><a tabindex=-1 href="#">Home</a></li>
 				<li class="hide"><a tabindex=-1 href="#">Manager</a></li>
 			</ul>
-			<form method="get" action="#"class="navbar-form pull-right">
+			<form id="logonForm" method="get" action="#"class="navbar-form pull-right">
 				<input type="text" name="uname" class="input-small"
 					placeholder="Username"> <input type="password"
 					name="password" class="input-small" placeholder="Password">
@@ -36,8 +36,8 @@
 	</div>
 	<!-- Search Form -->
 	<div class="row-fluid">
-		<div class="container span4" id="searchForm">
-			<form class="form-horizontal">
+		<div class="container span4">
+			<form class="form-horizontal" id="searchForm">
 				<div class="control-group">
 					<label class="control-label" for="mType">Media Type</label>
 					<div class="controls">
