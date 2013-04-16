@@ -22,6 +22,9 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 	private JPanel custInfoSubPanel;
 	private JPanel removeMediaPanel;
 	private JPanel checkItemPanel;
+        private JPanel addCheckPanel;
+        private JPanel addOldMediaPanel;
+        private JPanel addNewMediaPanel;
 	private JLabel welcomeLabel;
 	private JLabel medTypeText;
 	private JLabel searchByText;
@@ -39,6 +42,9 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 	private JLabel addType;
 	private JLabel addAmount;
 	private JLabel removeLabel;
+        private JLabel ChkLabel;
+	private JLabel oldMediaLabel1;
+        private JLabel oldMediaLabel2;
 	private JLabel checkItemLabel;
 	private JTextField creatorText;
 	private JTextField newNameText;
@@ -54,6 +60,8 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 	private JTextField removeText1;
 	private JTextField removeText2;
 	private JTextField checkItemText;
+        private JTextField oldIDText;
+        private JTextField oldAmountText;
 	private JButton go;
 	private JButton mngrLoginButton;
 	private JButton viewItem;
@@ -81,6 +89,12 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 	private JButton back3Button;
 	private JButton back4Button;
 	private JButton custInfoSubmit;
+        private JButton ChkButton1;
+        private JButton ChkButton2;
+	private JButton addOldMediaButton;
+        private JButton addOldMediaClear;
+        private JButton addOldMediaBack;
+        private JButton ChkBack;
 	private JRadioButton rate1;
 	private JRadioButton rate2;
 	private JRadioButton rate3;
@@ -138,7 +152,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 
 		// Create Manager panel,display only when correct password is input
 		managerPanel = new JPanel(new GridLayout(14, 2, 10, 10));
-		addMediaPanel = new JPanel(new GridLayout(12, 2));
+		addNewMediaPanel = new JPanel(new GridLayout(12, 2));
 		removeMediaPanel = new JPanel(new GridLayout(12, 2));
 		checkItemPanel = new JPanel(new GridLayout(12, 2));
 		
@@ -295,8 +309,58 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		mngrLogout.addActionListener(this);
 		mngrLogout
 				.setToolTipText("Log out of system, return to Search screen.");
+                
+                //addCheckPanel 
+                addCheckPanel = new JPanel(new GridLayout(12,1));
 
-		// Manager addMediaPanel Labels:
+                ChkLabel = new JLabel("What would you like to add to the Store?");
+                ChkLabel.setHorizontalAlignment(JLabel.CENTER);
+
+
+                ChkButton1 = new JButton("Add more of an existing item.");
+                ChkButton1.addActionListener(this);
+                ChkButton1.setToolTipText("Will add more media if given ID number, and Amount.");
+
+                ChkButton2 = new JButton("Add a new Media Item");
+                ChkButton2.addActionListener(this);
+                ChkButton2.setToolTipText("Adds a new item to the store.");
+
+                ChkBack = new JButton("Back to Manager Page");
+                ChkBack.addActionListener(this);
+                ChkBack.setToolTipText("Goes back to the Manager Home page");
+
+                addCheckPanel.add(ChkLabel);
+                addCheckPanel.add(ChkButton1);
+                addCheckPanel.add(ChkButton2);
+                addCheckPanel.add(ChkBack);
+                
+                //addOldMediaPanel
+                addOldMediaPanel = new JPanel(new GridLayout(12,2));
+
+                oldMediaLabel1 = new JLabel("Enter the ID number:");
+                oldMediaLabel2 = new JLabel("How many would you like to add?");
+
+                oldIDText = new JTextField(20);
+                oldAmountText = new JTextField(20);
+
+                addOldMediaButton = new JButton("Add Media");
+                addOldMediaButton.addActionListener(this);
+
+                addOldMediaClear = new JButton("Clear Fields");
+                addOldMediaClear.addActionListener(this);
+
+                addOldMediaBack = new JButton("Go Back");
+                addOldMediaBack.addActionListener(this);
+
+                addOldMediaPanel.add(oldMediaLabel1);
+                addOldMediaPanel.add(oldIDText);
+                addOldMediaPanel.add(oldMediaLabel2);
+                addOldMediaPanel.add(oldAmountText);
+                addOldMediaPanel.add(addOldMediaButton);
+                addOldMediaPanel.add(addOldMediaClear);
+                addOldMediaPanel.add(addOldMediaBack);
+
+		// Manager addNewMediaPanel Labels:
 		creatorLabel = new JLabel("Enter the Author/Artist/Producer name:");
 		mediaNameLabel = new JLabel("Enter the Title:");
 		mediaDuration = new JLabel(
@@ -327,7 +391,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		back1Button.addActionListener(this);
 		back1Button.setToolTipText("Go back to the Manager Home Screen.");
 
-		// Manager addMediaPanel TextFields
+		// Manager addNewMediaPanel TextFields
 		creatorText = new JTextField(20);
 		newNameText = new JTextField(20);
 		newDurationText = new JTextField(20);
@@ -335,44 +399,40 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		newPriceText = new JTextField(20);
 		newDefRateText = new JTextField(20);
 		newAvgRateText = new JTextField(20);
-		newIDText = new JTextField(20);
 		addTypeText = new JTextField(20);
 		addAmountText = new JTextField(20);
 
-		// Add components to addMediaPanel
-		addMediaPanel.add(creatorLabel);
-		addMediaPanel.add(creatorText);
+		// Add components to addNewMediaPanel
+		addNewMediaPanel.add(creatorLabel);
+		addNewMediaPanel.add(creatorText);
 
-		addMediaPanel.add(mediaNameLabel);
-		addMediaPanel.add(newNameText);
+		addNewMediaPanel.add(mediaNameLabel);
+		addNewMediaPanel.add(newNameText);
 
-		addMediaPanel.add(mediaDuration);
-		addMediaPanel.add(newDurationText);
+		addNewMediaPanel.add(mediaDuration);
+		addNewMediaPanel.add(newDurationText);
 
-		addMediaPanel.add(mediaGenre);
-		addMediaPanel.add(newGenreText);
+		addNewMediaPanel.add(mediaGenre);
+		addNewMediaPanel.add(newGenreText);
 
-		addMediaPanel.add(mediaPrice);
-		addMediaPanel.add(newPriceText);
+		addNewMediaPanel.add(mediaPrice);
+		addNewMediaPanel.add(newPriceText);
 
-		addMediaPanel.add(defaultRating);
-		addMediaPanel.add(newDefRateText);
+		addNewMediaPanel.add(defaultRating);
+		addNewMediaPanel.add(newDefRateText);
 
-		addMediaPanel.add(defaultAvgRating);
-		addMediaPanel.add(newAvgRateText);
+		addNewMediaPanel.add(defaultAvgRating);
+		addNewMediaPanel.add(newAvgRateText);
 
-		addMediaPanel.add(newID);
-		addMediaPanel.add(newIDText);
+		addNewMediaPanel.add(addType);
+		addNewMediaPanel.add(addTypeText);
 
-		addMediaPanel.add(addType);
-		addMediaPanel.add(addTypeText);
+		addNewMediaPanel.add(addAmount);
+		addNewMediaPanel.add(addAmountText);
 
-		addMediaPanel.add(addAmount);
-		addMediaPanel.add(addAmountText);
-
-		addMediaPanel.add(addButton);
-		addMediaPanel.add(clearButton);
-		addMediaPanel.add(back1Button);
+		addNewMediaPanel.add(addButton);
+		addNewMediaPanel.add(clearButton);
+		addNewMediaPanel.add(back1Button);
 
 		managerPanel.add(mngrText);
 		managerPanel.add(mngrAdd);
@@ -791,10 +851,53 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		// Handle the mngrAdd button
 		if (e.getSource() == mngrAdd) // if mngrAdd button was pressed
 		{
-			tabs.addTab("Add Media", addMediaPanel);
+                        tabs.addTab("Add Media", addCheckPanel);
+			//tabs.addTab("Add Media", addMediaPanel);    ***REMOVE
 			tabs.remove(managerPanel);
 		}
+                
+                // Handle the ChkButton1
+                if (e.getSource() == ChkButton1)
+                {
+                    tabs.addTab("Add Media", addOldMediaPanel);
+                    tabs.remove(addCheckPanel);
+                }
+                
+                // Handle the ChkButton2
+                if (e.getSource() == ChkButton2)
+                {
+                    tabs.addTab("Add Media", addNewMediaPanel);
+                    tabs.remove(addCheckPanel);
+                }
+                
+                // Handle the ChkBack Button
+                if (e.getSource() == ChkBack)
+                {
+                    tabs.addTab("Manager", managerPanel);
+			tabs.remove(addCheckPanel);
+                }
 
+                //HANDLE ADDING OLD MEDIA PANEL					
+                if (e.getSource() == addOldMediaButton)
+                {
+                    Media addOldMedia = null;
+			addOldMedia.id = Integer.parseInt(oldIDText.getText());
+			int num = Integer.parseInt(oldAmountText.getText());
+                }
+                
+                if(e.getSource() == addOldMediaClear)
+                {
+                    oldIDText.setText("");
+                    oldAmountText.setText("");
+                }
+                
+                if(e.getSource() == addOldMediaBack)
+                {
+                    tabs.addTab("Add Media", addCheckPanel);
+			tabs.remove(addOldMediaPanel);
+                }
+               
+                
 		// Handle the mngrChkTotal button
 		if (e.getSource() == mngrChkTotal) {
 			double newTotalSales = DBIO.getTotalSales();
@@ -894,7 +997,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 			newPriceText.setText("");
 			newDefRateText.setText("");
 			newAvgRateText.setText("");
-			newIDText.setText("");
+			//newIDText.setText("");		*****REMOVE
 			addTypeText.setText("");
 			addAmountText.setText("");
 
@@ -903,8 +1006,9 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		// HANDLE BACK BUTTON : addMediaPanel
 		if (e.getSource() == back1Button) {
 			tabs.addTab("Manager", managerPanel);
-			tabs.remove(addMediaPanel);
+			tabs.remove(addNewMediaPanel);
 		}
+        
 
 		// HANDLE WHEN MANAGER WANTS TO GO TO THE REMOVE MEDIA PANEL
 		if (e.getSource() == mngrRemove) {
