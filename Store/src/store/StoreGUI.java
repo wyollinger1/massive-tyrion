@@ -38,7 +38,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 	private JLabel defaultRating;
 	private JLabel defaultAvgRating;
 	private JLabel newID;
-	private JLabel customerCredit;
+	private JLabel customerCredit = null;
 	private JLabel addType;
 	private JLabel addAmount;
 	private JLabel removeLabel;
@@ -530,12 +530,12 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		custInfoPanel.add(custInfoSubmit);
 
 	}
-	public JLabel getCustCredit(){
+	public void getCustCredit(){
 		if(customerCredit != null){
 			search.remove(customerCredit);
 		}
 			customerCredit = new JLabel("Balance: $" + user.getBalance());
-		return customerCredit;
+		search.add(customerCredit);
 	}
 	/**
 	 * Refresh customer info information in custInfoPanel with uId' info.
@@ -758,7 +758,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 					search.add(custLogout);
 					search.remove(loginButton);
 					getCustCredit();
-					search.add(customerCredit);
+					
 				}
 				JOptionPane.showMessageDialog(this, "Welcome Back!");
 			} else {
@@ -1120,13 +1120,19 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 		
 		// Purchase Item functionality
 		if (e.getSource() == purchaseItem) {
-			if (user.purchase(mediaObj, numToBuy)) {
+			if (user.purchase(mediaObj, numToBuy) > 0) {
 				tabs.addTab("Rate", rate);
 				tabs.remove(purchase);
+				getCustCredit();
 				
-			} else {
+			} else if(user.purchase(mediaObj, numToBuy) == -1) {
 				JOptionPane.showMessageDialog(this,
 				"Not enough money, Returning to Search Pane");
+				tabs.addTab("Search", search);
+				tabs.remove(purchase);
+			} else if(user.purchase(mediaObj, numToBuy) == -2) {
+				JOptionPane.showMessageDialog(this,
+				"This item is out of stock, Returning to Search Pane");
 				tabs.addTab("Search", search);
 				tabs.remove(purchase);
 			}
@@ -1137,6 +1143,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 			tabs.addTab("View", view);
 			tabs.addTab("Search", search);
 			tabs.remove(purchase);
+			getCustCredit();
 		}
 
 		//RATE

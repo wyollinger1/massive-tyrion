@@ -137,7 +137,7 @@ public class User {
 	// Allows the user to make a purchase of a media object, if the user doesn't
 	// have enough credit the item is not sold and a message is printed on
 	// screen.
-	public boolean purchase(Media mediaObj, int numToBuy) {
+	public int purchase(Media mediaObj, int numToBuy) {
 		int purchased = 0;
 		User tempUser;
 
@@ -153,7 +153,7 @@ public class User {
 		this.balance=tempUser.balance;
 		this.shoppingCart = tempUser.getShoppingCart();
 		this.history = tempUser.getHistory();
-		return purchased > 0;
+		return purchased;
 	}
 
 	// Allows the user to rate a purchased media object

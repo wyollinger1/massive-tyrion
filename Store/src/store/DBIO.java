@@ -450,9 +450,14 @@ public class DBIO {
 
 			// If customer doesn't have enough money or there aren't that many
 			// in stock rollback
-			if ((num * price) > balance || numInStock < num) {
+			if ((num * price) > balance) {
 				con.rollback();
 				numRows = -1;
+			}
+			else if(numInStock < num){
+				con.rollback();
+				numRows = -2;
+			
 			}else{
 				con.commit();	
 			}
