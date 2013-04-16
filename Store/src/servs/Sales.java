@@ -78,6 +78,7 @@ public class Sales extends HttpServlet {
 	}
 
 	/**
+	 * Purchases content
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -97,7 +98,7 @@ public class Sales extends HttpServlet {
 		if(Util.validateParams(pm, "mId", "numToBuy")){
 			store.Media mObj=DBIO.getMedia(Integer.parseInt(pm.get("mId")[0]));
 			isPurchased=user.purchase(mObj, Integer.parseInt(pm.get("numToBuy")[0]));
-			resWrite.write(String.format("{\"isPurchased\":%b", isPurchased));
+			resWrite.write(String.format("{\"isPurchased\":%b, \"user\":%s}", isPurchased, Util.userToJson(user)));
 		}else{
 			resWrite.write("{\"Error\":\"Invalid Parameters\"}");
 		}
