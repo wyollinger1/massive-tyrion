@@ -137,18 +137,22 @@ public class User {
 	// Allows the user to make a purchase of a media object, if the user doesn't
 	// have enough credit the item is not sold and a message is printed on
 	// screen.
-	public boolean purchase(Media mediaObj, String type) {
+	public boolean purchase(Media mediaObj, int numToBuy) {
 		int purchased = 0;
+		User tempUser;
 
 		if (balance > mediaObj.getPrice()) // checks user credit
 		{
-			purchased = DBIO.addSale(mediaObj, this, 1);
+			purchased = DBIO.addSale(mediaObj, this, numToBuy);
 		} else {
-			System.out.println("Not enough money"); // item is not sold
+			purchased=0;
 		}
-		//Refresh history and shoppingcart
-		this.shoppingCart = DBIO.getShoppingCart(this.ID);
-		this.history = DBIO.getOrderHistory(this.ID);
+		
+		//Refresh User
+		tempUser= DBIO.getUser(this.ID);
+		this.balance=tempUser.balance;
+		this.shoppingCart = tempUser.getShoppingCart();
+		this.history = tempUser.getHistory();
 		return purchased > 0;
 	}
 

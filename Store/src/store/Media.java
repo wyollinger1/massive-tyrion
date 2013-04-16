@@ -49,7 +49,7 @@ public class Media {
 	 * @param id
 	 *            Integer unique id number
 	 */
-	Media(String creator, String name, int duration, String genre,
+	public Media(String creator, String name, int duration, String genre,
 			double price, int numRating, double avgRating, int id) {
 		this.creator = creator;
 		this.name = name;
