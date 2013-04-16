@@ -59,8 +59,8 @@ public class Util {
 			}
 			orderArr=orderArr.substring(0, orderArr.length()-1)+"]";
 			//Make the actual user JSON obj
-			return String.format("{\"name\":\"%s\", \"city\":%s, "+
-				"\"balance\":\"%.2f\", \"numOrders\":\"%d\", \"id\":%d}",
+			return String.format("{\"name\":\"%s\", \"city\":\"%s\", "+
+				"\"balance\":%.2f, \"numOrders\":%d, \"id\":%d}",
 				uObj.getName(), uObj.getcity(), uObj.getBalance(),
 				uObj.getHistory().length, uObj.getID());
 		}else{
