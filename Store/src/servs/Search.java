@@ -71,7 +71,9 @@ public class Search extends HttpServlet {
 				json+=Util.mediaToJson(iter.next());
 				json+=",";
 			}
-			json=json.substring(0, json.length()-1);
+			if(json.length()>1){ //Don't want to remove the '['
+				json=json.substring(0, json.length()-1);
+			}
 			json+="]";
 			
 			
