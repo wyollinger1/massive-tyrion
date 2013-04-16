@@ -158,7 +158,7 @@ public class User {
 
 	// Allows the user to rate a purchased media object
 	public void rateMedia(Media mediaObj, double rating) {
-		mediaObj.addRating(rating);
+		DBIO.updateRating(mediaObj, rating);
 	}
 
 	// Allows the user to get a list of all available media
