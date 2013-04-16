@@ -666,16 +666,14 @@ public class DBIO {
 	 * @return Double value of total sales of the store, NaN on error.
 	 */
 	public static double getTotalSales() {
-		String[] cols = { "numSold", "curPrice" };
-		SelectBuilder sales = DBIO.getSelectBuilder(cols, "Inventory");
+		String select = "Select SUM( (SELECT price FROM Inventory i WHERE i.mId=s.mId)*s.numSold) As Ttl_Sales FROM Sales s";
 		ResultSet allSales = null;
 		double totalSales = 0;
 		try {
-			allSales = sales.executeSelect(con);
-			while (allSales.next()) {
-				int numSold = allSales.getInt("numSold");
-				double price = allSales.getInt("curPrice");
-				totalSales += numSold * price;
+			PreparedStatement sales = con.prepareStatement(select);
+			allSales = sales.executeQuery();
+			if(allSales.next()){
+				totalSales=allSales.getDouble("Ttl_Sales");
 			}
 		} catch (SQLException sqlE) {
 			totalSales = Double.NaN;
