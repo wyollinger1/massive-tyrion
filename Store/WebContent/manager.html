@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/Store/bootstrap/css/bootstrap.min.css" rel="stylesheet"
+    media="screen">
+    <title>Insert title here</title>
+
+  </head>
+  <body>
+    <!-- Nav Bar -->
+    <div class="navbar navbar-inverse navbar-static-top">
+      <div class="navbar-inner">
+        <a class="brand" href="#">221 Store</a>
+        <ul class="nav">
+          <li class="active divider-vertical"><a tabindex=-1 href="/Store/index.html">
+            Home</a></li>
+          <li><a tabindex=-1 href="#">Manager</a></li>
+        </ul>
+        <ul class="nav pull-right" id="loggedIn">
+          <li class="divider-vertical"> 
+          <button class="btn" id="logout">Logout</button></li>
+          <li class="divider"></li>
+          <li> <p class="navbar-text" id="dispUsername"></p></li>
+          <li> <p class="navbar-text" id="dispBalance"></p></li>
+        </ul>
+      </div>
+    </div>
+    <!-- Accordian Panes -->	
+    <div class="accordion" id="accordian2">
+      <!-- Add New Media -->
+      <div class="accordion-group">
+        <div class="accordion-heading">
+          <a class="accordion-toggle" data-toggle="collapse" 
+            data-parent="#accordian2" href="#cNewMedia">Add New Media </a>
+        </div>
+        <div id="cNewMedia" class="accordion-body collapse">
+          <form action="#" id="addNewMediaForm" name="addNewMediaForm" >
+            <fieldset>
+              <label>Item Name and Creator</label>
+              <input type="text" name="name" placeholder="Name" />
+              <input type="text" name="creator" placeholder="Creator" />
+              <label>Item Genre and Duration (# of seconds)</label>
+              <input type="text" name="genre" placeholder="Genre" />
+              <div class="input-append">
+                <input type="text" class="input-small"name="duration" 
+                placeholder="Duration" />
+                <span class="add-on">sec</span>
+              </div>
+              <label>Price</label>
+              <div class="input-prepend">
+                <span class="add-on">$</span>
+                <input type="text" class="input-small" 
+                name="price" placeholder="0.00" />
+              </div>
+              <label>Number to add</label>
+              <input type="text" class="input-mini"  
+              name="num" placeholder="1" />
+              <label>Number of ratings and average rating</label>
+              <span class="help-block">Defaults are usually sufficient</span>
+              <input type="text" class="input-mini" 
+              name="numRatings" value="0" />
+              <input type="text" class="input-mini" 
+              name="avgRating" value="2.5" />
+              <button type="submit" class="btn">Submit</button>
+            </fieldset>
+          </form>
+        </div>
+      </div>
+      <!-- Add Pre-existing Media -->
+      <div class="accordion-group">
+        <div class="accordion-heading">
+          <a class="accordion-toggle" data-toggle="collapse" 
+            data-parent="#accordian2" href="#cAddMedia">
+            Add Pre-existing Media </a>
+        </div>
+        <div id="cAddMedia" class="accordion-body collapse">
+          <form name="addMediaForm" id="addMediaForm" action="#">
+            <fieldset> 
+              <input type="text" name="id" placeholder="Media ID #" />
+              <span class="help-block">Number to add</span>
+              <input type="text" name="num" placeholder="1" />
+              <button type="submit" class="btn">Submit</button>
+            </fieldset>
+          </form>
+        </div>
+      </div>
+      <!-- Delete/Remove Media -->
+      <div class="accordion-group">
+        <div class="accordion-heading">
+          <a class="accordion-toggle" data-toggle="collapse" 
+            data-parent="#accordian2" href="#cDelMedia">Remove Media</a>
+        </div>
+        <div id="cDelMedia" class="accordion-body collapse">
+          <form name="delMediaForm" id="delMediaForm" action="#">
+            <fieldset> 
+              <input type="text" name="id" placeholder="Media ID #" />
+              <span class="help-block">Number to add</span>
+              <input type="text" name="num" placeholder="1" />
+              <button type="submit" class="btn">Submit</button>
+            </fieldset>
+          </form>
+        </div>
+      </div>
+      <!--Item Sales Record -->
+      <div class="accordion-group">
+        <div class="accordion-heading">
+          <a class="accordion-toggle" data-toggle="collapse" 
+            data-parent="#accordian2" href="#cItemSales">Item Sales</a>
+        </div>
+        <div id="cItemSales" class="accordion-body collapse">
+          <form name="itemSalesForm" id="itemSalesForm" action="#">
+            <fieldset>
+              <input type="text" name="id" placeholder="Media ID #" />
+              <button type="submit" class="btn">Submit</button>
+            </fieldset>
+          </form>
+          <p class="lead" id="dispItemSales"></p>
+        </div>
+      </div>
+      <!--Total Sales -->
+      <div class="accordion-group">
+        <div class="accordion-heading">
+          <a class="accordion-toggle" data-toggle="collapse" 
+            data-parent="#accordian2" id="aTotalSales" href="#cTotalSales">Total Sales</a>
+        </div>
+        <div id="cTotalSales" class="accordion-body collapse">
+          <p class="lead" id="dispTtlSales"></p>
+          <button class="btn" id="ttlSalesBut">Refresh Total Sales</button>
+        </div>
+      </div>
+      <!--Customer Information -->
+      <div class="accordion-group">
+        <div class="accordion-heading">
+          <a class="accordion-toggle" data-toggle="collapse" 
+            data-parent="#accordian2" href="#cInfo">Customer Information</a>
+        </div>
+        <div id="cInfo" class="accordion-body collapse">
+          <form name="custInfoForm" id="custInfoForm" action="#">
+            <fieldset>
+              <input type="text" name="id" placeholder="Customer ID #" />
+              <button type="submit" class="btn">Submit</button>
+            </fieldset>
+          </form>
+          <div class="container" id="dispItemSales"></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="/Store/bootstrap/js/bootstrap.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/dojo/1.8.3/dojo/dojo.js"></script>
+    <script src="/Store/js/manager.js"></script>
+  </body>
+</html>
+
