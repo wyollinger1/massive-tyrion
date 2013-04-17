@@ -1,11 +1,12 @@
-define(['dojo/dom', 'dojo/query','dojo/on','dojo/request', 
-    'dojo/dom-form', 'dojo/dom-class', 'dojo/domReady!'], 
-    function(dom, query, on, request, domForm, domClass){
+define(["dojo/_base/declare", 'dojo/dom', 'dojo/dom-class', 'dojo/domReady!'], 
+    function(declare, dom, domClass){
       /**
        * Nav bar HTML customizer based on logged in user
        * Swaps login for logout button.
        */
-      return {'userCustomize':function(user){
+      return {
+    	  
+    	  'userCustomize':function(user){
         dom.byId('dispUsername').innerHTML=user['name'];
         dom.byId('dispBalance').innerHTML="$"+user['balance'];
         domClass.add('logonForm', "hide");
