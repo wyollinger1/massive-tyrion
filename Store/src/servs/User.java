@@ -52,7 +52,7 @@ public class User extends HttpServlet {
 		//Check for valid input and grab user info
 		if (user != null && user instanceof Manager) {
 			if(Util.validateParams(pm, "id")){
-				store.User gottenUser= (Customer)DBIO.getUser(Integer.parseInt(pm.get("id")[0]));
+				store.User gottenUser= (store.User)DBIO.getUser(Integer.parseInt(pm.get("id")[0]));
 				if(gottenUser!=null && gottenUser instanceof Customer){
 					//man.getcustInfo(gottenUser); I want JSON not a string
 					resWrite.write(Util.userToJson(gottenUser));
