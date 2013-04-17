@@ -49,6 +49,7 @@ public class Util {
 	 */
 	public  static String userToJson(store.User uObj){
 		String orderArr;
+		boolean isManager=false;
 		if(uObj!=null){
 			//Construct the user's purchase history as a JSON array of JSON
 			//Order objs
@@ -59,10 +60,14 @@ public class Util {
 			}
 			orderArr=orderArr.substring(0, orderArr.length()-1)+"]";
 			//Make the actual user JSON obj
+			if(uObj instanceof Manager){
+				isManager=true;
+			}
 			return String.format("{\"name\":\"%s\", \"city\":\"%s\", "+
-				"\"balance\":%.2f, \"numOrders\":%d, \"id\":%d}",
+				"\"balance\":%.2f, \"numOrders\":%d, \"id\":%d,"+
+				"\"isManager\":%b}",
 				uObj.getName(), uObj.getcity(), uObj.getBalance(),
-				uObj.getHistory().length, uObj.getID());
+				uObj.getHistory().length, uObj.getID(), isManager);
 		}else{
 			return "{}";
 		}
