@@ -42,6 +42,7 @@ public class Login extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
+		
 		logon(request, response);
 	}
 
@@ -78,8 +79,11 @@ public class Login extends HttpServlet {
 		response.setHeader("Content-Type", "application/json");
 		resWrite.write("[");
 		
-		// Login user
-		if (paramMap.containsKey("uname")
+		session = request.getSession();
+		user=(store.User)session.getAttribute("user");
+		if(user!=null){//Just return user if already logged in
+			resWrite.write(Util.userToJson(user));
+		}else if (paramMap.containsKey("uname") //Log in non-logged in user
 				&& paramMap.get("uname")[0].length() > 0
 				&& paramMap.containsKey("password")
 				&& paramMap.get("password")[0].length() > 0) {
