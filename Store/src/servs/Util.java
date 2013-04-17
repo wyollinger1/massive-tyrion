@@ -130,4 +130,17 @@ public class Util {
 		}
 		return true;
 	}
+	public static store.Media correctType(String creator, String name, int duration, String genre,
+			double price, int numRating, double avgRating, int id, String type){
+		if(type.equalsIgnoreCase("album")){
+			return new store.Album(creator, name, duration, genre, price, numRating, avgRating, id);
+		}else if(type.equalsIgnoreCase("movie")){
+			return new store.Movie(creator, name, duration, genre, price, numRating, avgRating, id);
+		}else if(type.equalsIgnoreCase("book")){
+			return new store.Audiobook(creator, name, duration, genre, price, numRating, avgRating, id);
+			
+		}
+		
+		return null;
+	}
 }
