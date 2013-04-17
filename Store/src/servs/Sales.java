@@ -85,7 +85,7 @@ public class Sales extends HttpServlet {
 		Map<String, String[]> pm = request.getParameterMap();
 		HttpSession session = request.getSession();
 		store.User user = (store.User) session.getAttribute("user");
-		boolean isPurchased=false;
+		int isPurchased;
 		
 
 		PrintWriter resWrite = response.getWriter();
@@ -98,7 +98,7 @@ public class Sales extends HttpServlet {
 		if(Util.validateParams(pm, "mId", "numToBuy")){
 			store.Media mObj=DBIO.getMedia(Integer.parseInt(pm.get("mId")[0]));
 			isPurchased=user.purchase(mObj, Integer.parseInt(pm.get("numToBuy")[0]));
-			resWrite.write(String.format("{\"isPurchased\":%b, \"user\":%s}", isPurchased, Util.userToJson(user)));
+			resWrite.write(String.format("{\"isPurchased\":%b, \"user\":%s}", isPurchased>0, Util.userToJson(user)));
 		}else{
 			resWrite.write("{\"Error\":\"Invalid Parameters\"}");
 		}
