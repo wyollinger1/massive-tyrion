@@ -55,7 +55,9 @@ public class Media extends HttpServlet {
 			}
 			
 		}
-}
+		resWrite.write("]");
+		Util.closeRes(response, resWrite);
+	}
 	
 	/**
 	 * 
@@ -91,20 +93,23 @@ public class Media extends HttpServlet {
 				}
 
 			} else if (Util.validateParams(pm, "creator", "name", "duration",
-					"genre", "price", "numRatings", "avgRating", "num")) {
-				addedMedia = man
-						.addMedia(
-								new store.Media(
-										pm.get("creator")[0],
-										pm.get("name")[0],
-										Integer.parseInt(pm.get("duration")[0]),
-										pm.get("genre")[0],
-										Double.parseDouble(pm.get("price")[0]),
-										Integer.parseInt(pm.get("numRatings")[0]),
-										Double.parseDouble(pm.get("avgRating")[0]),
-										0), Integer.parseInt(pm.get("num")[0]));
-				// Write out new media object
-				resWrite.write(Util.mediaToJson(addedMedia));
+					"genre", "price", "numRatings", "avgRating", "num", "type")) {
+				store.Media newMedia = Util.correctType(pm.get("creator")[0],
+						pm.get("name")[0],
+						Integer.parseInt(pm.get("duration")[0]),
+						pm.get("genre")[0],
+						Double.parseDouble(pm.get("price")[0]),
+						Integer.parseInt(pm.get("numRatings")[0]),
+						Double.parseDouble(pm.get("avgRating")[0]),
+						0, pm.get("type")[0]);
+				if(newMedia!=null){
+					addedMedia = man
+						.addMedia(newMedia, Integer.parseInt(pm.get("num")[0]));
+					// Write out new media object
+					resWrite.write(Util.mediaToJson(addedMedia));
+				}else{
+					resWrite.write("{\"Error\":\"Invalid Media Type\"}");
+				}
 			} else {
 				resWrite.write("{\"Error\":\"Invalid Parameters\"}");
 			}
