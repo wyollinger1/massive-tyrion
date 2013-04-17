@@ -70,7 +70,7 @@ require(['dojo/dom', 'dojo/query','dojo/on','dojo/request',
             }else{ //Success
             var media=sales['media'];
             dom.byId("dispItemSales").innerHTML="Media #: "+media['id']
-              + "\n\tName: "+ media['name']+ "\n\tTotal Sales: " + 
+              + ";\tName: "+ media['name']+ ";\tTotal Sales: " + 
               sales['numSold'];
             }
           }else{ //Unknown Error
@@ -82,10 +82,10 @@ require(['dojo/dom', 'dojo/query','dojo/on','dojo/request',
         'func':function(user){
           if(user && user.length>0){
             user=user[0];
-            if("Error" in media){//Known error
+            if("Error" in user){//Known error
               alert(user["Error"]); 
             }else{ //Success
-              alert("Media #: "+user['id']+ " Name: "+
+              alert("User #: "+user['id']+ " Name: "+
                   user['name']);
             }
           }else{ //Unknown Error
@@ -98,15 +98,19 @@ require(['dojo/dom', 'dojo/query','dojo/on','dojo/request',
         // prevent the page from navigating after submit
         evt.stopPropagation();
         evt.preventDefault();
-
-        var id = evt.target.id;
+        var form = evt.target;
+        while(form.nodeName!="FORM"){
+        	form=form.parentElement;
+        }
+        var id = form.name;
+        
         if(!(id in idToAjax)){
           console.log("What's this then:", id);
           return;
         }
         var myAjax=idToAjax[id];
         if(myAjax['method']=='get'){
-          request.post(myAjax['URL'], {
+          request(myAjax['URL'], {
             query: domForm.toObject(evt.target),
             handleAs: "json",
             timeout: 2000
@@ -117,12 +121,14 @@ require(['dojo/dom', 'dojo/query','dojo/on','dojo/request',
             handleAs: "json",
             timeout: 2000
           }).then(myAjax['func']);
-        }else if(myAjax['method']=='get'){
-          request(myAjax['URL'], {
+        }else if(myAjax['method']=='delete'){
+          request.del(myAjax['URL'], {
             query: domForm.toObject(evt.target),
             handleAs: "json",
             timeout: 2000
-          }).then(myAjax['func']);
+          }).then(myAjax['func'], function(err){
+        	  console.log(err);
+          });
         }
       }
       
