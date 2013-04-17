@@ -116,6 +116,16 @@ public class Login extends HttpServlet {
 	protected void doDelete(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
-		session.invalidate();
+		try{
+			session.invalidate();
+		}catch(java.lang.IllegalStateException ignore){
+			
+		}
+		PrintWriter resWrite = response.getWriter();
+		// Going to return JSON so set header and begin the list
+		response.setHeader("Content-Type", "application/json");
+		resWrite.write("[{\"out\":true}]");
+		//Wrap it up
+		Util.closeRes(response, resWrite);
 	}
 }
