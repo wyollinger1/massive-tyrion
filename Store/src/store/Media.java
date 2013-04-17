@@ -279,15 +279,4 @@ public class Media {
 				+ this.getNumSold() + ", price=" + price + ", numRating="
 				+ numRating + ", avgRating=" + avgRating + "]";
 	}
-
-	/**
-	 * Adds another rating to product and updates avgRating
-	 * 
-	 * @param rating
-	 *            double rating being added
-	 */
-	public void addRating(double rating) {
-		this.avgRating = ((this.numRating * this.avgRating) + rating)
-				/ ++(this.numRating);
-	}
 }

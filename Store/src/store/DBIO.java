@@ -243,7 +243,7 @@ public class DBIO {
 	public static Media add(Media mObj, DBIO.Types typeEnum, int num) {
 		String insMedia = "INSERT INTO Inventory (creator, name, duration, genre, numInStock, price, type)"
 				+ "VALUES(?, ?, ?, ?, ?, ?, ?)";
-		String selMid = "SELECT mId FROM Inventory WHERE creator=? AND name=? AND duration=? AND price=? AND type=? ORDER BY mId DESC";
+		String selMid = "SELECT mId FROM Inventory WHERE creator=? AND name=? AND duration=? AND genre=? AND numInStock=? AND price=? AND type=? ORDER BY mId DESC";
 		PreparedStatement insStmnt = null;
 		PreparedStatement selId = null;
 		ResultSet rs;
@@ -276,7 +276,7 @@ public class DBIO {
 
 				// Get the newly inserted media object
 				rs = selId.executeQuery();
-				if (rs.first()) {
+				if (rs.next()) {
 					retVal = DBIO.getMedia(rs.getInt("mId"));
 				} else {
 					throw new SQLException("Couldn't get inserted media");
@@ -355,9 +355,9 @@ public class DBIO {
 		int mId = mObj.getId();
 		int isUpdated = 0;
 		try {
-			isUpdated = stmnt.executeUpdate("UPDATE Inventory SET"
+			isUpdated = stmnt.executeUpdate("UPDATE Inventory SET "
 					+ "avgRating=(avgRating*numRating +" + rating
-					+ ")/(numRating+1), " + "numRating=numRating+1"
+					+ ")/(numRating+1), " + "numRating=numRating+1 "
 					+ "WHERE mId=" + mId);
 			if (isUpdated != 0) { // Don't make an unnecessary SQL query
 				mObj = getMedia(mObj.getId());
@@ -450,9 +450,14 @@ public class DBIO {
 
 			// If customer doesn't have enough money or there aren't that many
 			// in stock rollback
-			if ((num * price) > balance || numInStock < num) {
+			if ((num * price) > balance) {
 				con.rollback();
 				numRows = -1;
+			}
+			else if(numInStock < num){
+				con.rollback();
+				numRows = -2;
+			
 			}else{
 				con.commit();	
 			}
@@ -666,16 +671,14 @@ public class DBIO {
 	 * @return Double value of total sales of the store, NaN on error.
 	 */
 	public static double getTotalSales() {
-		String[] cols = { "numSold", "curPrice" };
-		SelectBuilder sales = DBIO.getSelectBuilder(cols, "Inventory");
+		String select = "Select SUM( (SELECT price FROM Inventory i WHERE i.mId=s.mId)*s.numSold) As Ttl_Sales FROM Sales s";
 		ResultSet allSales = null;
 		double totalSales = 0;
 		try {
-			allSales = sales.executeSelect(con);
-			while (allSales.next()) {
-				int numSold = allSales.getInt("numSold");
-				double price = allSales.getInt("curPrice");
-				totalSales += numSold * price;
+			PreparedStatement sales = con.prepareStatement(select);
+			allSales = sales.executeQuery();
+			if(allSales.next()){
+				totalSales=allSales.getDouble("Ttl_Sales");
 			}
 		} catch (SQLException sqlE) {
 			totalSales = Double.NaN;
@@ -911,7 +914,7 @@ public class DBIO {
 	 * @return	Order array holding all the customers past purchases
 	 */
 	public static Order[] getOrderHistory(int uId){
-		SelectBuilder sb = DBIO.getSelectBuilder(new String[]{"*"}, "CART");
+		SelectBuilder sb = DBIO.getSelectBuilder(new String[]{"*"}, "SALES");
 		ResultSet rs;
 		ArrayList<Order> orders = new ArrayList<Order>();
 		
