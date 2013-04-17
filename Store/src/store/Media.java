@@ -160,7 +160,7 @@ public class Media {
 		// TODO: should this be moved to DBIO?
 		try {
 			selectNumSold.addIntCondition("mId", "=", conArr, true);
-			numSold = DBIO.executeQuery(selectNumSold).getInt(0);
+			numSold = DBIO.executeQuery(selectNumSold).getInt(1);
 		} catch (SQLException sqlE) {
 			// TODO: Alert user somehow that there's a 'temporary' error with
 			// the db
