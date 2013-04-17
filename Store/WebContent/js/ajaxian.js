@@ -1,6 +1,8 @@
 require(['dojo/dom', 'dojo/query','dojo/on','dojo/request', 
-    'dojo/dom-form', 'dojo/dom-class', 'dojo/domReady!'], 
-    function(dom, query, on, request, domForm, domClass){
+    'dojo/dom-form', 'dojo/dom-class', '/Store/js/shared.js',
+    'dojo/domReady!'], 
+    function(dom, query, on, request, domForm, domClass, shared){
+      console.log(shared);
       /**
        * Setup ajax
        */
@@ -31,17 +33,9 @@ require(['dojo/dom', 'dojo/query','dojo/on','dojo/request',
         });
         return false;
       });
+
       //Sign in ajax
       var logonForm = dom.byId("logonForm");
-      /*
-         on(query("button", logonForm)[0], 'click', function(evt){
-      // prevent the page from navigating after submit
-      evt.stopPropagation();
-      evt.preventDefault();
-
-      console.log("Caught button click");
-
-      });*/
       on(logonForm, "submit", function(evt){
         // prevent the page from navigating after submit
         evt.stopPropagation();
@@ -55,13 +49,38 @@ require(['dojo/dom', 'dojo/query','dojo/on','dojo/request',
 
           if(user && user[0] && user[0]['name']){
             alert("Hello "+ user[0]['name']);
-            userCustomize(user[0]);
+            shared.userCustomize(user[0]);
           }else{
             //Error processing TODO: maybe bootstraps alert?
           }
         });
         return false;
       });
+      
+      //Sign out ajax
+      on(dom.byId("logout"), "click", function(evt){
+        // prevent the page from navigating after submit
+        evt.stopPropagation();
+        evt.preventDefault();
+        
+        request.del('/Store/login', {
+          handleAs: 'json',
+          timeout: 2000
+        }).then(function(out){
+          if(out && out.length>0){
+            out=out[0];
+            if(out['out']==true){
+              shared.logout();
+            }
+          }else{
+            alert("Error not logged out");
+          }
+        }, function(err){
+          alert(err);
+        });
+      });
+      
+      /** Purchase Form Ajax */
       on(dom.byId("purchase"), 'click', function(evt){
         var purchTag = dom.byId("purchaseId");
         if(!purchTag || !purchTag.innerHTML){
@@ -77,7 +96,7 @@ require(['dojo/dom', 'dojo/query','dojo/on','dojo/request',
           if(isPurchased && isPurchased.length>0){ 
             isPurchased=isPurchased[0];
             if(!("Error" in isPurchased)){
-              userCustomize(isPurchased['user']);
+              shared.userCustomize(isPurchased['user']);
             }else{
               /*TODO:Handle Error*/
             }
@@ -88,7 +107,7 @@ require(['dojo/dom', 'dojo/query','dojo/on','dojo/request',
 
 
       //TODO: Connect up rest of Customer type buttons (purchase)
-      //      also make rest of HTML generators (popView, userCustomize, logout)
+      //      also make rest of HTML generators (popView, logout)
       //      Then work on Manager stuff
 
       /**
@@ -177,15 +196,4 @@ require(['dojo/dom', 'dojo/query','dojo/on','dojo/request',
         dom.byId("purchaseView").innerHTML=view;
 
       }
-      /**
-       * Nav bar HTML customizer based on logged in user
-       * Swaps login for logout button.
-       */
-      function userCustomize(user){
-        dom.byId('dispUsername').innerHTML=user['name']
-          dom.byId('dispBalance').innerHTML="$"+user['balance'];
-        domClass.add('logonForm', "hide");
-        domClass.remove('loggedIn', "hide");
-      }
     });
-
