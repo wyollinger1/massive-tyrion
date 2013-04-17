@@ -1,8 +1,7 @@
 require(['dojo/dom', 'dojo/query','dojo/on','dojo/request', 
-    'dojo/dom-form', 'dojo/dom-class', '/Store/js/shared.js',
+    'dojo/dom-form', 'dojo/dom-class', './js/shared.js',
     'dojo/domReady!'], 
     function(dom, query, on, request, domForm, domClass, shared){
-      console.log(shared);
       /**
        * Setup ajax
        */
@@ -33,7 +32,20 @@ require(['dojo/dom', 'dojo/query','dojo/on','dojo/request',
         });
         return false;
       });
-
+      
+      //Check if logged in on load
+      request.post('/Store/login', {
+    	  handleAs: 'json',
+    	  timeout: 2000
+    	  }).then(function(user){
+    		  if(user && user[0] && user[0]['name']){
+    			  alert("Hello "+ user[0]['name']);
+    			  shared.userCustomize(user[0]);
+    		  }else{
+    			//Error processing TODO: maybe bootstraps alert?
+    		}
+    	  });
+      
       //Sign in ajax
       var logonForm = dom.byId("logonForm");
       on(logonForm, "submit", function(evt){
@@ -56,7 +68,6 @@ require(['dojo/dom', 'dojo/query','dojo/on','dojo/request',
         });
         return false;
       });
-      
       //Sign out ajax
       on(dom.byId("logout"), "click", function(evt){
         // prevent the page from navigating after submit
