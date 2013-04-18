@@ -21,27 +21,28 @@ package store;
  */
 public class Customer extends User {
 
-	// Default constructor - gets data from user class
-	public Customer() {
-		super();
-	}
+  // Default constructor - gets data from user class
+  public Customer() {
+    super();
+  }
 
-	// Initializer constructor- sets data members through user class
-	public Customer(int ID, String name, String password, String city,
-			double balance) {
-		super(ID, name, password, city, balance);
+  // Initializer constructor- sets data members through user class
+  public Customer(int ID, String name, String password, String city,
+      double balance) {
+    super(ID, name, password, city, balance);
 
-	}
+  }
 
-	@Override
-	// toString holding all customer information
-	public String toString() {
-		return String.format("::CUSTOMER INFORMATION::\n"
-				+ "Identification #:%20s \n" + "The Customer:%20s \n"
-				+ "Password:%20s \n" + "City:%20s \n" + "Balance:%20f \n"
-				+ "Shopping Cart:%20s \n" + "History:%20s \n", this.ID,
-				this.name, this.password, this.city, this.balance,
-				User.ordersToString(this.shoppingCart), User.ordersToString(this.history));
+  @Override
+  // toString holding all customer information
+  public String toString() {
+    return String.format("::CUSTOMER INFORMATION::\n"
+        + "Identification #:%20s \n" + "The Customer:%20s \n"
+        + "Password:%20s \n" + "City:%20s \n" + "Balance:%20f \n"
+        + "Shopping Cart:%20s \n" + "History:%20s \n", this.ID, this.name,
+        this.password, this.city, this.balance,
+        User.ordersToString(this.shoppingCart),
+        User.ordersToString(this.history));
 
-	}
+  }
 }

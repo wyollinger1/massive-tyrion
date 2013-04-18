@@ -22,67 +22,68 @@ package store;
  * @author Jared Bean
  */
 public class Manager extends User {
-	// Constructor calls super class to default construct manager
-	public Manager() {
-		super();
-	}
+  // Constructor calls super class to default construct manager
+  public Manager() {
+    super();
+  }
 
-	public Manager(int ID, String name, String password, String city,
-			double balance) {
-		super(ID, name, password, city, balance);
-	}
+  public Manager(int ID, String name, String password, String city,
+      double balance) {
+    super(ID, name, password, city, balance);
+  }
 
-	// Adds media to store
-	// Takes in a Media object: mediaObj
-	// and the number to add
-	public Media addMedia(Media mediaObj, int num) {
-		DBIO.Types type;
-		if (mediaObj instanceof Album) {
-			type = DBIO.Types.ALBUM;
-		} else if (mediaObj instanceof Audiobook) {
-			type = DBIO.Types.AUDIOBOOK;
-		} else if (mediaObj instanceof Movie) {
-			type = DBIO.Types.MOVIE;
-		} else {
-			type = DBIO.Types.ALBUM;
-		}
-		return DBIO.add(mediaObj, type, num);
-	}
+  // Adds media to store
+  // Takes in a Media object: mediaObj
+  // and the number to add
+  public Media addMedia(Media mediaObj, int num) {
+    DBIO.Types type;
+    if (mediaObj instanceof Album) {
+      type = DBIO.Types.ALBUM;
+    } else if (mediaObj instanceof Audiobook) {
+      type = DBIO.Types.AUDIOBOOK;
+    } else if (mediaObj instanceof Movie) {
+      type = DBIO.Types.MOVIE;
+    } else {
+      type = DBIO.Types.ALBUM;
+    }
+    return DBIO.add(mediaObj, type, num);
+  }
 
-	// Removes media from store
-	// Takes in Media object: mediaObj
-	// and number of media objects to remove
-	public Media deleteMedia(Media mediaObj, int num) {
-		DBIO.remove(mediaObj.getId(), num);
-		return DBIO.getMedia(mediaObj.getId());
-	}
+  // Removes media from store
+  // Takes in Media object: mediaObj
+  // and number of media objects to remove
+  public Media deleteMedia(Media mediaObj, int num) {
+    DBIO.remove(mediaObj.getId(), num);
+    return DBIO.getMedia(mediaObj.getId());
+  }
 
-	// Retrieve all information of any customer
-	public String getcustInfo(Customer cust) {
+  // Retrieve all information of any customer
+  public String getcustInfo(Customer cust) {
 
-		return cust.toString();
-	}
+    return cust.toString();
+  }
 
-	// Takes in media object
-	// will return the number sold
-	public int getnumSold(Media mediaObj) {
-		return mediaObj.getNumSold();
-	}
+  // Takes in media object
+  // will return the number sold
+  public int getnumSold(Media mediaObj) {
+    return mediaObj.getNumSold();
+  }
 
-	// Allows manager to get the total number of sales for the media store
-	public double getTotalSales() {
-		return DBIO.getTotalSales();
-	}
+  // Allows manager to get the total number of sales for the media store
+  public double getTotalSales() {
+    return DBIO.getTotalSales();
+  }
 
-	@Override
-	// toString holding all customer information
-	public String toString() {
-		return String.format("::MANAGER INFORMATION::\n"
-				+ " Identification #: %20s \n" + " The Manager: %20s \n"
-				+ " Password: %20s \n" + " City:	  %20s \n"
-				+ " Balance: %20f \n" + " Shopping Cart: %20s \n"
-				+ " History: %20s \n", this.ID, this.name, this.password,
-				this.city, this.balance, User.ordersToString(this.shoppingCart), User.ordersToString(this.history));
+  @Override
+  // toString holding all customer information
+  public String toString() {
+    return String.format("::MANAGER INFORMATION::\n"
+        + " Identification #: %20s \n" + " The Manager: %20s \n"
+        + " Password: %20s \n" + " City:	  %20s \n" + " Balance: %20f \n"
+        + " Shopping Cart: %20s \n" + " History: %20s \n", this.ID, this.name,
+        this.password, this.city, this.balance,
+        User.ordersToString(this.shoppingCart),
+        User.ordersToString(this.history));
 
-	}
+  }
 }
