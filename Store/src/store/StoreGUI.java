@@ -134,7 +134,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 
   public StoreGUI() {
     super("Store GUI");
-
+    //somethign
     DBIO.init();
     DBIO.setDb("src/store/Store.sqlite");
 
