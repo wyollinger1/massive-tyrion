@@ -1007,7 +1007,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 
         }
       }
-    }
+    } 
 
 		// HANDLE CLEAR BUTTON : addMediaPanel
 		if (e.getSource() == clearButton) {
