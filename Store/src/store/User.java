@@ -140,7 +140,7 @@ public class User {
     int purchased = 0;
     User tempUser;
 
-    if (balance > mediaObj.getPrice()) // checks user credit
+    if (balance >= mediaObj.getPrice()) // checks user credit
     {
       purchased = DBIO.addSale(mediaObj, this, numToBuy);
     } else {
