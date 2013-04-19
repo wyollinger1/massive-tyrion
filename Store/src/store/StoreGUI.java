@@ -134,7 +134,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 
   public StoreGUI() {
     super("Store GUI");
-    //somethign
+    
     DBIO.init();
     DBIO.setDb("src/store/Store.sqlite");
 
@@ -937,7 +937,8 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 
       if (pswInt == JOptionPane.YES_OPTION) // prompts the manager to
       { // to make sure they really
-        tabs.addTab("Search", search); // want to logout.
+        user = null;
+    	tabs.addTab("Search", search); // want to logout.
         tabs.remove(managerPanel);
       }
 
