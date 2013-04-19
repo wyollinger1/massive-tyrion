@@ -1065,11 +1065,8 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 
 		// HANDLE checkItemButton
 		if (e.getSource() == checkItemButton) {
-			// TODO: search for media obviously -- mixin some buttons maybe
-			// Or pass in next page to buildView() maybe???
-			Media checkMedia = null;
-
-			checkMedia.id = Integer.parseInt(checkItemText.getText());
+			// TODO: Display return of getnumSold
+			Media checkMedia = DBIO.getMedia(Integer.parseInt(checkItemText.getText()));
 			if (user instanceof Manager) {
 				((Manager) user).getnumSold(checkMedia);
 			}
