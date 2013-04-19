@@ -134,7 +134,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 
   public StoreGUI() {
     super("Store GUI");
-    
+
     DBIO.init();
     DBIO.setDb("src/store/Store.sqlite");
 
@@ -882,12 +882,19 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 
     // HANDLE ADDING OLD MEDIA PANEL
     if (e.getSource() == addOldMediaButton) {
-      Media oldMedia = DBIO.getMedia(Integer.parseInt(oldIDText.getText()));
+      try {
+        Media oldMedia = DBIO.getMedia(Integer.parseInt(oldIDText.getText()));
 
-      if (user instanceof Manager) {
-        ((Manager) user).addMedia(oldMedia,
-            Integer.parseInt(oldAmountText.getText()));
+        if (user instanceof Manager) {
+          ((Manager) user).addMedia(oldMedia,
+              Integer.parseInt(oldAmountText.getText()));
 
+        }
+      } catch (NumberFormatException nfe) {
+        JOptionPane.showMessageDialog(this,
+            "Incorrect Format. Please enter an integer value.");
+        oldIDText.setText("");
+        oldAmountText.setText("");
       }
     }
 
@@ -919,11 +926,15 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
       try {
         uid = new Integer(custIdText.getText());
       } catch (NumberFormatException nfe) {
+        JOptionPane.showMessageDialog(this,
+            "Incorrect Format. Please enter an integer value.");
+        custIdText.setText("");
         uid = 0;
       }
       refreshCustInfo(uid);
       tabs.validate();
     }
+
     if (e.getSource() == back4Button) {
       tabs.addTab("Manager", managerPanel);
       tabs.remove(custInfoPanel);
@@ -938,7 +949,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
       if (pswInt == JOptionPane.YES_OPTION) // prompts the manager to
       { // to make sure they really
         user = null;
-    	tabs.addTab("Search", search); // want to logout.
+        tabs.addTab("Search", search); // want to logout.
         tabs.remove(managerPanel);
       }
 
@@ -963,23 +974,9 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
       }
 
     }
+
     // HANDLE ADDING A MEDIA OBJECT
     if (e.getSource() == addButton) {
-      /*
-       * Media addedMedia = null; addedMedia.creator = creatorText.getText();
-       * addedMedia.name = newNameText.getText(); addedMedia.duration =
-       * Integer.parseInt(newDurationText.getText()); addedMedia.genre =
-       * newGenreText.getText(); addedMedia.price =
-       * Double.parseDouble(newPriceText.getText()); addedMedia.numRating =
-       * Integer.parseInt(newDefRateText.getText()); addedMedia.avgRating =
-       * Double.parseDouble(newAvgRateText.getText()); addedMedia.id =
-       * Integer.parseInt(newID.getText());
-       * 
-       * if (user instanceof Manager) { ((Manager) user).addMedia(addedMedia,
-       * 1); }
-       */// TODO: this was obviously broken (null pointer)
-         // TODO:Assigning an id number should not happen -- should have
-         // two different add media pages
       if (user instanceof Manager) {
         try {
           ((Manager) user).addMedia(
@@ -990,7 +987,17 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
                       .parseDouble(newAvgRateText.getText()), 0), Integer
                   .parseInt(addAmountText.getText()));
         } catch (NumberFormatException nfe) {
-
+          JOptionPane.showMessageDialog(this,
+              "Incorrect Input Format, try again.");
+          creatorText.setText("");
+          newNameText.setText("");
+          newDurationText.setText("");
+          newGenreText.setText("");
+          newPriceText.setText("");
+          newDefRateText.setText("");
+          newAvgRateText.setText("");
+          addTypeText.setText("");
+          addAmountText.setText("");
         }
       }
     }
@@ -1036,13 +1043,19 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 
     // HANDLE REMOVING A MEDIA OBJECT
     if (e.getSource() == removeMediaButton) {
+      try {
+        Media rmvMedia = DBIO.getMedia(Integer.parseInt(removeText1.getText()));
 
-      Media rmvMedia = DBIO.getMedia(Integer.parseInt(removeText1.getText()));
+        if (user instanceof Manager) {
+          ((Manager) user).deleteMedia(rmvMedia,
+              Integer.parseInt(removeText2.getText()));
 
-      if (user instanceof Manager) {
-        ((Manager) user).deleteMedia(rmvMedia,
-            Integer.parseInt(removeText2.getText()));
-
+        }
+      } catch (NumberFormatException nfe) {
+        JOptionPane.showMessageDialog(this,
+            "Incorrect Format. Please enter an integer value.");
+        removeText1.setText("");
+        removeText2.setText("");
       }
     }
 
@@ -1054,15 +1067,22 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 
     // HANDLE checkItemButton
     if (e.getSource() == checkItemButton) {
-      Media checkMedia = DBIO
-          .getMedia(Integer.parseInt(checkItemText.getText()));
-      double itemSales =0;
-      if (user instanceof Manager) {
-        if(checkMedia!=null){
-          itemSales=((Manager) user).getnumSold(checkMedia) *checkMedia.price;
+      try {
+        Media checkMedia = DBIO.getMedia(Integer.parseInt(checkItemText
+            .getText()));
+        double itemSales = 0;
+        if (user instanceof Manager) {
+          if (checkMedia != null) {
+            itemSales = ((Manager) user).getnumSold(checkMedia)
+                * checkMedia.price;
+          }
+          JOptionPane.showMessageDialog(checkItemPanel, itemSales,
+              "Total Sales of this item: ", 2);
         }
-        JOptionPane.showMessageDialog(checkItemPanel, itemSales,
-            "Total Sales of this item: ", 2);
+      } catch (NumberFormatException nfe) {
+        JOptionPane.showMessageDialog(this,
+            "Incorrect Format. Please enter an integer value.");
+        checkItemText.setText("");
       }
     }
 
