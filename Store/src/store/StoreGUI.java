@@ -957,6 +957,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 			if (pswInt == JOptionPane.YES_OPTION) // prompts the customer to
 			{ // to make sure they really want to logout
 				user = null;
+				tabs.remove(view);
 				view.remove(purchaseItem);
 				search.remove(custLogout);
 				search.remove(customerCredit);
@@ -1130,17 +1131,19 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener {
 
 		// Purchase Item functionality
 		if (e.getSource() == purchaseItem) {
-			if (user.purchase(mediaObj, numToBuy) > 0) {
+			int numPurchase= user.purchase(mediaObj, numToBuy);
+			
+			if (numPurchase > 0) {
 				tabs.addTab("Rate", rate);
 				tabs.remove(purchase);
 				getCustCredit();
 
-			} else if (user.purchase(mediaObj, numToBuy) == -1) {
+			} else if (numPurchase == 0 || numPurchase == -1) {
 				JOptionPane.showMessageDialog(this,
 						"Not enough money, Returning to Search Pane");
 				tabs.addTab("Search", search);
 				tabs.remove(purchase);
-			} else if (user.purchase(mediaObj, numToBuy) == -2) {
+			} else if (numPurchase == -2) {
 				JOptionPane.showMessageDialog(this,
 						"This item is out of stock, Returning to Search Pane");
 				tabs.addTab("Search", search);
