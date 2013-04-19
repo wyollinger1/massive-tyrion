@@ -19,14 +19,14 @@ import java.sql.SQLException;
  */
 public class Media {
 
-  protected String creator;
-  protected String name;
-  protected int    duration;
-  protected String genre;
-  protected double price;
-  protected int    numRating;
-  protected double avgRating;
-  protected int    id;
+  protected String creator;		//person who created the media object
+  protected String name;		//name of the media object
+  protected int    duration;	//length of the object in minutes		
+  protected String genre;		//type of the object
+  protected double price;		//cost of the object
+  protected int    numRating;	//how many ratings
+  protected double avgRating;	//average of the ratings
+  protected int    id;			//media object id number
 
   /**
    * Constructor for a Media object, initialized with all the data defining a
