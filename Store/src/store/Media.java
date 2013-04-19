@@ -162,11 +162,8 @@ public class Media {
       selectNumSold.addIntCondition("mId", "=", conArr, true);
       numSold = DBIO.executeQuery(selectNumSold).getInt(1);
     } catch (SQLException sqlE) {
-      // TODO: Alert user somehow that there's a 'temporary' error with
-      // the db
       numSold = -1;
     } catch (Exception e) {
-      // TODO: Alert user somehow that there's a bug in code
       numSold = -1;
     }
 

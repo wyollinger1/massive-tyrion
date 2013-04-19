@@ -13,10 +13,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
 import java.sql.Savepoint;
 import java.sql.Statement;
-import java.sql.DatabaseMetaData;
 import java.util.ArrayList;
 
 /**
@@ -116,8 +114,7 @@ public class DBIO {
   }
 
   /**
-   * Initializes static class with the SQLite JDBC driver. TODO Docs claim
-   * Class.forName() is no longer necessary ... which is all this init does
+   * Initializes static class with the SQLite JDBC driver. 
    * 
    * @returns true on success and false otherwise
    */
@@ -157,7 +154,10 @@ public class DBIO {
       return false;
     }
   }
-
+/**
+ * Tests if the DBIO is currently connected to a database
+ * @return True if there is connection or false otherwise
+ */
   public static boolean isConnected() {
     try {
       if (con != null) {
@@ -201,7 +201,7 @@ public class DBIO {
    *          integer id of the media object
    * @param num
    *          integer number of media objects to add
-   * @return integer number of rows updated, -1 on error
+   * @return 0 on success, -1 on error
    */
   public static int add(int mId, int num) {
     int isSuccess = 0;
@@ -323,7 +323,7 @@ public class DBIO {
    * 
    * @param mObj
    *          Media object containing new data to set for it's mId
-   * @return integer number of rows manipulated, -1 on error
+   * @return 0 on success, -1 on error
    */
   public static int update(int mId, Media mObj) {
     int isSuccess = 0;
@@ -754,22 +754,6 @@ public class DBIO {
     return sb;
   }
 
-  /*
-   * //TODO: remove as unneeded Code public static ArrayList<ArrayList<String>>
-   * getGenres(){ ArrayList<ArrayList<String>> genres = new
-   * ArrayList<ArrayList<String>>(); String genre; String type; try{ ResultSet
-   * rs=con.createStatement().executeQuery(
-   * "SELECT genre, type FROM Inventory GROUP BY genre");
-   * 
-   * for(int i=0; i<3; i++){ genres.add(new ArrayList<String>()); }
-   * 
-   * while(rs.next()){ genre = rs.getString("genre"); type =
-   * rs.getString("type"); if(type.equalsIgnoreCase("Album")){
-   * genres.get(0).add(genre); }else if(type.equalsIgnoreCase("Movie")){
-   * genres.get(1).add(genre); }else if(type.equalsIgnoreCase("Book")){
-   * genres.get(2).add(genre); } } }catch(SQLException sqle){ return null; }
-   * return genres; }
-   */
   /**
    * Logs in user and returns the user which is really either a Customer or
    * Manager.
@@ -874,6 +858,11 @@ public class DBIO {
     return userObjs;
   }
 
+  /**
+   * Get the User's shopping cart 
+   * @param uId Integer id of the user
+   * @return  Order array of orders the user wants to make at checkout, null on error
+   */
   public static Order[] getShoppingCart(int uId) {
     SelectBuilder sb = DBIO.getSelectBuilder(new String[] { "*" }, "CART");
     ResultSet rs;
@@ -882,15 +871,9 @@ public class DBIO {
       sb.addIntCondition("uId", "=", new Integer[] { uId }, true);
       rs = sb.executeSelect(con);
       while (rs.next()) {
+        //There is no date for the shopping cart
         orders
-            .add(new Order(rs.getInt("mId"), rs.getInt("numSold"), new Date())); // TODO
-                                                                                 // Update
-                                                                                 // SQL
-                                                                                 // Table
-                                                                                 // to
-                                                                                 // have
-                                                                                 // a
-                                                                                 // date
+            .add(new Order(rs.getInt("mId"), rs.getInt("numSold"), new Date())); 
       }
     } catch (SQLException sqlE) {
       return null;
@@ -905,7 +888,7 @@ public class DBIO {
    * 
    * @param uId
    *          Integer id of the user
-   * @return Order array holding all the customers past purchases
+   * @return Order array holding all the customers past purchases, null on error
    */
   public static Order[] getOrderHistory(int uId) {
     SelectBuilder sb = DBIO.getSelectBuilder(new String[] { "*" }, "SALES");
