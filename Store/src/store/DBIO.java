@@ -360,11 +360,11 @@ public class DBIO {
       if (isUpdated != 0) { // Don't make an unnecessary SQL query
         mObj = getMedia(mObj.getId());
       }
-    } catch (SQLException sqlE) {
-      mObj = mObj;
+    } catch (SQLException ignore) {
+      
     }
-    return mObj; // TODO: Should this go in a finally? what's the diff?
-  }
+    return mObj; 
+    }
 
   /**
    * Adds the sale of the num number of media objects to the specified customer.

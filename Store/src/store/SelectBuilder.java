@@ -26,29 +26,13 @@ public class SelectBuilder {
   private HashMap<Integer, Integer[]>  intParams;
   private HashMap<Integer, String[]>   stringParams;
   private HashMap<Integer, Double[]>   doubleParams;
-  private int                          numParams;                                  // Number
-                                                                                    // of
-                                                                                    // parameters
-                                                                                    // in
-                                                                                    // all
-                                                                                    // of
-                                                                                    // the
-                                                                                    // hashmaps
-  // combined
 
-  private String[]                     columnArr;                                  // Holds
-                                                                                    // the
-                                                                                    // columns
-                                                                                    // to
-                                                                                    // SELECT
-                                                                                    // upon
-  private String                       tableName;                                  // Holds
-                                                                                    // the
-                                                                                    // table
-                                                                                    // name
-                                                                                    // to
-                                                                                    // SELECT
-                                                                                    // upon
+  // Number of parameters in all of the hashmaps combined
+  private int                          numParams;
+  // Holds the columns to SELECT upon
+  private String[]                     columnArr;
+  // Holds the table name to SELECT upon
+  private String                       tableName;
 
   public static boolean isOperator(String op) {
     return OPS.contains(op);
@@ -111,6 +95,7 @@ public class SelectBuilder {
           condFormatStr += "OR ";
         }
       }
+      // Setup operator with ?'s based on which operator is being used
       condFormatStr += colName + " " + operator + " ";
       if (operator.equalsIgnoreCase("BETWEEN")) {
         if (conditionArr.length != 2) {
