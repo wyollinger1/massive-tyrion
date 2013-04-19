@@ -142,7 +142,7 @@ public class StoreGUI extends JFrame implements ItemListener, ActionListener
     super("Store GUI");                     // call to super
 
     DBIO.init();                            // set up our database connection
-    DBIO.setDb("src/store/Store.sqlite");   // path to database
+    DBIO.setDb(":resource:store/Store.sqlite");   // path to database
 
     user = null;                            // set initial user to null
     isManager = false;                      // assume user is not a manager initially
